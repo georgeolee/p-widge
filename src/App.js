@@ -3,28 +3,36 @@ import {sketch} from './sketch.js';
 import p5 from 'p5';
 import { Slider } from './components/Slider';
 import { Checkbox } from './components/Checkbox';
-import { Radio } from './components/Radio';
+import { Radio, RadioHeader } from './components/Radio';
 
 import {useRef, useEffect} from 'react';
 
-import { mouse, particleSettings } from './globals';
+import { mouse, particleSettings, flags } from './globals';
 
-import { parseHexColorString } from './utilities';
+import { RGBAInput } from './components/RGBAInput';
+import { FrameManager } from './particle-system/FrameManager';
+import { FileInput } from './components/FileInput';
 
 /*
 *   TODO: 
 *       LOTS OF STUFF!
-*       -managing image - where / how to do
-*         > color, url move into particle system settings? 
-*       -link particle system position to mouse ; use app mouse pos relative to canvas element rather than p5 variable
-*         > mouse over canvas : lerp towards mouse
-*         > mouse not over canvas : lerp towards canvas center
-*       -keep it clean
-
-*       -begin work on ui ; figure out what is reusable & what should be tweaked / redone
-*         > keep inline styles to a minimum
+*       
+*       -inputs  
+*         >bezier - could use some serious cleanup
+*         >randomsize, randomspeed  
+*       
+*       
+*       -canvas size - settings?
 *
-*       -canvas size, blend mode - where do these settings go?
+*
+*    BUGFIX: 
+*       ParticleSystem: 
+*         -big flare up when emitting stops and starts again
+*         -fixed this before ... what was the issue?
+*         
+*          
+*
+*         
 *
 */
 
@@ -46,23 +54,33 @@ function App() {
 
 
   const p5ContainerRef = useRef();
+
   useEffect(()=>{
+    console.log('useEffect')
     const p = new p5(sketch, p5ContainerRef.current);
+
 
     return(()=> {
       p.remove();
     });
 
   },[])
-
+ 
   return (
     <div className="App" onPointerMove={onAppPointerMove}>
       <header className="App-header">p-widget</header>      
       
       <div className='controls-left'>
-        <Slider label='size' min={0} max={200} step={1} func={n => particleSettings.particleBaseSize = n}/>
-        <Slider label='speed' min={0} max={500} step={1} func={n => particleSettings.particleBaseSpeed = n}/>
+        <Slider label='size' min={0} max={200} step={1} defaultValue={150} func={n => particleSettings.particleBaseSize = n}/>
+        <Slider label='speed' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
         <Slider label='lifetime' min={0} max={2} step={0.01} func={n => particleSettings.particleLifetime = n}/>
+      
+        <Radio label='option A' checked/>
+        <Radio label='option B'/>
+        <Radio label='option C'/>
+        <Radio label='option D'/>
+        <Radio label='option e'/>
+
       </div>
       
       <div ref={p5ContainerRef} className='p5-container'></div>
@@ -74,7 +92,29 @@ function App() {
 
         <Radio label='option A' checked/>
         <Radio label='option B'/>
+        <Radio label='option C'/>
+        <Radio label='option D'/>
+        <Radio label='option e'/>
+        
+
+        <FileInput label='Particle Image' func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}/>
+
+        <FileInput label='Emission Map' func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}/>
+
+        <RadioHeader label='Blend Mode'/>
+        <Radio name='blend-mode'label='alpha' func={()=>particleSettings.p5BlendMode = 'blend'} />
+        <Radio name='blend-mode' label='add' func={()=>particleSettings.p5BlendMode = 'add'} checked/>        
+        <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />
+        <Radio name='blend-mode'label='screen' func={() => particleSettings.p5BlendMode = 'screen'}/>
+        <Radio name='blend-mode'label='hard light' func={() => particleSettings.p5BlendMode = 'hard_light'}/>
+
       </div>      
+
+      <div className='controls-center'>
+        <RGBAInput label='start color' rgb='#ff6600' alpha={255} func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}}/>
+        <RGBAInput label='end color' rgb='#ff0066' alpha={0} func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}}/>
+        <RGBAInput label='background color' rgb='#000000' alpha={255} func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}/>
+      </div>
 
     </div>
   );

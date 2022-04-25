@@ -1,5 +1,13 @@
 import { useEffect, useRef } from "react";
 
+export function RadioHeader(props){
+    const label = props.label ?? 'Radio Group';
+
+    return(
+        <div className="radio radio-header">{label}</div>
+    );
+}
+
 export function Radio(props){
 
     const inputRef = useRef();

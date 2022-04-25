@@ -23,17 +23,28 @@ export function getRandomVelocity(sMin, sMax, aMin, aMax){
 }
 
 export function parseHexColorString(hexColorString){
-    const prefix = /^#|^0x/;
-    const validLengths = [3,4,6,8];
+    
+    const prefix = /^#|^0x/;                //  match hexadecimal prefix
+    const invalidChars = /[^(0-9|a-f)]/i    //  match anything besides 0-9 or a-f, case insensitive
+    const validLengths = [3,4,6,8];         //  valid lengths for rgb(a) string
 
+    //trim any prefix and start/end whitespace from the string
     let str = hexColorString.replace(prefix, '').trim();
-    if(!validLengths.includes(str.length)) return undefined;
-    if(str.length <= 4) str += str;
+    
+    //invalid format?
+    if(!validLengths.includes(str.length) || str.match(invalidChars)) return undefined;
 
+    //if in RGB / RGBA format, double it to RRGGBB / RRGGBBAA
+    if(str.length <= 4) str = str                                       
+                                .split('')                              //[r, g, b]
+                                .map(char => char + char)               //[rr, gg, bb]
+                                .reduce((prev, curr) => prev + curr)    //(rr+gg)+bb
+
+    //parse each char pair to a decimal number & return results
     return {
         r: parseInt(str.substring(0, 2), 16),
         g: parseInt(str.substring(2, 4), 16),
         b: parseInt(str.substring(4, 6), 16),
-        a: str.length % 3 ? parseInt(str.substring(6, 8), 16) : undefined,
+        a: str.length === 8 ? parseInt(str.substring(6, 8), 16) : 255,  //default to 255 if no alpha value supplied
     }
 }

@@ -34,9 +34,9 @@ export class Emitter{
     }
       
   
-    loadEmissionMap(em){
+    loadEmissionMap(url){
       console.log('loading emap')
-      this.#p5.loadImage(em, (image) => {
+      this.#p5.loadImage(url, (image) => {
           this.emissionMap = image;
   
           const w = image.width;

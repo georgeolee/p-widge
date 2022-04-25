@@ -15,3 +15,9 @@ export const mouse = {
 }
 
 export const particleSettings = new ParticleSystemSettings();
+
+export const flags = {
+    recolor: false,
+    loadEmap: false,
+    dirtyBackground: false,
+}

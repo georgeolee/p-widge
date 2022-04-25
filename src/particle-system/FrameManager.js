@@ -1,10 +1,11 @@
-import p5 from 'p5'
+import { particleSettings } from '../globals';
+import { lerp } from '../utilities';
 
 export class FrameManager{
     static isBusy;
     static queue;
     static maxQueueSize;
-    static url; //image url
+    // static url; //image url
     static frameCount;
     
     //p5
@@ -20,7 +21,7 @@ export class FrameManager{
 
         this.p5 = null;
 
-        this.url = './images/default-particle.png';
+        // this.url = './images/default-particle.png';
         this.frameCount = 32;
         
         
@@ -30,12 +31,17 @@ export class FrameManager{
 
     static createFrames(url, count, callback){
         if(!this.p5){
-            console.log('no p5 instance assigned yet to static class FrameManager; assign one to FrameManager.p5');
+            console.log('FrameManager failed to create new frames; missing reference to p5 instance');
             return;
         }
 
         if(!this.startColor || !this.endColor){
-            console.log('null or invalid value for FrameManager.startColor or FrameManager.endColor; assign a p5.Color to each');
+            console.log('FrameManager failed to create new frames; missing start or end color');
+            return;
+        }
+
+        if(!url){
+            console.log('FrameManager failed to create new frames; missing url');
             return;
         }
 
@@ -48,7 +54,7 @@ export class FrameManager{
             const t_step = count > 1 ? 1/(count - 1) : 0;
             const frames = [];
             for(let n = 0; n < count; n++){
-                buffer.tint(this.p5.lerpColor(this.startColor, this.endColor, 1 - t_step * n));
+                buffer.tint(this.composeP5Color( this.lerpColorRGBA(this.startColor, this.endColor, 1 - t_step * n)));
                 buffer.image(pimg, 0, 0);
                 const frame = this.p5.createImage(pimg.width, pimg.height);
                 frame.copy(buffer, 0, 0, buffer.width, buffer.height, 0, 0, frame.width, frame.height);
@@ -58,6 +64,34 @@ export class FrameManager{
             callback?.(frames); //invoke the callback w/ the created frames as an argument
             
         })
+    }
+
+    static setStartColor(colorObject){
+        this.startColor = colorObject;
+    }
+
+    static setEndColor(colorObject){
+        this.endColor = colorObject;
+    }
+
+    static lerpColorRGBA(a, b, t){
+        return {
+            r: lerp(a.r, b.r, t),
+            g: lerp(a.g, b.g, t),
+            b: lerp(a.b, b.b, t),
+            a: lerp(a.a, b.a, t)
+        }
+    }
+
+    static setUrl(url){
+        this.url = url;
+    }
+
+    static composeP5Color(rgba){
+        if(!this.p5){
+            console.log('FrameManager.composeP5Color: no p5 instance yet! ; failed to create color');            
+        }
+        return this?.p5?.color(rgba.r, rgba.g, rgba.b, rgba.a);
     }
 
     static queueRecolor(callback){
@@ -70,7 +104,7 @@ export class FrameManager{
         
         const recolor = () => {
             this.isBusy = true;
-            this.createFrames(this.url, this.frameCount, onFinished);
+            this.createFrames(particleSettings.imageUrl, this.frameCount, onFinished);
         }
 
         if(!this.isBusy) recolor();        
@@ -84,7 +118,7 @@ export class FrameManager{
     }
 
     static processQueue(newestFirst = true){
-        //get the most recent push (or the oldest one)
+        //get the most recent push or the oldest one
         const recolor = newestFirst ? this.queue.pop() : this.queue.splice(0,1)[0];
         recolor?.();
     }

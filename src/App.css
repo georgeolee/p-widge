@@ -37,12 +37,23 @@
   flex-direction: column;
 }
 
+:is(.controls-right, .controls-left) > :nth-child(n+2):not(.radio+.radio){
+  margin-top: 2em;
+}
+
 .controls-left{
-  grid-column: 1;
+  grid-column: 1;  
 }
 
 .controls-right{
   grid-column: 3;
+}
+
+.controls-center{
+  grid-column: 2;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
 
 .slider{
@@ -58,4 +69,18 @@
 .radio, .checkbox{
   display: flex;
   flex-direction: row;
+}
+
+.rgba-picker{
+  display: flex;
+  flex-direction: column;
+}
+
+.rgba-picker > label{
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.rgb-input, .apha-input{
+  flex-grow: 1;
 }

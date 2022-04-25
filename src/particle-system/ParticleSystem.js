@@ -23,7 +23,7 @@ export class ParticleSystem {
     constructor(p5Instance, settingsObject = null) {
 
       this.p5 = p5Instance;
-      this.settings = settingsObject ?? new ParticleSystemSettings();
+      this.settings = settingsObject;
 
       this.pos = new Vector(0,0);
       this.nextIndex = 0;
@@ -34,16 +34,7 @@ export class ParticleSystem {
         return new Particle(new Vector(0,0), v, this.settings.particleLifetime, this.settings.particleBaseSize);
       })
 
-      this.emitter = new Emitter(p5Instance);            
-
-      FrameManager.p5 = p5Instance;
-
-      //make these fields part of settings class instead ?
-      FrameManager.startColor = this.p5.color(255,0,0);
-      FrameManager.endColor = this.p5.color(0,0,255,0);
-
-      FrameManager.queueRecolor(frames => {this.settings.imageFrames = frames; console.log(`recolor finished; frames: ${frames}`)});
-      
+      this.emitter = new Emitter(p5Instance);                  
     }
 
     //refactor ; find a better way, place to do this
@@ -145,9 +136,9 @@ export class ParticleSystem {
 
       let n = 0;
 
-      if(this.settings.emitAuto){
-        this.emitPerSecond(this.settings.rate, this.settings.overwrite);
-      }
+      // if(this.settings.emitAuto || ){
+      //   this.emitPerSecond(this.settings.rate, this.settings.overwrite);
+      // }
 
       for(let i = 0; i < this.particles.length; i++){
         n++
@@ -157,7 +148,6 @@ export class ParticleSystem {
       }
       
       this.drawParticles();
-      // console.log(`updated ${n} particles`)
     }
   
     drawParticle(p){
@@ -189,9 +179,9 @@ export class ParticleSystem {
         this.p5.image(theImage,0,0)
       }
       
-      else{ //no frames - just draw something to the canvas
+      else{ //no frames - draw magenta error to the canvas
         this.p5.stroke(255,0,255)
-        this.p5.strokeWeight(5)
+        this.p5.strokeWeight(10)
         this.p5.point(0,0)
       }
 

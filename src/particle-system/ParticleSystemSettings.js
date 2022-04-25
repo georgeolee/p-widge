@@ -5,9 +5,13 @@ export class ParticleSystemSettings{
     imageFrames;
     sizeTable
     speedTable
+
+    imageUrl;
+    emapUrl;
+
+    backgroundColor;
       
     rotateByVelocity;
-
     emitAuto;
 
     maxParticleCount;    
@@ -39,6 +43,12 @@ export class ParticleSystemSettings{
         this.imageFrames = s?.imageFrames || null;
         this.speedTable = s?.speedTable || [1,0];
         this.sizeTable = s?.sizeTable || [1,0];
+
+        this.imageUrl = s?.imageUrl || './images/default-particle.png';
+        this.emapUrl = s?.emapUrl || null;
+        this.p5BlendMode = s?.p5BlendMode || 'add';
+
+        this.backgroundColor = s?.backgroundColor || {r:0,g:0,b:0,a:255};
 
         this.emitAuto = s?.emitAuto ?? true;
         this.rotateByVelocity = s?.rotateByVelocity ?? false;
