@@ -2,7 +2,11 @@ import {Vector} from "p5";
 import { FrameManager } from "./particle-system/FrameManager";
 import { ParticleSystem } from "./particle-system/ParticleSystem";
 import { mouse, particleSettings, flags } from "./globals";
-import { parseHexColorString } from "./utilities";
+import { parseHexColorString, randomRange } from "./utilities";
+
+import { V2D } from "./components/BezierInput/V2D";
+
+import { CubicBezier } from "./components/BezierInput/CubicBezier";
 
 export function sketch(p){
         
@@ -19,7 +23,34 @@ export function sketch(p){
         default: p.ADD
     }
 
+    randomRange()
+
     let backgroundColor = FrameManager.composeP5Color(s.settings.backgroundColor);
+
+    // const v2 = new V2D(0, 8)
+
+    // v2.add(new V2D(30,30))
+
+    console.log(
+        V2D.sum(
+            new V2D(1,1),
+            new V2D(1,1),
+            new V2D(10,10),
+            new V2D(10,10),
+            new V2D(100,100),
+            new V2D(100,100),
+        )
+    )
+
+    ////// TESTING STUFF
+    console.log('TESTING')
+    console.log(Object.keys(new V2D(0,0))); 
+    
+    const bz = new CubicBezier(0,0,0,0,1,1,1,1);
+    const lookups = bz.createLookupTable(32);
+    console.log(lookups)
+
+    ///TESTING STUFF
 
     p.setup = function(){
         p.createCanvas(600,600)

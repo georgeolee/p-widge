@@ -11,6 +11,12 @@ export function constrain(val, min, max){
     return Math.min(max, Math.max(min, val));
 }
 
+/**
+ * 
+ * @param {number} minInclusive 
+ * @param {number} maxExclusive 
+ * @returns a random number between min (inclusive) and max (exclusive)
+ */
 export function randomRange(minInclusive, maxExclusive){
     return Math.random() * (maxExclusive - minInclusive) + minInclusive;
 }
@@ -22,6 +28,11 @@ export function getRandomVelocity(sMin, sMax, aMin, aMax){
     return new Vector(r * Math.cos(theta), r * Math.sin(theta));
 }
 
+/**
+ * Parses a hexadecimal character string in the format #RRGGBB(AA), #RGB(A), 0xRRGGBB(AA), or 0xRGB(A)
+ * @param {string} hexColorString 
+ * @returns an object containing the numerical values for  r, g, b, and a, or undefined for invalid inputs. Alpha defaults to 255 for inputs in RRGGBB or RGB format.
+ */
 export function parseHexColorString(hexColorString){
     
     const prefix = /^#|^0x/;                //  match hexadecimal prefix
