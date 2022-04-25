@@ -47,8 +47,13 @@ export function sketch(p){
     console.log(Object.keys(new V2D(0,0))); 
     
     const bz = new CubicBezier(0,0,0,0,1,1,1,1);
-    const lookups = bz.createLookupTable(32);
-    console.log(lookups)
+    // const lookups = bz.createLookupTable(32);
+    // console.log(lookups)
+
+
+    console.log(bz)
+    bz.setPoint(0, 0, 0)
+    console.log(bz)
 
     ///TESTING STUFF
 

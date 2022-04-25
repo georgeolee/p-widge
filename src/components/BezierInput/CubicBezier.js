@@ -8,6 +8,10 @@ export class CubicBezier{
     P2;
     P3;
 
+    /**
+     * 
+     * @param  {...number|vector} args 
+     */
     constructor(...args){
         if(args.length === 8 && args.every(arg => typeof arg === 'number')){
             this.P0 = new V2D(args[0], args[1]);
@@ -37,6 +41,35 @@ export class CubicBezier{
             V2D.scale(this.P2, 3 * (1-t) * (t**2)),
             V2D.scale(this.P3, t**3),
         );
+    }
+
+
+    /**
+     * Sets one of the control points on the bezier curve
+     * @param {number} pointNumber the point to set - 0, 1, 2, or 3
+     * @param  {...any} args a single object with x and y values, or two separate numbers
+     */
+    setPoint(pointNumber, ...args){
+        const p = {
+            0: this.P0,
+            1: this.P1,
+            2: this.P2,
+            3: this.P3
+        }[pointNumber];
+
+        if(p === undefined) throw new Error(`CubicBezier.setPoint: invalid argument ${pointNumber} for pointNumber ; must be a integer from 0 to 3`)
+
+        if(args.length === 1 && typeof args[0].x === 'number' && typeof args[0].y === 'number'){
+            p.x = args[0].x;
+            p.y = args[0].y;
+        }
+
+        else if(args.length > 1){
+            p.x = Number(args[0]);
+            p.y = Number(args[1]);
+        }
+
+        else throw new Error(`CubicBezier.setPoint: invalid arguments ${args} for x and y; must be an object with x and y number values or two numbers`);
     }
 
 
