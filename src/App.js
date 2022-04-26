@@ -13,24 +13,26 @@ import { RGBAInput } from './components/RGBAInput';
 import { FrameManager } from './particle-system/FrameManager';
 import { FileInput } from './components/FileInput';
 
+import { BezierInput } from './components/BezierInput/BezierInput';
+
 /*
 *   TODO: 
 *       LOTS OF STUFF!
 *       
 *       -inputs  
-*         >bezier - could use some serious cleanup
-*         >randomsize, randomspeed  
+*         >bezier - needs some serious cleanup
+*         
 *       
 *       
 *       -canvas size - settings?
 *
 *
 *    BUGFIX: 
-*       ParticleSystem: 
-*         -big flare up when emitting stops and starts again
-*         -fixed this before ... what was the issue?
-*         
-*          
+*       CubicBezier: 
+*         -lookup table is broken ; looks like all the y values are evenly spaced when they shouldn't be ?
+*         - CubicBezier(0,0, 0,0, 1,1, 1,1) -> evenly spaced, as expected
+*         - CubicBezier(0,0, 0,0, 0,0, 1,1) -> same result for some reason ? no change?
+*         - CubicBezier(0,0, 0,0, 0,0, 0,1) -> lots of NaN
 *
 *         
 *
@@ -80,6 +82,8 @@ function App() {
         <Radio label='option C'/>
         <Radio label='option D'/>
         <Radio label='option e'/>
+
+        <BezierInput />
 
       </div>
       

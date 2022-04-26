@@ -44,16 +44,27 @@ export function sketch(p){
 
     ////// TESTING STUFF
     console.log('TESTING')
-    console.log(Object.keys(new V2D(0,0))); 
     
-    const bz = new CubicBezier(0,0,0,0,1,1,1,1);
-    // const lookups = bz.createLookupTable(32);
-    // console.log(lookups)
+    const points = [
+        0,0,
+        0.5, 1,
+        0.5, 1,
+        1,0
+    ]
 
+    const bz = new CubicBezier(...points);
 
-    console.log(bz)
-    bz.setPoint(0, 0, 0)
-    console.log(bz)
+    // bz.setPoint(2,1,1)
+
+    console.log('BZ TEST')
+    console.log(bz.getPointAtParameterValue(0.5))
+    
+    const lookups = bz.createLookupTable(32);
+    console.log(lookups)
+
+    // console.log(bz)
+    // bz.setPoint(3, 100, 100)
+    // console.log(bz)
 
     ///TESTING STUFF
 

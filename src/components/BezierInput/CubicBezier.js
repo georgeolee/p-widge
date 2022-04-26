@@ -1,5 +1,5 @@
 import { V2D } from "./V2D";
-import { lerp } from "../../utilities";
+import { lerp, dcp } from "./utilities";
 
 export class CubicBezier{
 
@@ -98,6 +98,8 @@ export class CubicBezier{
         const xRange = samples[samples.length - 1].x - samples[0].x;
         const xStep = xRange / (lookupResolution - 1);
         
+        console.log(`xStep: ${xStep}`); 
+
         lookups.push(samples[0].y);
 
 
@@ -106,6 +108,7 @@ export class CubicBezier{
         let xPrev = samples[prevSampleIndex].x;
         let xNext = samples[nextSampleIndex].x;
 
+        console.log(`pIndex: ${prevSampleIndex}\t nIndex: ${nextSampleIndex}\t xPrev: ${xPrev}\t xNext: ${xNext}`); 
 
         for(let n = 1; n < lookupResolution - 1; n++){
             const x = samples[0].x + xStep * n;
@@ -117,18 +120,26 @@ export class CubicBezier{
                 xNext = samples[nextSampleIndex].x;
             }
 
+            // console.log(`pIndex: ${prevSampleIndex}\t nIndex: ${nextSampleIndex}\t xPrev: ${xPrev}\t xNext: ${xNext} x: ${x}`); 
+            
+
             const distPrev = Math.abs(xPrev - x);
             const distNext = Math.abs(xNext - x);
 
             const t = distPrev / (distPrev + distNext);
 
-            const yApprox = lerp(samples[prevSampleIndex].y, samples[nextSampleIndex].y, t);
+            // console.log(`xPrev: ${xPrev}\t xNext: ${xNext} x: ${x}\t t: ${t}`); 
 
+            console.log(`[${n}]\t:\tsamples[pIndex].y : ${dcp(samples[prevSampleIndex].y,3)}\tsamples[nIndex].y : ${dcp(samples[nextSampleIndex].y,3)}`); 
+            const yApprox = lerp(samples[prevSampleIndex].y, samples[nextSampleIndex].y, t);
+            // console.log(`y approx : ${yApprox}`)
             lookups.push(yApprox);
         }        
 
         lookups.push(samples[samples.length - 1].y);
 
+        console.log('samples');
+        console.log(samples); 
         return lookups;
     }
 }
