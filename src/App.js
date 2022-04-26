@@ -92,7 +92,7 @@ function App() {
         <Radio label='option e'/>
 
         size
-        <BezierInput points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.sizeTable = lookups}/>        
+        <BezierInput labelTop='Size Curve' labelY='% Base Size' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.sizeTable = lookups}/>        
 
       </div>
       
@@ -116,7 +116,7 @@ function App() {
         <Radio name='blend-mode'label='hard light' func={() => particleSettings.p5BlendMode = 'hard_light'}/>
 
         speed
-        <BezierInput points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
+        <BezierInput labelTop='Speed Curve' labelY='% Base Speed' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
       </div>      
 
       <div className='controls-center'>

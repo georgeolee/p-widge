@@ -1,0 +1,61 @@
+
+.bezier-input{
+
+    --bezier-control-size: 18px; /*same size HTML canvas uses for drawing control elements in BezierInput.js; used for positioning labels*/
+
+
+    --outer-padding: 25px; /*padding around the canvas controls; this is where the labels go*/
+
+    padding: var(--outer-padding);
+
+    box-sizing: border-box;
+    display:flex;
+    position:relative;
+    margin:auto;
+
+    background-color:#e8e8e8;
+    border: 1px solid #aaa;
+    border-radius: calc(var(--outer-padding)/2);
+    
+}
+
+.bezier-canvas-container{
+    display: flex;
+}
+
+.bezier-controls{
+    position: absolute;
+}
+
+[class *= bezier-label]{
+    position: absolute;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    color: #444;
+    font-size: 13px;    
+}
+
+.bezier-label-top{
+    left: 0;
+    top: 0;
+    height: calc(var(--outer-padding) + var(--bezier-control-size));    
+}
+
+.bezier-label-x{
+    left: 0;
+    bottom: 0;    
+    height: calc(var(--outer-padding) + var(--bezier-control-size));
+}
+
+.bezier-label-y{
+    top:0;
+    left:0;
+    height: var(--outer-padding);
+    transform: translate(0,-100%) rotate(90deg);
+    transform-origin: 0 100%;
+}
