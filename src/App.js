@@ -19,20 +19,20 @@ import { BezierInput } from './components/BezierInput/BezierInput';
 *   TODO: 
 *       LOTS OF STUFF!
 *       
-*       -inputs  
-*         >bezier - needs some serious cleanup
-*         
-*       
+*       -RGBAInput  
+*         > LQ / HQ - 4/8/32? depending on still editing vs input release
+*         > change implementation 
+*             — on pointer up > after N seconds w/o input
 *       
 *       -canvas size - settings?
 *
 *
-*    BUGFIX: 
+*     
 *       CubicBezier: 
-*         -lookup table is broken ; looks like all the y values are evenly spaced when they shouldn't be ?
-*         - CubicBezier(0,0, 0,0, 1,1, 1,1) -> evenly spaced, as expected
-*         - CubicBezier(0,0, 0,0, 0,0, 1,1) -> same result for some reason ? no change?
-*         - CubicBezier(0,0, 0,0, 0,0, 0,1) -> lots of NaN
+*         -labels & styling
+*         
+*         
+*         
 *
 *         
 *
@@ -54,6 +54,14 @@ function App() {
     mouse.overCanvas = mouse.canvasX >= 0 && mouse.canvasY >= 0 && mouse.canvasX <= canvasRect.width && mouse.canvasY <= canvasRect.height;
   }
 
+  const onAppPointerUp = e => {
+    mouse.buttons = e.buttons;
+  }
+
+  const onAppPointerDown = e => {
+    mouse.buttons = e.buttons;
+  }
+
 
   const p5ContainerRef = useRef();
 
@@ -69,7 +77,7 @@ function App() {
   },[])
  
   return (
-    <div className="App" onPointerMove={onAppPointerMove}>
+    <div className="App" onPointerMove={onAppPointerMove} onPointerDown={onAppPointerDown} onPointerUp={onAppPointerUp}>
       <header className="App-header">p-widget</header>      
       
       <div className='controls-left'>
@@ -83,7 +91,8 @@ function App() {
         <Radio label='option D'/>
         <Radio label='option e'/>
 
-        <BezierInput />
+        size
+        <BezierInput points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.sizeTable = lookups}/>        
 
       </div>
       
@@ -93,12 +102,6 @@ function App() {
         <Slider label='rate' min={0} max={500} step={1} func={n => particleSettings.rate = n}/>
         <Slider label='rotation' min={0} max={360} step={1} func={n => particleSettings.rotation = n}/>
         <Checkbox label='auto emit' func={b => particleSettings.emitAuto = b} checked/>
-
-        <Radio label='option A' checked/>
-        <Radio label='option B'/>
-        <Radio label='option C'/>
-        <Radio label='option D'/>
-        <Radio label='option e'/>
         
 
         <FileInput label='Particle Image' func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}/>
@@ -112,11 +115,13 @@ function App() {
         <Radio name='blend-mode'label='screen' func={() => particleSettings.p5BlendMode = 'screen'}/>
         <Radio name='blend-mode'label='hard light' func={() => particleSettings.p5BlendMode = 'hard_light'}/>
 
+        speed
+        <BezierInput points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
       </div>      
 
       <div className='controls-center'>
-        <RGBAInput label='start color' rgb='#ff6600' alpha={255} func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}}/>
-        <RGBAInput label='end color' rgb='#ff0066' alpha={0} func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}}/>
+        <RGBAInput label='start color' rgb='#ff6600' alpha={255} func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} finish={()=> flags.slowRecolor = true}/>
+        <RGBAInput label='end color' rgb='#ff0066' alpha={0} func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} finish={()=> flags.slowRecolor = true}/>
         <RGBAInput label='background color' rgb='#000000' alpha={255} func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}/>
       </div>
 

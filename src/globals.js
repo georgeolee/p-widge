@@ -12,12 +12,17 @@ export const mouse = {
     canvasY: null,
 
     overCanvas: false,
+
+    buttons: 0,
 }
 
 export const particleSettings = new ParticleSystemSettings();
 
 export const flags = {
     recolor: false,
+
+    slowRecolor: false,
+    
     loadEmap: false,
     dirtyBackground: false,
 }

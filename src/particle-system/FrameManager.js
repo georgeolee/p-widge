@@ -94,22 +94,27 @@ export class FrameManager{
         return this?.p5?.color(rgba.r, rgba.g, rgba.b, rgba.a);
     }
 
-    static queueRecolor(callback){
-                
+
+    static queueRecolor(callback, frameCount = this.frameCount){
+        
+        //do this when recolor finishes
         const onFinished = (frames) => {         
             callback(frames);
             this.isBusy = false; 
-            this.processQueue();
+            this.processQueue(); //check the queue for recolor jobs
         }
         
         const recolor = () => {
             this.isBusy = true;
-            this.createFrames(particleSettings.imageUrl, this.frameCount, onFinished);
+            this.createFrames(particleSettings.imageUrl, frameCount, onFinished);
         }
 
+        //not busy — recolor right away!
         if(!this.isBusy) recolor();        
 
+        //busy! — push the recolor job into the queue
         else{
+            console.log(`FM BUSY`); 
             if(this.queue.length >= this.maxQueueSize){
                 this.queue.splice(0,1); //remove the oldest element from the array if reached max queue size
             }

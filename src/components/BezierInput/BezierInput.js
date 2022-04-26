@@ -11,20 +11,19 @@ import { CubicBezier } from "./CubicBezier";
         -pointer capture & release
         -lookup table & attaching func - does it work?
 
-
-        -lookup table resolution
-            >test
-            >low during edit, higher res on pointer up?
 */
 
 
 export function BezierInput(props){
 
-    const width =  200;
+    const func = props.func ?? (lookups => console.log(lookups));
+    const init = props.init ?? true;
+
+    const width =  150;
     const height = width;
 
 
-    const margin = props.margin ?? 40;
+    const margin = props.margin ?? 18;
     const points = props.points ?? [
             0,0,    //start
             0,1,    //first handle
@@ -46,25 +45,30 @@ export function BezierInput(props){
         
 
         ctx.clearRect(0,0,cw, ch);
+
+        ctx.fillStyle = '#000';
+        ctx.fillStyle = '#06f';
+        ctx.fillStyle = '#ddd';
+        ctx.fillRect(0,0,cw,ch);
         
         ctx.save(); //ctx.restore() to go back
-        
-        console.log(`canvas width ${cw} height ${ch}`); 
         
         ctx.translate(0, ch);    //use standard cartesian coordinate plane with origin in bottom-left      
         ctx.scale(cw, -ch)
 
         
 
-        //bounds
-        ctx.lineWidth = 1/cw;
-        ctx.strokeRect(0,0,1,1)
+        
 
         const drawCurve = () => {
             ctx.beginPath();
-            ctx.lineWidth = 2/cw;
-            ctx.strokeStyle = '#000';
-            ctx.fillStyle = '#0002'
+            ctx.lineWidth = 4/cw;
+            ctx.strokeStyle = '#fff';
+            // ctx.fillStyle = '#06f'
+            // ctx.fillStyle = '#f44'
+
+            ctx.fillStyle = '#4af';
+
             ctx.moveTo(bz.P0.x, bz.P0.y);        
             ctx.bezierCurveTo(bz.P1.x, bz.P1.y, bz.P2.x, bz.P2.y, bz.P3.x, bz.P3.y);
             ctx.stroke();
@@ -74,6 +78,11 @@ export function BezierInput(props){
         }
         
         drawCurve();
+
+        //bounds
+        ctx.lineWidth = 1/cw;
+        ctx.strokeStyle='#000'
+        ctx.strokeRect(0,0,1,1)
 
         ctx.restore();
 
@@ -103,22 +112,44 @@ export function BezierInput(props){
 
 
         const drawHandle = PN => {
+            
             ctx.beginPath();
-            ctx.fillStyle = '#f44';
+            ctx.fillStyle = '#fff';
+            ctx.arc(PN.x * curveScale.x, PN.y * curveScale.y, margin/2 + 2, 0, 2 * Math.PI);
+            ctx.fill();
+
+            ctx.beginPath();
+            // ctx.fillStyle = '#f44';
+            ctx.fillStyle = '#06f';
             ctx.arc(PN.x * curveScale.x, PN.y * curveScale.y, margin/2, 0, 2 * Math.PI);
             ctx.fill();
         }
 
         const drawEndPoint = PN => {
-            ctx.fillStyle = '#f44'
+            // ctx.fillStyle = '#f44'
+            ctx.fillStyle = '#06f';
             ctx.fillRect(PN.x * curveScale.x, PN.y * curveScale.y - margin, PN === bz.P3 ? margin : -margin, 2 * margin)
         }
+
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath()
+        ctx.moveTo(bz.P0.x * curveScale.x, bz.P0.y * curveScale.y);
+        ctx.lineTo(bz.P1.x * curveScale.x, bz.P1.y * curveScale.y);
+        ctx.stroke()
+
+        ctx.strokeStyle = '#444';
+        ctx.lineWidth = 1;
+        ctx.beginPath()
+        ctx.moveTo(bz.P2.x * curveScale.x, bz.P2.y * curveScale.y);
+        ctx.lineTo(bz.P3.x * curveScale.x, bz.P3.y * curveScale.y);
+        ctx.stroke()
         
         drawHandle(bz.P1)
         drawHandle(bz.P2)
 
         drawEndPoint(bz.P0);
-        drawEndPoint(bz.P3);
+        drawEndPoint(bz.P3);        
 
         ctx.restore();
     }
@@ -126,9 +157,11 @@ export function BezierInput(props){
     useEffect(()=>{
         drawBezier(bzRef.current);
         drawControls(bzRef.current);
-    });
+        if(init) func(bzRef.current.createLookupTable(64));
+    }, [bzRef]);
 
     function onPointerDown(e){
+        e.target.setPointerCapture(e.pointerId);
         const rect = e.target.getBoundingClientRect();
         const mx = e.clientX - rect.left;
         const my = rect.width - (e.clientY - rect.top); //flip y to match canvas orientation
@@ -147,13 +180,18 @@ export function BezierInput(props){
         else if(mx >= 0 && mx <= margin && my <= bz.P0.y * curveScale.y + margin*2 && my >= bz.P0.y * curveScale.y) hit = bz.P0;
         else if(mx >= margin + curveScale.x && mx <= margin * 2 + curveScale.x && my <= bz.P3.y * curveScale.y + margin*2 && my >= bz.P3.y * curveScale.y) hit = bz.P3;
 
-        console.log(`hit ${hit?.toString()}: ${hit}`); 
+        // console.log(`hit ${hit?.toString()}: ${hit}`); 
 
         editPoint.current = hit;
     }
 
     function onPointerUp(e){
+        e.target.releasePointerCapture(e.pointerId);
         editPoint.current = null;
+        
+        // const lookups = bzRef.current.createLookupTable(64);
+
+        func(bzRef.current.createLookupTable(64))
     }
 
     function onPointerMove(e){
@@ -176,10 +214,12 @@ export function BezierInput(props){
 
         drawBezier(bzRef.current);
         drawControls(bzRef.current);
+
+        func(bzRef.current.createLookupTable(16))
     }
 
     return(
-        <div style={{display:'flex', border: '1px solid red', margin: 'auto'}}>            
+        <div style={{display:'flex', border: '1px solid black', margin: 'auto'}}>            
                 <canvas onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerDown={onPointerDown} ref={controlCnvRef} width={width + 2*margin} height={height + 2*margin} style={{position:'absolute'}}/>
                 <canvas ref={cnvRef} width={width} height={height} style={{width:width, height:height, margin:margin + 'px'}}/>            
         </div>

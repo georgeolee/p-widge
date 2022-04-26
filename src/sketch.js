@@ -31,6 +31,8 @@ export function sketch(p){
 
     // v2.add(new V2D(30,30))
 
+    setInterval(()=>console.log(`frames: ${s.settings.imageFrames?.length}`), 1000)
+
     console.log(
         V2D.sum(
             new V2D(1,1),
@@ -108,8 +110,13 @@ export function sketch(p){
         }
 
         if(flags.recolor && s.settings.imageUrl){
-            FrameManager.queueRecolor(frames => s.settings.imageFrames = frames);
+            FrameManager.queueRecolor(frames => s.settings.imageFrames = frames, 4);
             flags.recolor = false;
+        }
+
+        if(flags.slowRecolor && s.settings.imageUrl){
+            FrameManager.queueRecolor(frames => s.settings.imageFrames = frames, 32);
+            flags.slowRecolor = false;
         }
 
         if(flags.dirtyBackground){
