@@ -1,19 +1,4 @@
 /**
- * Get mouse position relative to HTML element
- * @param {HTMLElement} elt 
- * @param {MouseEvent} evt 
- * @returns an object containing x and y
- */
-export const getMousePos = (elt, evt) => {
-    let rect = elt.getBoundingClientRect();    
-    return {
-        x:evt.clientX - rect.left, 
-        y:evt.clientY - rect.top
-    }
-}
-
-
-/**
  * 
  * @param {number} number 
  * @param {number} nplaces 

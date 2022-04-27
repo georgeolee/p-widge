@@ -34,14 +34,14 @@ export function sketch(p){
     console.log('TESTING')
     // setInterval(()=>console.log(`frames: ${s.settings.imageFrames?.length}`), 1000)
 
-    setInterval(()=>{
-        document.querySelector('.controls-right .bezier-input').classList.add('dark');
-        console.log('on')
-        setTimeout(()=>{
-            document.querySelector('.controls-right .bezier-input').classList.remove('dark')
-            console.log('off')
-        }, 1000)
-    }, 2000)
+    // setInterval(()=>{
+    //     document.querySelector('.controls-right .bezier-input').classList.add('dark');
+    //     console.log('on')
+    //     setTimeout(()=>{
+    //         document.querySelector('.controls-right .bezier-input').classList.remove('dark')
+    //         console.log('off')
+    //     }, 1000)
+    // }, 2000)
 
     p.setup = function(){
         p.createCanvas(600,600)
@@ -55,6 +55,8 @@ export function sketch(p){
 
         s.pos = p.createVector(p.width/2,p.height/2)
              
+
+        // setTimeout(()=>document.querySelectorAll('.bezier-graph').forEach(el => {el.width=400; el.style.width='400px'}),2000)
     }
 
     p.draw = function(){

@@ -1,32 +1,39 @@
 
 .bezier-input{
 
-    --bezier-control-size: 18px; /*same size HTML canvas uses for drawing control elements in BezierInput.js; used for positioning labels*/
-
+    /* size of graph canvas and canvas control points */
+    /* these properties are also read by the React component and used for drawing to the canvas */
+    --bezier-control-size: 18px; 
+    --bezier-canvas-width: 150px;
+    --bezier-canvas-height: 120px;    
     
-    
-    --outer-padding: 25px; /*padding around the canvas controls; this is where the labels go*/
+    --outer-padding: 10px; /*padding around the canvas controls; this is where the labels go*/
 
 
     /* color properties used by React component for drawing to HTML canvas*/
     --curve-fill: #4af;
     --curve-stroke: #fff;
-    
     --control-fill: #06f;
     --control-hover-fill: #4af;
     --control-stroke: #fff;
     --control-handle-stroke: #444;
-
     --canvas-border: #444;
     --track-stroke: #aaa;
 
 
-    padding: var(--outer-padding);
+    --label-color: #444;
+    --label-font-size: 13px;
+
 
     box-sizing: border-box;
     display:flex;
     position:relative;
-    margin:auto;
+
+    width: fit-content;
+    height: fit-content;
+
+    padding: var(--outer-padding);
+    padding-left: calc(var(--outer-padding) + var(--bezier-control-size));    
 
     background-color:#e8e8e8;
     border: 1px solid #999;
@@ -34,51 +41,73 @@
     
 }
 
-.bezier-input.dark{
+.dark .bezier-input{
+    --curve-fill: #bf4;
+    --curve-stroke: #fff;
     --control-fill: #f44;
     --control-hover-fill: #f77;
+    --control-stroke: #fff;
+    --control-handle-stroke: #444;
+    --canvas-border: #444;
+    --track-stroke: #aaa;
+}
+
+.bezier-input.purple{
+    --curve-fill: #82f;
 }
 
 .bezier-canvas-container{
     display: flex;
+    width: calc(var(--bezier-canvas-width) + var(--bezier-control-size) * 2 );
+    height: calc(var(--bezier-canvas-height) + var(--bezier-control-size) * 2);
+    position: relative;
+    box-sizing: border-box;
 }
 
 .bezier-controls{
     position: absolute;
+    inset: 0;
+    z-index: 2000;
 }
 
 .bezier-graph{
     background-color: #c8c8c8;
+    position: absolute;
+    inset: var(--bezier-control-size);        
 }
+
 [class *= bezier-label]{
     position: absolute;
     pointer-events: none;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center;    
 
-    width: 100%;
-
-    color: #444;
-    font-size: 13px;    
+    color: var(--label-color);
+    font-size: var(--label-font-size);
 }
 
-.bezier-label-top{
-    left: 0;
-    top: 0;
-    height: calc(var(--outer-padding) + var(--bezier-control-size));    
-}
-
-.bezier-label-x{
-    left: 0;
-    bottom: 0;    
+.bezier-label-top, .bezier-label-x{
+    width: calc(100% - var(--bezier-control-size));
     height: calc(var(--outer-padding) + var(--bezier-control-size));
 }
 
-.bezier-label-y{
-    top:0;
+.bezier-label-top{
+    left: var(--bezier-control-size);
+    top: 0;
+}
+
+.bezier-label-x{
+    left: var(--bezier-control-size);
+    bottom: 0;    
+}
+
+.bezier-label-y{    
     left:0;
-    height: var(--outer-padding);
+    top:0;
+
+    height: calc(var(--outer-padding) + var(--bezier-control-size));
+    width: calc(var(--bezier-canvas-height) + 2*var(--bezier-control-size) + 2*var(--outer-padding));
     transform: translate(0,-100%) rotate(90deg);
     transform-origin: 0 100%;
 }

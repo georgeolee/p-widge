@@ -28,11 +28,11 @@ import { BezierInput } from './components/BezierInput/BezierInput';
 *       -randomness sliders
 *       -emitter size slider
 *     
-*       CubicBezier: 
+*       BezierInput: 
 *         -styling - continue transitiion from inline to stylesheet
 *         -get canvas dimensions from CSS?
-*         
-*         
+*         -add slightly more space on y axis side
+*         -y axis label off center?
 *
 *         
 *
@@ -89,6 +89,8 @@ function App() {
         
         <Slider label='Base Speed' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
         <BezierInput labelTop='Speed Curve' labelY='% Base Speed' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
+      
+        <Checkbox label='dark?' func={b=>{document.body.classList?.toggle('dark')}} init={false}/>
       </div>
       
       <div ref={p5ContainerRef} className='p5-container'></div>
@@ -110,7 +112,6 @@ function App() {
         <Radio name='blend-mode'label='screen' func={() => particleSettings.p5BlendMode = 'screen'}/>
         <Radio name='blend-mode'label='hard light' func={() => particleSettings.p5BlendMode = 'hard_light'}/>
         
-        <BezierInput func={lookups => {}}/>
       </div>      
 
       <div className='controls-center'>
