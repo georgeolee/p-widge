@@ -25,12 +25,12 @@ import { BezierInput } from './components/BezierInput/BezierInput';
 *             — on pointer up > after N seconds w/o input
 *       
 *       -canvas size - settings?
-*
-*
+*       -randomness sliders
+*       -emitter size slider
 *     
 *       CubicBezier: 
-*         -labels & styling
-*         
+*         -styling - continue transitiion from inline to stylesheet
+*         -get canvas dimensions from CSS?
 *         
 *         
 *
@@ -80,27 +80,22 @@ function App() {
     <div className="App" onPointerMove={onAppPointerMove} onPointerDown={onAppPointerDown} onPointerUp={onAppPointerUp}>
       <header className="App-header">p-widget</header>      
       
-      <div className='controls-left'>
-        <Slider label='size' min={0} max={200} step={1} defaultValue={150} func={n => particleSettings.particleBaseSize = n}/>
-        <Slider label='speed' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
+      <div className='controls-left'>        
+        
         <Slider label='lifetime' min={0} max={2} step={0.01} func={n => particleSettings.particleLifetime = n}/>
-      
-        <Radio label='option A' checked/>
-        <Radio label='option B'/>
-        <Radio label='option C'/>
-        <Radio label='option D'/>
-        <Radio label='option e'/>
-
-        size
-        <BezierInput labelTop='Size Curve' labelY='% Base Size' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.sizeTable = lookups}/>        
-
+        
+        <Slider label='Base Size' min={0} max={200} step={1} defaultValue={150} func={n => particleSettings.particleBaseSize = n}/>
+        <BezierInput labelTop='Size Curve' labelY='% Base Size' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,2,   1,1]} func={lookups => particleSettings.sizeTable = lookups}/>        
+        
+        <Slider label='Base Speed' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
+        <BezierInput labelTop='Speed Curve' labelY='% Base Speed' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
       </div>
       
       <div ref={p5ContainerRef} className='p5-container'></div>
       
       <div className='controls-right'>
         <Slider label='rate' min={0} max={500} step={1} func={n => particleSettings.rate = n}/>
-        <Slider label='rotation' min={0} max={360} step={1} func={n => particleSettings.rotation = n}/>
+        <Slider label='rotation' min={0} max={360} step={1} defaultValue={0} func={n => particleSettings.rotation = n}/>
         <Checkbox label='auto emit' func={b => particleSettings.emitAuto = b} checked/>
         
 
@@ -114,9 +109,8 @@ function App() {
         <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />
         <Radio name='blend-mode'label='screen' func={() => particleSettings.p5BlendMode = 'screen'}/>
         <Radio name='blend-mode'label='hard light' func={() => particleSettings.p5BlendMode = 'hard_light'}/>
-
-        speed
-        <BezierInput labelTop='Speed Curve' labelY='% Base Speed' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
+        
+        <BezierInput func={lookups => {}}/>
       </div>      
 
       <div className='controls-center'>

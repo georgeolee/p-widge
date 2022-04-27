@@ -15,7 +15,6 @@
 }
 
 
-
 .App-header {
   grid-column: 2;
   display: flex;
@@ -42,8 +41,13 @@
   margin-top: 2em;
 }
 
+.radio+.radio{
+  margin-top: 0.25em;
+}
+
 .controls-left{
   grid-column: 1;  
+  grid-row: span 2;
 }
 
 .controls-right{

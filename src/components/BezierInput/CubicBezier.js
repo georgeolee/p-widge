@@ -1,5 +1,5 @@
 import { V2D } from "./V2D";
-import { lerp, dcp } from "./utilities";
+import { lerp } from "./utilities";
 
 export class CubicBezier{
 
@@ -9,7 +9,7 @@ export class CubicBezier{
     P3;
 
     /**
-     * 
+     * Instantiate a new CubicBezier. Takes 8 
      * @param  {...number|vector} args 
      */
     constructor(...args){
@@ -17,8 +17,9 @@ export class CubicBezier{
             this.P0 = new V2D(args[0], args[1]);
             this.P1 = new V2D(args[2], args[3]);
             this.P2 = new V2D(args[4], args[5]);
-            this.P3 = new V2D(args[6], args[7]);
+            this.P3 = new V2D(args[6], args[7]);            
         }
+
         else if(args.length === 4 && args.every(arg => typeof arg.x === 'number' && typeof arg.y === 'number')){
             this.P0 = new V2D(args[0].x, args[0].y);
             this.P1 = new V2D(args[1].x, args[1].y);
@@ -72,6 +73,24 @@ export class CubicBezier{
         else throw new Error(`CubicBezier.setPoint: invalid arguments ${args} for x and y; must be an object with x and y number values or two numbers`);
     }
 
+    //remaps curve points to the 0-1 range for x and y ; if points all fall along a line in either axis, just sets that coordinate to zero (might cause weirdness in the case of X)
+    normalize(){
+        const minX = Math.min(this.P0.x, this.P1.x, this.P2.x, this.P3.x);
+        const maxX = Math.max(this.P0.x, this.P1.x, this.P2.x, this.P3.x);
+        const minY = Math.min(this.P0.y, this.P1.y, this.P2.y, this.P3.y);
+        const maxY = Math.max(this.P0.y, this.P1.y, this.P2.y, this.P3.y);
+
+        const normalizePoint = P => {
+            P.x = (P.x - minX) / (maxX - minX || 1);
+            P.y = (P.y - minY) / (maxY - minY || 1);
+        }
+
+        for(const PN of [this.P0, this.P1, this.P2, this.P3]){
+            normalizePoint(PN);
+        }
+
+        return this;    //chainable
+    }
 
     /**
      * Sample the curve for 0 <= t <= 1
@@ -97,8 +116,6 @@ export class CubicBezier{
         //assuming here that P0.x <= P1.x <= P3.x and P0.x <= P2.x <= P3.x
         const xRange = samples[samples.length - 1].x - samples[0].x;
         const xStep = xRange / (lookupResolution - 1);
-        
-        // console.log(`xStep: ${xStep}`); 
 
         lookups.push(samples[0].y);
 
@@ -107,8 +124,6 @@ export class CubicBezier{
         let nextSampleIndex = 1;
         let xPrev = samples[prevSampleIndex].x;
         let xNext = samples[nextSampleIndex].x;
-
-        // console.log(`pIndex: ${prevSampleIndex}\t nIndex: ${nextSampleIndex}\t xPrev: ${xPrev}\t xNext: ${xNext}`); 
 
         for(let n = 1; n < lookupResolution - 1; n++){
             const x = samples[0].x + xStep * n;
@@ -120,26 +135,17 @@ export class CubicBezier{
                 xNext = samples[nextSampleIndex].x;
             }
 
-            // console.log(`pIndex: ${prevSampleIndex}\t nIndex: ${nextSampleIndex}\t xPrev: ${xPrev}\t xNext: ${xNext} x: ${x}`); 
-            
-
             const distPrev = Math.abs(xPrev - x);
             const distNext = Math.abs(xNext - x);
 
             const t = distPrev / (distPrev + distNext);
 
-            // console.log(`xPrev: ${xPrev}\t xNext: ${xNext} x: ${x}\t t: ${t}`); 
-
-            // console.log(`[${n}]\t:\tsamples[pIndex].y : ${dcp(samples[prevSampleIndex].y,3)}\tsamples[nIndex].y : ${dcp(samples[nextSampleIndex].y,3)}`); 
             const yApprox = lerp(samples[prevSampleIndex].y, samples[nextSampleIndex].y, t);
-            // console.log(`y approx : ${yApprox}`)
             lookups.push(yApprox);
         }        
 
         lookups.push(samples[samples.length - 1].y);
 
-        // console.log('samples');
-        // console.log(samples); 
         return lookups;
     }
 }

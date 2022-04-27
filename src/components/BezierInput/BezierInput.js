@@ -9,49 +9,75 @@ import './BezierInput.css';
 
 */
 
-
+/**
+ * 
+ * @param {*} props 
+ * @returns 
+ */
 export function BezierInput(props){
 
+    console.log('BEXIER RENDERRRRRR')
     const resolution = 32;
 
+    //PROPS
+    
     const func = props.func ?? (lookups => console.log(lookups));
-    const init = props.init ?? true;
-
-    const width =  150;
-    const height = width;
-
-    // let width;
-    // let height;
-
     const labelTop = props.labelTop ?? 'New Bezier Input';
     const labelX = props.labelX ?? 'x axis label';
     const labelY = props.labelY ?? 'y axis label';
 
-
-    const pointColor = '#06f';
-    const pointHoverColor = '#4af';
-    
-    const trackColor = '#aaa';
-
-    const curveFill = '#4af';
-    const curveStroke = '#fff';
-    const curveBackground = '#ccc'
-    const canvasBorder = '#444'
-
-    const margin = props.margin ?? 18;
+    //initial control points for the bezier curve
+    //NOTE: these will get normalized to the range 0 - 1
     const points = props.points ?? [
-            0,0,    //start
-            0,1,    //first handle
-            1,0,    //second handle
-            1,1     //end
-        ];
+        0,0,    //start
+        0,1,    //first handle
+        1,0,    //second handle
+        1,1     //end
+    ];
 
+    const init = props.init ?? true;
+    const width =  props.width ?? 150;
+    const height = props.height ?? 120;
+    
+    const margin = 18;
+    
+    const componentRef = useRef();
 
-    const bzRef = useRef(new CubicBezier(...points));
+    const bzRef = useRef(new CubicBezier(...points).normalize());
     const cnvRef = useRef()
     const controlCnvRef = useRef();
     const editPoint = useRef(null);
     const hoverPoint = useRef(null);
+
+    //colors used by canvas drawing context; these are retrieved from CSS on initial render
+    const color = useRef({});
+
+
+    //get colors from CSS or use fallback values
+    const getColors = () => {
+        const style = getComputedStyle(cnvRef.current);
+        color.current.curveFill = style.getPropertyValue('--curve-fill') || '#4af';
+        color.current.curveStroke = style.getPropertyValue('--curve-stroke') || '#fff';
+
+        color.current.canvasBorder = style.getPropertyValue('--canvas-border') || '#444';
+        color.current.trackStroke = style.getPropertyValue('--track-stroke') || '#aaa';
+
+        color.current.controlFill = style.getPropertyValue('--control-fill') || '#06f';
+        color.current.controlHoverFill = style.getPropertyValue('--control-hover-fill') || '#4af'; 
+        color.current.controlStroke = style.getPropertyValue('--control-stroke') || '#fff';
+        color.current.controlHandleStroke = style.getPropertyValue('--control-handle-stroke') || '#444';
+    }
+
+    
+    useEffect(()=>{        
+        getColors();
+        console.log('bz effect')
+
+    }, [color]);
+
+    
+
+    
 
     function drawBezier(bz){
         const ctx = cnvRef.current.getContext('2d');
@@ -61,8 +87,6 @@ export function BezierInput(props){
         
 
         ctx.clearRect(0,0,cw, ch);
-        ctx.fillStyle = curveBackground;
-        ctx.fillRect(0,0,cw,ch);
         
         ctx.save(); //ctx.restore() to go back
         
@@ -76,8 +100,8 @@ export function BezierInput(props){
         const drawCurve = () => {
             ctx.beginPath();
             ctx.lineWidth = 4/cw;
-            ctx.strokeStyle = curveStroke;
-            ctx.fillStyle = curveFill;
+            ctx.strokeStyle = color.current.curveStroke;
+            ctx.fillStyle = color.current.curveFill;
 
             ctx.moveTo(bz.P0.x, bz.P0.y);        
             ctx.bezierCurveTo(bz.P1.x, bz.P1.y, bz.P2.x, bz.P2.y, bz.P3.x, bz.P3.y);
@@ -91,7 +115,7 @@ export function BezierInput(props){
 
         //bounds
         ctx.lineWidth = 1/cw;
-        ctx.strokeStyle=canvasBorder;
+        ctx.strokeStyle=color.current.canvasBorder;
         ctx.strokeRect(0,0,1,1)
 
         ctx.restore();
@@ -121,56 +145,48 @@ export function BezierInput(props){
         ctx.translate(margin, margin);
 
 
-        const drawHandle = PN => {           
+        const drawPoint = PN => {           
             
             const radius = margin/2 + 2;
             ctx.beginPath();
-            ctx.fillStyle = PN === hoverPoint.current ? pointHoverColor : pointColor;
+            ctx.fillStyle = PN === hoverPoint.current ? color.current.controlHoverFill : color.current.controlFill;
             ctx.arc(PN.x * curveScale.x, PN.y * curveScale.y, radius, 0, 2 * Math.PI);
             ctx.fill();
             
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 1.5;
             const offset = 2;
 
             ctx.beginPath();
-            ctx.strokeStyle = '#fff';
+            ctx.strokeStyle = color.current.controlStroke;
             ctx.arc(PN.x * curveScale.x, PN.y * curveScale.y, radius - offset, 0, 2 * Math.PI);
             ctx.stroke();
         }
 
         const drawEndPoint = PN => {
-            // ctx.fillStyle = '#f44'
 
-            ctx.fillStyle = PN === hoverPoint.current ? pointHoverColor : pointColor;
+            ctx.fillStyle = PN === hoverPoint.current ? color.current.controlHoverFill : color.current.controlFill;
             ctx.fillRect(PN.x * curveScale.x, PN.y * curveScale.y - margin, PN === bz.P3 ? margin : -margin, 2 * margin)
 
-            ctx.strokeStyle = '#fff';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = color.current.controlStroke;
+            ctx.lineWidth = 1.5;
 
             const offset = 2;
 
             ctx.strokeRect(PN.x * curveScale.x - offset * (PN === bz.P3 ? -1 : 1), PN.y * curveScale.y - margin + offset, (margin - offset*2) *  (PN === bz.P3 ? 1 : -1), 2 * (margin - offset))
         }
 
-        //handle line
-        ctx.strokeStyle = '#444';
-        ctx.lineWidth = 1;
-        ctx.beginPath()
-        ctx.moveTo(bz.P0.x * curveScale.x, bz.P0.y * curveScale.y);
-        ctx.lineTo(bz.P1.x * curveScale.x, bz.P1.y * curveScale.y);
-        ctx.stroke()
-
-        //handle line
-        ctx.strokeStyle = '#444';
-        ctx.lineWidth = 1;
-        ctx.beginPath()
-        ctx.moveTo(bz.P2.x * curveScale.x, bz.P2.y * curveScale.y);
-        ctx.lineTo(bz.P3.x * curveScale.x, bz.P3.y * curveScale.y);
-        ctx.stroke()
+        const drawHandle = (PA, PB) => {
+            ctx.strokeStyle = color.current.controlHandleStroke;
+            ctx.lineWidth = 1;
+            ctx.beginPath()
+            ctx.moveTo(PA.x * curveScale.x, PA.y * curveScale.y);
+            ctx.lineTo(PB.x * curveScale.x, PB.y * curveScale.y);
+            ctx.stroke()
+        }
         
 
         //track?
-        ctx.strokeStyle = trackColor;
+        ctx.strokeStyle = color.current.trackStroke;
         ctx.lineWidth = 2;
         ctx.beginPath()
         let x = bz.P0.x * curveScale.x - margin/2;
@@ -179,7 +195,7 @@ export function BezierInput(props){
         ctx.stroke()
 
         //track?
-        ctx.strokeStyle = trackColor;
+        ctx.strokeStyle = color.current.trackStroke;
         ctx.lineWidth = 2;
         ctx.beginPath()
         x = bz.P3.x * curveScale.x + margin/2;
@@ -187,15 +203,17 @@ export function BezierInput(props){
         ctx.lineTo(x, ch - margin * 2);
         ctx.stroke()
 
-        drawHandle(bz.P1)
-        drawHandle(bz.P2)
+        drawHandle(bz.P0, bz.P1);
+        drawHandle(bz.P2, bz.P3);
+
+        drawPoint(bz.P1)
+        drawPoint(bz.P2)
 
         drawEndPoint(bz.P0);
         drawEndPoint(bz.P3);        
 
         ctx.restore();
-    }
-
+    }    
 
     useEffect(()=>{
         drawBezier(bzRef.current);
@@ -212,7 +230,7 @@ export function BezierInput(props){
     function getEditPointUnderMouse(e){
         const rect = e.target.getBoundingClientRect();
         const mx = e.clientX - rect.left;
-        const my = rect.width - (e.clientY - rect.top); //flip y to match canvas orientation
+        const my = rect.height - (e.clientY - rect.top); //flip y to match canvas orientation
 
         const curveScale = {
             x: controlCnvRef.current.width - 2*margin,
@@ -234,9 +252,6 @@ export function BezierInput(props){
         e.target.releasePointerCapture(e.pointerId);
         editPoint.current = null;
         hoverPoint.current = getEditPointUnderMouse(e);
-
-        // const lookups = bzRef.current.createLookupTable(64);
-
         func(bzRef.current.createLookupTable(64))
     }
 
@@ -248,16 +263,14 @@ export function BezierInput(props){
         if(editPoint.current === null) return;
 
         //normalized mouse coords relative to curve canvas (the inset one)
-        // const rect = e.target.getBoundingClientRect();
-
-
-        //THIS LOOKS SKETCHY?
         const rect = cnvRef.current.getBoundingClientRect();
         const mxn = (e.clientX - rect.left)/rect.width;
         const myn = (rect.height - (e.clientY - rect.top))/rect.height; //invert
 
+        //follow mouse y, but constrain to inside canvas
         editPoint.current.y = clip(myn, 0, 1);
 
+        //same for x if not an end point
         if(editPoint.current === bzRef.current.P1 || editPoint.current === bzRef.current.P2){
             editPoint.current.x = clip(mxn, 0, 1)
         }
@@ -276,26 +289,38 @@ export function BezierInput(props){
         }
     }
 
+    //recompute custom color properties from CSS & trigger a canvas redraw if component class changes
+    //only need this effect if toggling CSS class to change appearance at runtime
+    useEffect(()=>{
+        console.log('MUTATE EFFECT!')
+        const callback = function(mutationsList, observer){
+            getColors();
+            drawBezier(bzRef.current);
+            drawControls(bzRef.current);
+            console.log('mutateeeeee!!!')
+        }
+
+        const classObserver = new MutationObserver(callback)
+        classObserver.observe(componentRef.current, {attributes:true, attributeFilter:['class']})
+
+        return () => {
+            classObserver.disconnect();
+        };
+
+    },[componentRef.current, bzRef.current])
+
     return(        
-        <div className="bezier-input">
+        <div className="bezier-input" ref={componentRef}>
             
             <div className="bezier-label-top" >{labelTop}</div>
-
-            {/* y axis label */}
             <div className="bezier-label-y">{labelY}</div>
             
 
             <div className="bezier-canvas-container">            
-                
-                {/* canvas - controls */}
                 <canvas className="bezier-controls" onPointerLeave={onPointerLeave} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerDown={onPointerDown} ref={controlCnvRef} width={width + 2*margin} height={height + 2*margin} />
-                
-                {/* canvas - curve */}
-                <canvas className="bezier-graph" ref={cnvRef} width={width} height={height} style={{width:width, height:height, margin:margin + 'px'}}/>            
-            
+                <canvas className="bezier-graph" ref={cnvRef} width={width} height={height} style={{width:width + 'px', height:height + 'px', margin:margin + 'px'}}/>                        
             </div>
             
-            {/* x axis label */}
             <div className="bezier-label-x" >{labelX}</div>
         </div>
     );

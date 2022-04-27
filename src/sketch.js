@@ -23,52 +23,25 @@ export function sketch(p){
         default: p.ADD
     }
 
-    randomRange()
+    
 
     let backgroundColor = FrameManager.composeP5Color(s.settings.backgroundColor);
 
-    // const v2 = new V2D(0, 8)
+    
 
-    // v2.add(new V2D(30,30))
-
-    setInterval(()=>console.log(`frames: ${s.settings.imageFrames?.length}`), 1000)
-
-    console.log(
-        V2D.sum(
-            new V2D(1,1),
-            new V2D(1,1),
-            new V2D(10,10),
-            new V2D(10,10),
-            new V2D(100,100),
-            new V2D(100,100),
-        )
-    )
 
     ////// TESTING STUFF
     console.log('TESTING')
-    
-    const points = [
-        0,0,
-        0.5, 1,
-        0.5, 1,
-        1,0
-    ]
+    // setInterval(()=>console.log(`frames: ${s.settings.imageFrames?.length}`), 1000)
 
-    const bz = new CubicBezier(...points);
-
-    // bz.setPoint(2,1,1)
-
-    console.log('BZ TEST')
-    console.log(bz.getPointAtParameterValue(0.5))
-    
-    const lookups = bz.createLookupTable(32);
-    console.log(lookups)
-
-    // console.log(bz)
-    // bz.setPoint(3, 100, 100)
-    // console.log(bz)
-
-    ///TESTING STUFF
+    setInterval(()=>{
+        document.querySelector('.controls-right .bezier-input').classList.add('dark');
+        console.log('on')
+        setTimeout(()=>{
+            document.querySelector('.controls-right .bezier-input').classList.remove('dark')
+            console.log('off')
+        }, 1000)
+    }, 2000)
 
     p.setup = function(){
         p.createCanvas(600,600)

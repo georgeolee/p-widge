@@ -3,8 +3,23 @@
 
     --bezier-control-size: 18px; /*same size HTML canvas uses for drawing control elements in BezierInput.js; used for positioning labels*/
 
-
+    
+    
     --outer-padding: 25px; /*padding around the canvas controls; this is where the labels go*/
+
+
+    /* color properties used by React component for drawing to HTML canvas*/
+    --curve-fill: #4af;
+    --curve-stroke: #fff;
+    
+    --control-fill: #06f;
+    --control-hover-fill: #4af;
+    --control-stroke: #fff;
+    --control-handle-stroke: #444;
+
+    --canvas-border: #444;
+    --track-stroke: #aaa;
+
 
     padding: var(--outer-padding);
 
@@ -14,9 +29,14 @@
     margin:auto;
 
     background-color:#e8e8e8;
-    border: 1px solid #aaa;
+    border: 1px solid #999;
     border-radius: calc(var(--outer-padding)/2);
     
+}
+
+.bezier-input.dark{
+    --control-fill: #f44;
+    --control-hover-fill: #f77;
 }
 
 .bezier-canvas-container{
@@ -27,6 +47,9 @@
     position: absolute;
 }
 
+.bezier-graph{
+    background-color: #c8c8c8;
+}
 [class *= bezier-label]{
     position: absolute;
     pointer-events: none;
