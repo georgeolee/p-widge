@@ -1,4 +1,5 @@
 import { CubicBezier } from "./CubicBezier";
+import { clip } from "./utilities";
 
 export class CubicBezierCanvas{
     canvas;
@@ -31,6 +32,21 @@ export class CubicBezierCanvas{
         this.editPoint = null;
         this.hoverPoint = null;
 
+    }
+
+    attachCanvas(canvasElement){
+        if(this.canvas){
+            //cleanup
+        }
+
+        if(!canvasElement){
+            //error
+            throw new Error('CubicBezierCanvas.attachCanvas: canvasElement is null or undefined');
+        }
+
+        this.canvas = canvasElement;
+        this.getCanvasColorsFromCSS(canvasElement);
+        this.setCanvasDimensionsFromCSS(canvasElement);
     }
 
     getCanvasColorsFromCSS(){
@@ -116,16 +132,16 @@ export class CubicBezierCanvas{
 
         const drawPoint = PN => {           
             let xOffset = 0;
-            if(PN === bz.P0) xOffset = -controlSize/2;
-            else if(PN === bz.P3) xOffset = controlSize/2;
+            if(PN === bz.P0) xOffset = -this.controlSize/2;
+            else if(PN === bz.P3) xOffset = this.controlSize/2;
 
             ctx.beginPath();
             ctx.fillStyle = PN === this.hoverPoint ? this.color.controlHoverFill : this.color.controlFill;
-            ctx.arc(PN.x * gw + xOffset, PN.y * gh, controlSize/2, 0, 2 * Math.PI);
+            ctx.arc(PN.x * gw + xOffset, PN.y * gh, this.controlSize/2, 0, 2 * Math.PI);
             ctx.fill();
             
             ctx.lineWidth = 1.5;
-            const strokeRadius = controlSize/2 - 2;
+            const strokeRadius = this.controlSize/2 - 2;
 
             ctx.beginPath();
             ctx.strokeStyle = this.color.controlStroke;
@@ -148,18 +164,18 @@ export class CubicBezierCanvas{
         ctx.strokeStyle = this.color.trackStroke;
         ctx.lineWidth = 2;
         ctx.beginPath()
-        let x = bz.P0.x * gw - controlSize/2;
+        let x = bz.P0.x * gw - this.controlSize/2;
         ctx.moveTo(x, 0);
-        ctx.lineTo(x, ch - controlSize * 2);
+        ctx.lineTo(x, ch - this.controlSize * 2);
         ctx.stroke()
 
         //track?
         ctx.strokeStyle = this.color.trackStroke;
         ctx.lineWidth = 2;
         ctx.beginPath()
-        x = bz.P3.x * gw + controlSize/2;
+        x = bz.P3.x * gw + this.controlSize/2;
         ctx.moveTo(x, 0);
-        ctx.lineTo(x, ch - controlSize * 2);
+        ctx.lineTo(x, ch - this.controlSize * 2);
         ctx.stroke()
 
         drawHandle(bz.P0, bz.P1);
@@ -178,59 +194,89 @@ export class CubicBezierCanvas{
         const mx = e.clientX - rect.left;
         const my = rect.height - (e.clientY - rect.top); //flip y to match canvas orientation
 
+        const gw = this.width - this.controlSize * 2;
+        const gh = this.height - this.controlSize * 2;
+
+        
         const bz = this.bezier;
         
         let hit = null;
 
+        const p0x = bz.P0.x * gw + this.controlSize - this.controlSize/2;
+        const p0y = bz.P0.y * gh + this.controlSize;
+        const p1x = bz.P1.x * gw + this.controlSize;
+        const p1y = bz.P1.y * gh + this.controlSize;
+        const p2x = bz.P2.x * gw + this.controlSize;
+        const p2y = bz.P2.y * gh + this.controlSize;
+        const p3x = bz.P3.x * gw + this.controlSize + this.controlSize/2;
+        const p3y = bz.P3.y * gh + this.controlSize;
+
+
+        // console.log(`mx: ${mx}\tmy: ${my}\tp1x: ${p1x}\tp1y: ${p1y}`)
         if(
-            ((this.controlSize + bz.P1.x * this.width) - mx)**2 + 
-            ((this.controlSize + bz.P1.y * height) - my)**2     < 
+            (p1x - mx)**2 + 
+            (p1y - my)**2     < 
             (this.controlSize/2)**2
             ) hit = bz.P1;
 
         else if(
-            ((this.controlSize + bz.P2.x * width) - mx)**2 + 
-            ((this.controlSize + bz.P2.y * height) - my)**2 < 
+            (p2x - mx)**2 + 
+            (p2y - my)**2 < 
             (this.controlSize/2)**2
             ) hit = bz.P2;
 
         else if(
-            mx >= 0 && 
-            mx <= this.controlSize && 
-            my <= bz.P0.y * this.height + this.controlSize*2 && 
-            my >= bz.P0.y * this.height
+            (p0x - mx)**2 +
+            (p0y - my)**2 <
+            (this.controlSize/2)**2
             ) hit = bz.P0;
 
         else if(
-            mx >= this.controlSize + this.width && 
-            mx <= this.controlSize * 2 + this.width && 
-            my <= bz.P3.y * this.height + this.controlSize*2 && 
-            my >= bz.P3.y * this.height
+            (p3x - mx)**2 +
+            (p3y - my)**2 <
+            (this.controlSize/2)**2
             ) hit = bz.P3;
 
         return hit;
     }
 
+    clearCanvas(){
+        const ctx = this.canvas.getContext('2d');
+        ctx.clearRect(0,0,this.width, this.height)
+    }
+
+
+    redraw(){
+        this.clearCanvas();
+        this.drawBezier(this.bezier);
+        this.drawControls(this.bezier);
+    }
+
     onCanvasPointerMove(e){
         this.hoverPoint = this.getControlPointUnderMouse(e);
 
-        this.drawControls(this.bezier);
+        this.clearCanvas()
+        // this.drawControls(this.bezier);
 
-        if(this.editPoint === null) return;
+        if(this.editPoint){
+            //normalized mouse coords relative to curve canvas (the inset one)
+            const rect = this.canvas.getBoundingClientRect();
 
-        //normalized mouse coords relative to curve canvas (the inset one)
-        const rect = this.canvas.getBoundingClientRect();
+            const mxn = (e.clientX - this.controlSize - rect.left)/(rect.width - 2*this.controlSize);
+            const myn = (rect.height - this.controlSize - (e.clientY - rect.top))/(rect.height - 2*this.controlSize); //invert
 
-        const mxn = (e.clientX - this.controlSize - rect.left)/(rect.width - 2*this.controlSize);
-        const myn = (rect.height - this.controlSize - (e.clientY - rect.top))/(rect.height - 2*this.controlSize); //invert
+            //follow mouse y, but constrain to inside graph area
+            this.editPoint.y = clip(myn, 0, 1);
 
-        //follow mouse y, but constrain to inside graph area
-        this.editPoint.y = clip(myn, 0, 1);
-
-        //same for x if not an end point
-        if(this.editPoint === this.bezier.P1 || this.editPoint === this.bezier.P2){
-            this.editPoint.x = clip(mxn, 0, 1)
+            //same for x if not an end point
+            if(this.editPoint === this.bezier.P1 || this.editPoint === this.bezier.P2){
+                this.editPoint.x = clip(mxn, 0, 1)
+            }
         }
+        
+        
+
+        
 
         this.drawBezier(this.bezier);
         this.drawControls(this.bezier);
@@ -241,22 +287,25 @@ export class CubicBezierCanvas{
     }
 
     onCanvasPointerDown(e){
+        console.log(`this: ${this}`)
+        console.log(`this . edit point: ${this.editPoint}`)
         e.target.setPointerCapture(e.pointerId);
-        this.editPoint.current = this.getEditPointUnderMouse(e);
+        this.editPoint = this.getControlPointUnderMouse(e);
     }
 
     onCanvasPointerUp(e){
         e.target.releasePointerCapture(e.pointerId);
-        editPoint.current = null;
+        this.editPoint = null;
         
         //React? V TODO
         // func(bzRef.current.createLookupTable(resolution))
     }
 
     onCanvasPointerLeave(e){
+        console.log(this)
         if(this.hoverPoint){        
             this.hoverPoint = null;      //  catches mouse leaving if control point is right up against canvas edge
-            drawControls(this.bezier);    //  redraw the controls with non-hover color
+            this.drawControls(this.bezier);    //  redraw the controls with non-hover color
         }
     }
 

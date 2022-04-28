@@ -1,5 +1,4 @@
-import { useEffect, useRef, useCallback, useState } from "react";
-import { clip } from "./utilities";
+import { useEffect, useRef} from "react";
 import { CubicBezier } from "./CubicBezier";
 import './BezierInput.css';
 
@@ -7,7 +6,7 @@ import { CubicBezierCanvas } from "./CubicBezierCanvas";
 
 /*
     TODO:
-        -cleanup
+        -major cleanup
 
 */
 
@@ -51,14 +50,18 @@ export function BezierInput(props){
     const canvasElementRef = useRef();
 
     const handlePointerMove = e => {
-        bezierCanvasRef.current.onCanvasPointerMove(e);
+        bezierCanvasRef.current?.onCanvasPointerMove(e);
         func(bezierRef.current.createLookupTable(resolution));
     }
 
-    useEffect(() => {
-        bezierCanvasRef.current.canvas = canvasElementRef.current;
 
-        //draw canvas
+    useEffect(() => {
+        // bezierCanvasRef.current.canvas = canvasElementRef.current;
+        console.log(bezierCanvasRef.current)
+        bezierCanvasRef.current.attachCanvas(canvasElementRef.current);
+        bezierCanvasRef.current.redraw();
+        console.log('bezier canvas ref');
+        
     });
 
     return(        
@@ -69,10 +72,10 @@ export function BezierInput(props){
             
             <canvas 
                 className="bezier-canvas" 
-                onPointerLeave={bezierCanvasRef.current.onCanvasPointerLeave} 
+                onPointerLeave={(e)=> bezierCanvasRef.current.onCanvasPointerLeave(e, bezierCanvasRef.current)} 
                 onPointerMove={handlePointerMove} 
-                onPointerUp={bezierCanvasRef.current.onCanvasPointerUp} 
-                onPointerDown={bezierCanvasRef.current.onCanvasPointerDown} 
+                onPointerUp={e => bezierCanvasRef.current.onCanvasPointerUp(e)} 
+                onPointerDown={e => bezierCanvasRef.current.onCanvasPointerDown(e)} 
                 ref={canvasElementRef} 
             />
             
