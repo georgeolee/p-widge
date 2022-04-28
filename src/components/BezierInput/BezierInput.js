@@ -31,8 +31,6 @@ export function BezierInput(props){
     
     const id = props.id ?? '';
     const classes = props.className ? ` ${props.className}` : '';
-
-    // const [clean, setClean] = useState(true);
     
     const points = props.points ?? [    //initial control points for the bezier curve ; will get normalized to the range 0 - 1
         0,0,    //start
@@ -41,9 +39,6 @@ export function BezierInput(props){
         1,1     //end
     ];    
     
-    
-    const componentRef = useRef();
-
     const bezierRef = useRef(new CubicBezier(...points).normalize());
     const bezierCanvasRef = useRef(new CubicBezierCanvas(null, bezierRef.current))
 
@@ -56,16 +51,14 @@ export function BezierInput(props){
 
 
     useEffect(() => {
-        // bezierCanvasRef.current.canvas = canvasElementRef.current;
-        console.log(bezierCanvasRef.current)
+        console.log('BZ EFFECT')
         bezierCanvasRef.current.attachCanvas(canvasElementRef.current);
-        bezierCanvasRef.current.redraw();
-        console.log('bezier canvas ref');
-        
+        bezierCanvasRef.current.redraw();        
+        func(bezierRef.current.createLookupTable(resolution));
     });
 
     return(        
-        <div className={'bezier-input' + classes} id={id} ref={componentRef}>
+        <div className={'bezier-input' + classes} id={id}>
             
             <div className="bezier-label-top" >{labelTop}</div>
             <div className="bezier-label-y">{labelY}</div>

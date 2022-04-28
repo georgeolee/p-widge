@@ -4,27 +4,27 @@
     /* size of graph canvas and canvas control points */
     /* these properties are also read by the React component and used for drawing to the canvas */
     --bezier-control-size: 20px; 
-    --bezier-canvas-width: 150px;
-    --bezier-canvas-height: 120px;    
+    --bezier-canvas-width: 180px;
+    --bezier-canvas-height: 150px;    
     
     --outer-padding: 10px; /*padding around the canvas controls; this is where the labels go*/
 
+    --label-color: #444;
+    --label-font-size: 13px;
+    --bezier-background-color: #f4f4f4;
 
-    /* color properties used by React component for drawing to HTML canvas*/
+
+    /* color properties used by CubicBezierCanvas for drawing to canvas element*/
     --curve-fill: #4af;
     --curve-stroke: #fff;
     --control-fill: #06f;
     --control-hover-fill: #4af;
     --control-stroke: #fff;
     --control-handle-stroke: #444;
-    --canvas-border: #444;
+    --canvas-border: #888;
     --track-stroke: #aaa;
+    --background-fill: #e1e1e1;
 
-
-    --label-color: #444;
-    --label-font-size: 13px;
-    
-    --bezier-background-color: #f4f4f4;
 
     box-sizing: border-box;
     display:flex;

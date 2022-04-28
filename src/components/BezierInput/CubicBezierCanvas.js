@@ -1,4 +1,3 @@
-import { CubicBezier } from "./CubicBezier";
 import { clip } from "./utilities";
 
 export class CubicBezierCanvas{
@@ -13,40 +12,58 @@ export class CubicBezierCanvas{
     editPoint;
     hoverPoint;
 
+    classChangeObserver;
 
-    /*
-
-        hover state?
-
-        mouse pos
-
-        editing?
-
-    */
-
+    /**
+     * 
+     * @param {HTMLCanvasElement} canvasElement 
+     * @param {CubicBezier} cubicBezier 
+     */
     constructor(canvasElement = null, cubicBezier = null){
-        this.canvas = canvasElement;
-        this.bezier = cubicBezier;
+        
         this.color = {};
-    
         this.editPoint = null;
         this.hoverPoint = null;
 
+        const updateCanvasColors = () => {
+            this.getCanvasColorsFromCSS();
+            this.redraw();
+        };
+
+        //allow changing canvas colors by toggling CSS class
+        this.classChangeObserver = new MutationObserver(updateCanvasColors);
+
+        if(canvasElement) this.attachCanvas(canvasElement);
+        this.bezier = cubicBezier;
     }
 
-    attachCanvas(canvasElement){
-        if(this.canvas){
-            //cleanup
-        }
+    /**
+     * 
+     * @param {HTMLCanvasElement} canvasElement 
+     */
+    attachCanvas(canvasElement){        
 
         if(!canvasElement){
             //error
             throw new Error('CubicBezierCanvas.attachCanvas: canvasElement is null or undefined');
         }
 
+        if(canvasElement.tagName !== 'CANVAS'){
+            throw new Error('CubicBezierCanvas.attachCanvas: function argument is not an HTMLCanvasElement');
+        }
+
+        if(this.canvas){            
+            this.classChangeObserver.disconnect();  //observer cleanup
+        }
+
         this.canvas = canvasElement;
         this.getCanvasColorsFromCSS(canvasElement);
-        this.setCanvasDimensionsFromCSS(canvasElement);
+        this.getCanvasDimensionsFromCSS(canvasElement);
+        this.canvas.width = this.width;
+        this.canvas.height = this.height;
+        
+        this.classChangeObserver.observe(this.canvas, {attributes:true, attributeFilter: ['class']});       // watch canvas for changes
+        this.classChangeObserver.observe(document.body, {attributes:true, attributeFilter: ['class']});     // watch document body for changes
     }
 
     getCanvasColorsFromCSS(){
@@ -55,22 +72,20 @@ export class CubicBezierCanvas{
         this.color.curveStroke = style.getPropertyValue('--curve-stroke') || '#fff';
 
         this.color.canvasBorder = style.getPropertyValue('--canvas-border') || '#444';
-        this.color.trackStroke = style.getPropertyValue('--track-stroke') || '#aaa';
+        this.color.backgroundFill = style.getPropertyValue('--background-fill') || '#eee';
 
+        this.color.trackStroke = style.getPropertyValue('--track-stroke') || '#aaa';
         this.color.controlFill = style.getPropertyValue('--control-fill') || '#06f';
         this.color.controlHoverFill = style.getPropertyValue('--control-hover-fill') || '#4af'; 
         this.color.controlStroke = style.getPropertyValue('--control-stroke') || '#fff';
         this.color.controlHandleStroke = style.getPropertyValue('--control-handle-stroke') || '#444';
     }
 
-    setCanvasDimensionsFromCSS(){
+    getCanvasDimensionsFromCSS(){
         const style = getComputedStyle(this.canvas);
         this.width = Number(style.getPropertyValue('--bezier-canvas-width').replace('px','')) || 150;
         this.height = Number(style.getPropertyValue('--bezier-canvas-height').replace('px','')) || 120;
-        this.controlSize = Number(style.getPropertyValue('--bezier-control-size').replace('px','')) || 18;
-        
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
+        this.controlSize = Number(style.getPropertyValue('--bezier-control-size').replace('px','')) || 18;        
     }
 
     drawBezier(bz){
@@ -82,12 +97,10 @@ export class CubicBezierCanvas{
 
         ctx.save();
 
-        
-        // ctx.clearRect(0,0,this.width, this.height);        
         ctx.translate(0, this.height);    // flip coordinate plane so positive y axis points up
         ctx.scale(1, -1);
 
-        ctx.translate(this.controlSize, this.controlSize);
+        ctx.translate(this.controlSize, this.controlSize);  //inset to leave empty space around the graph edge for controls
 
         const drawCurve = () => {
             ctx.beginPath();
@@ -127,7 +140,7 @@ export class CubicBezierCanvas{
         ctx.translate(0, this.height);   //flip to positive up
         ctx.scale(1, -1);
 
-        ctx.translate(this.controlSize, this.controlSize);    //use same origin as graph canvas
+        ctx.translate(this.controlSize, this.controlSize);    //use same origin as bezier graph
 
 
         const drawPoint = PN => {           
@@ -160,19 +173,13 @@ export class CubicBezierCanvas{
         }
         
 
-        //track?
+        //draw slider tracks for P0 and P3
         ctx.strokeStyle = this.color.trackStroke;
         ctx.lineWidth = 2;
         ctx.beginPath()
         let x = bz.P0.x * gw - this.controlSize/2;
         ctx.moveTo(x, 0);
         ctx.lineTo(x, ch - this.controlSize * 2);
-        ctx.stroke()
-
-        //track?
-        ctx.strokeStyle = this.color.trackStroke;
-        ctx.lineWidth = 2;
-        ctx.beginPath()
         x = bz.P3.x * gw + this.controlSize/2;
         ctx.moveTo(x, 0);
         ctx.lineTo(x, ch - this.controlSize * 2);
@@ -190,52 +197,54 @@ export class CubicBezierCanvas{
     }
 
     getControlPointUnderMouse(e){
+        //mouse coords relative to canvas
         const rect = e.target.getBoundingClientRect();
         const mx = e.clientX - rect.left;
-        const my = rect.height - (e.clientY - rect.top); //flip y to match canvas orientation
+        const my = rect.height - (e.clientY - rect.top); //match flipped canvas origin for y
 
+        //graph area width and height
         const gw = this.width - this.controlSize * 2;
         const gh = this.height - this.controlSize * 2;
 
         
-        const bz = this.bezier;
-        
+        const [P0, P1, P2, P3] = [this.bezier.P0, this.bezier.P1, this.bezier.P2, this.bezier.P3];
+
+        //get bezier coords in canvas space
+        const p0x = P0.x * gw + this.controlSize - this.controlSize/2;
+        const p0y = P0.y * gh + this.controlSize;
+        const p1x = P1.x * gw + this.controlSize;
+        const p1y = P1.y * gh + this.controlSize;
+        const p2x = P2.x * gw + this.controlSize;
+        const p2y = P2.y * gh + this.controlSize;
+        const p3x = P3.x * gw + this.controlSize + this.controlSize/2;
+        const p3y = P3.y * gh + this.controlSize;
+
         let hit = null;
 
-        const p0x = bz.P0.x * gw + this.controlSize - this.controlSize/2;
-        const p0y = bz.P0.y * gh + this.controlSize;
-        const p1x = bz.P1.x * gw + this.controlSize;
-        const p1y = bz.P1.y * gh + this.controlSize;
-        const p2x = bz.P2.x * gw + this.controlSize;
-        const p2y = bz.P2.y * gh + this.controlSize;
-        const p3x = bz.P3.x * gw + this.controlSize + this.controlSize/2;
-        const p3y = bz.P3.y * gh + this.controlSize;
-
-
-        // console.log(`mx: ${mx}\tmy: ${my}\tp1x: ${p1x}\tp1y: ${p1y}`)
+        // square distance check
         if(
             (p1x - mx)**2 + 
             (p1y - my)**2     < 
             (this.controlSize/2)**2
-            ) hit = bz.P1;
+            ) hit = P1;
 
         else if(
             (p2x - mx)**2 + 
             (p2y - my)**2 < 
             (this.controlSize/2)**2
-            ) hit = bz.P2;
+            ) hit = P2;
 
         else if(
             (p0x - mx)**2 +
             (p0y - my)**2 <
             (this.controlSize/2)**2
-            ) hit = bz.P0;
+            ) hit = P0;
 
         else if(
             (p3x - mx)**2 +
             (p3y - my)**2 <
             (this.controlSize/2)**2
-            ) hit = bz.P3;
+            ) hit = P3;
 
         return hit;
     }
@@ -243,6 +252,8 @@ export class CubicBezierCanvas{
     clearCanvas(){
         const ctx = this.canvas.getContext('2d');
         ctx.clearRect(0,0,this.width, this.height)
+        ctx.fillStyle = this.color.backgroundFill;
+        ctx.fillRect(this.controlSize,this.controlSize,this.width - 2 * this.controlSize, this.height - 2 * this.controlSize);
     }
 
 
@@ -255,13 +266,10 @@ export class CubicBezierCanvas{
     onCanvasPointerMove(e){
         this.hoverPoint = this.getControlPointUnderMouse(e);
 
-        this.clearCanvas()
-        // this.drawControls(this.bezier);
-
         if(this.editPoint){
-            //normalized mouse coords relative to curve canvas (the inset one)
             const rect = this.canvas.getBoundingClientRect();
 
+            //normalized mouse coords relative to graph area
             const mxn = (e.clientX - this.controlSize - rect.left)/(rect.width - 2*this.controlSize);
             const myn = (rect.height - this.controlSize - (e.clientY - rect.top))/(rect.height - 2*this.controlSize); //invert
 
@@ -274,21 +282,10 @@ export class CubicBezierCanvas{
             }
         }
         
-        
-
-        
-
-        this.drawBezier(this.bezier);
-        this.drawControls(this.bezier);
-
-        //this in react? V TODO
-
-        // func(this.bezier.createLookupTable(resolution))
+        this.redraw();
     }
 
     onCanvasPointerDown(e){
-        console.log(`this: ${this}`)
-        console.log(`this . edit point: ${this.editPoint}`)
         e.target.setPointerCapture(e.pointerId);
         this.editPoint = this.getControlPointUnderMouse(e);
     }
@@ -296,15 +293,11 @@ export class CubicBezierCanvas{
     onCanvasPointerUp(e){
         e.target.releasePointerCapture(e.pointerId);
         this.editPoint = null;
-        
-        //React? V TODO
-        // func(bzRef.current.createLookupTable(resolution))
     }
 
     onCanvasPointerLeave(e){
-        console.log(this)
         if(this.hoverPoint){        
-            this.hoverPoint = null;      //  catches mouse leaving if control point is right up against canvas edge
+            this.hoverPoint = null;            //  catches mouse leaving if control point is right up against canvas edge
             this.drawControls(this.bezier);    //  redraw the controls with non-hover color
         }
     }
