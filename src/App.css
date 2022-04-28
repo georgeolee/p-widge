@@ -63,6 +63,9 @@
 .slider{
   display: grid;
   grid-template-columns: 50px auto 50px;
+  font-size: 12px;
+
+  align-items: flex-start;
 }
 
 .slider-input{

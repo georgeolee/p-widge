@@ -103,7 +103,7 @@
     top:0;
 
     height: calc(var(--outer-padding) + var(--bezier-control-size));
-    width: calc(var(--bezier-canvas-height) + 2*var(--bezier-control-size) + 2*var(--outer-padding));
+    width: calc(var(--bezier-canvas-height) + 2*var(--outer-padding));
     transform: translate(0,-100%) rotate(90deg);
     transform-origin: 0 100%;
 }

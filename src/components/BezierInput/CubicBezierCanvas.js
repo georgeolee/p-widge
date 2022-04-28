@@ -4,14 +4,11 @@ export class CubicBezierCanvas{
     canvas;
     bezier;
     color;
-
     width;
     height;
     controlSize;
-
     editPoint;
     hoverPoint;
-
     classChangeObserver;
 
     /**
@@ -64,21 +61,23 @@ export class CubicBezierCanvas{
         
         this.classChangeObserver.observe(this.canvas, {attributes:true, attributeFilter: ['class']});       // watch canvas for changes
         this.classChangeObserver.observe(document.body, {attributes:true, attributeFilter: ['class']});     // watch document body for changes
+
+        this.redraw();
     }
 
     getCanvasColorsFromCSS(){
         const style = getComputedStyle(this.canvas);
-        this.color.curveFill = style.getPropertyValue('--curve-fill') || '#4af';
-        this.color.curveStroke = style.getPropertyValue('--curve-stroke') || '#fff';
+        this.color.curveFill = style.getPropertyValue('--curve-fill') || '4af';
+        this.color.curveStroke = style.getPropertyValue('--curve-stroke') || 'fff';
 
-        this.color.canvasBorder = style.getPropertyValue('--canvas-border') || '#444';
-        this.color.backgroundFill = style.getPropertyValue('--background-fill') || '#eee';
+        this.color.canvasBorder = style.getPropertyValue('--canvas-border') || '444';
+        this.color.backgroundFill = style.getPropertyValue('--background-fill') || 'eee';
 
-        this.color.trackStroke = style.getPropertyValue('--track-stroke') || '#aaa';
-        this.color.controlFill = style.getPropertyValue('--control-fill') || '#06f';
-        this.color.controlHoverFill = style.getPropertyValue('--control-hover-fill') || '#4af'; 
-        this.color.controlStroke = style.getPropertyValue('--control-stroke') || '#fff';
-        this.color.controlHandleStroke = style.getPropertyValue('--control-handle-stroke') || '#444';
+        this.color.trackStroke = style.getPropertyValue('--track-stroke') || 'aaa';
+        this.color.controlFill = style.getPropertyValue('--control-fill') || '06f';
+        this.color.controlHoverFill = style.getPropertyValue('--control-hover-fill') || '4af'; 
+        this.color.controlStroke = style.getPropertyValue('--control-stroke') || 'fff';
+        this.color.controlHandleStroke = style.getPropertyValue('--control-handle-stroke') || '444';
     }
 
     getCanvasDimensionsFromCSS(){
@@ -136,12 +135,11 @@ export class CubicBezierCanvas{
         const gh = ch - 2*this.controlSize;
 
         ctx.save();
-        // ctx.clearRect(0,0,cw,ch)
+
         ctx.translate(0, this.height);   //flip to positive up
         ctx.scale(1, -1);
 
         ctx.translate(this.controlSize, this.controlSize);    //use same origin as bezier graph
-
 
         const drawPoint = PN => {           
             let xOffset = 0;
@@ -221,7 +219,7 @@ export class CubicBezierCanvas{
 
         let hit = null;
 
-        // square distance check
+        // square distance comparison
         if(
             (p1x - mx)**2 + 
             (p1y - my)**2     < 
@@ -251,11 +249,10 @@ export class CubicBezierCanvas{
 
     clearCanvas(){
         const ctx = this.canvas.getContext('2d');
-        ctx.clearRect(0,0,this.width, this.height)
+        ctx.clearRect(0,0,this.width, this.height);
         ctx.fillStyle = this.color.backgroundFill;
         ctx.fillRect(this.controlSize,this.controlSize,this.width - 2 * this.controlSize, this.height - 2 * this.controlSize);
     }
-
 
     redraw(){
         this.clearCanvas();
@@ -263,26 +260,35 @@ export class CubicBezierCanvas{
         this.drawControls(this.bezier);
     }
 
-    onCanvasPointerMove(e){
-        this.hoverPoint = this.getControlPointUnderMouse(e);
-
+    onCanvasPointerMove(e){        
+        
+        //redraw if pointer move while editing
         if(this.editPoint){
-            const rect = this.canvas.getBoundingClientRect();
-
-            //normalized mouse coords relative to graph area
+            
+            //get normalized mouse coords relative to graph area
+            const rect = this.canvas.getBoundingClientRect();            
             const mxn = (e.clientX - this.controlSize - rect.left)/(rect.width - 2*this.controlSize);
             const myn = (rect.height - this.controlSize - (e.clientY - rect.top))/(rect.height - 2*this.controlSize); //invert
 
-            //follow mouse y, but constrain to inside graph area
+            //follow mouse y, but constrain inside graph area
             this.editPoint.y = clip(myn, 0, 1);
 
             //same for x if not an end point
             if(this.editPoint === this.bezier.P1 || this.editPoint === this.bezier.P2){
                 this.editPoint.x = clip(mxn, 0, 1)
             }
+
+            this.redraw();
         }
         
-        this.redraw();
+        //redraw if hover state changed
+        else{
+            const hp = this.getControlPointUnderMouse(e);
+            if(hp !== this.hoverPoint){
+                this.hoverPoint = hp;
+                this.redraw();
+            }
+        }        
     }
 
     onCanvasPointerDown(e){
@@ -302,17 +308,4 @@ export class CubicBezierCanvas{
         }
     }
 
-    // const updateCanvasColors = () => {
-    //     getCanvasColorsFromCSS();  
-    //     drawBezier(bzRef.current);
-    //     drawControls(bzRef.current);
-    // }
-
-    // const classObserver = new MutationObserver(updateCanvasColors);
-    // classObserver.observe(componentRef.current, {attributes:true, attributeFilter:['class']})
-    // classObserver.observe(document.body, {attributes:true, attributeFilter:['class']})
-
-    // return () => {  //effect cleanup
-    //     classObserver.disconnect();
-    // };
 }

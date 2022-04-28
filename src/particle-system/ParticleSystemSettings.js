@@ -37,9 +37,7 @@ export class ParticleSystemSettings{
     
     
     constructor(s = null){
-        
-
-        this.emitter = s?.emitter || null;
+                
         this.imageFrames = s?.imageFrames || null;
         this.speedTable = s?.speedTable || [1,0];
         this.sizeTable = s?.sizeTable || [1,0];
@@ -58,7 +56,8 @@ export class ParticleSystemSettings{
         this.rate = s?.rate ?? 200;
         this.arc = s?.arc ?? 360;
         this.pointRotation = s?.pointRotation ?? 0;
-        
+        this.emitterSize = s?.emitterSize || 50;
+
         this.particleLifetime = s?.particleLifetime ?? 2;
         this.particleBaseSpeed = s?.particleBaseSpeed ?? 100;
         this.particleBaseSize = s?.particleBaseSize ?? 30;

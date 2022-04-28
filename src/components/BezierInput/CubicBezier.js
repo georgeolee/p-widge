@@ -1,5 +1,4 @@
-import { V2D } from "./V2D";
-import { lerp } from "./utilities";
+import { lerp, V2D } from "./utilities";
 
 export class CubicBezier{
 
@@ -9,8 +8,9 @@ export class CubicBezier{
     P3;
 
     /**
-     * Instantiate a new CubicBezier. Takes 8 
+     * Instantiate a new CubicBezier object. Takes 8 numbers or 4 objects with x and y properties as initial point arguments.
      * @param  {...number|vector} args 
+     * @returns a CubicBezier with 4 control points P0, P1, P2, and P3
      */
     constructor(...args){
         if(args.length === 8 && args.every(arg => typeof arg === 'number')){
@@ -58,7 +58,7 @@ export class CubicBezier{
             3: this.P3
         }[pointNumber];
 
-        if(p === undefined) throw new Error(`CubicBezier.setPoint: invalid argument ${pointNumber} for pointNumber ; must be a integer from 0 to 3`)
+        if(p === undefined) throw new Error(`CubicBezier.setPoint: invalid argument ${pointNumber} for pointNumber ; must be an integer from 0 to 3`)
 
         if(args.length === 1 && typeof args[0].x === 'number' && typeof args[0].y === 'number'){
             p.x = args[0].x;
@@ -73,7 +73,11 @@ export class CubicBezier{
         else throw new Error(`CubicBezier.setPoint: invalid arguments ${args} for x and y; must be an object with x and y number values or two numbers`);
     }
 
-    //remaps curve points to the 0-1 range for x and y ; if points all fall along a line in either axis, just sets that coordinate to zero (might cause weirdness in the case of X)
+    /**
+     * Remaps curve points from their current values to the range (0,0) to (1,1). 
+     * In the case of all points sharing the same value for a given coordinate, the remapped value will be zero.
+     * @returns The CubicBezier with its point values remapped.
+     */
     normalize(){
         const minX = Math.min(this.P0.x, this.P1.x, this.P2.x, this.P3.x);
         const maxX = Math.max(this.P0.x, this.P1.x, this.P2.x, this.P3.x);

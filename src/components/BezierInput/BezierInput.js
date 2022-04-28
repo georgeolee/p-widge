@@ -1,64 +1,62 @@
 import { useEffect, useRef} from "react";
 import { CubicBezier } from "./CubicBezier";
+import { CubicBezierCanvas } from "./CubicBezierCanvas";
 import './BezierInput.css';
 
-import { CubicBezierCanvas } from "./CubicBezierCanvas";
-
-/*
-    TODO:
-        -major cleanup
-
-*/
 
 /**
- * 
- * @param {*} props 
+ * A bezier curve with click and drag edit handles. 
+ * It passes an array of lookup values to a handler function after initial render and on user input.
+ * Lookup values are interpolated
+ * @param props
+ * @param {function} .func - function to handle lookup values ; logs to console by default
+ * @param {number} .resolution - number of lookup entries to generate
+ * @param {(number|vector)[]} .points - an array of 8 numbers or 4 vector objects specifying initial control points for the bezier curve
+ * @param {string} .labelX.labelY.labelTop - graph labels
+ * @param {string} .id
+ * @param {string} .className
  * @returns 
  */
 export function BezierInput(props){
-
-    console.log('BEZIER RENDERRRRRR')    
-
-    //PROPS
-    
-    const func = props.func ?? (lookups => console.log(lookups));   //  attached function ; should take an array of lookup values as argument
-    const resolution = 64;                                          //  # of lookup values ; the higher the number, the smoother the approximation will be
-
-    const labelTop = props.labelTop ?? 'New Bezier Input';  //graph labels
+    const resolution = props.resolution || 64; 
+    const labelTop = props.labelTop ?? 'New Bezier Input';  
     const labelX = props.labelX ?? 'x axis label';
     const labelY = props.labelY ?? 'y axis label';
-
-    
-    const id = props.id ?? '';
-    const classes = props.className ? ` ${props.className}` : '';
-    
-    const points = props.points ?? [    //initial control points for the bezier curve ; will get normalized to the range 0 - 1
-        0,0,    //start
-        0,1,    //first handle
-        1,0,    //second handle
-        1,1     //end
+    const points = props.points ?? [    
+        0,0,    //P0
+        0,1,    //P1
+        1,0,    //P2
+        1,1     //P3
     ];    
     
     const bezierRef = useRef(new CubicBezier(...points).normalize());
-    const bezierCanvasRef = useRef(new CubicBezierCanvas(null, bezierRef.current))
-
+    const bezierCanvasRef = useRef(new CubicBezierCanvas(null, bezierRef.current));
     const canvasElementRef = useRef();
 
-    const handlePointerMove = e => {
-        bezierCanvasRef.current?.onCanvasPointerMove(e);
-        func(bezierRef.current.createLookupTable(resolution));
+    const handleCanvasPointerMove = e => {
+        const func = props.func ?? (lookups => {console.log('bezier lookup values:'); console.log(lookups)});
+        bezierCanvasRef.current.onCanvasPointerMove(e);        
+        
+        if(bezierCanvasRef.current.editPoint){  //editing?
+            func(bezierRef.current.createLookupTable(resolution));
+        }     
     }
 
+    //attach the rendered canvas to the CubicBezierCanvas instance
+    useEffect(() => {        
+        bezierCanvasRef.current.attachCanvas(canvasElementRef.current);            
+    },[]);
 
-    useEffect(() => {
-        console.log('BZ EFFECT')
-        bezierCanvasRef.current.attachCanvas(canvasElementRef.current);
-        bezierCanvasRef.current.redraw();        
+    //call the handler function after initial render or function change
+    useEffect(()=>{
+        const func = props.func ?? (lookups => {console.log('bezier lookup values:'); console.log(lookups)});
         func(bezierRef.current.createLookupTable(resolution));
-    });
+    }, [props.func, resolution]);
 
     return(        
-        <div className={'bezier-input' + classes} id={id}>
+        <div 
+            className={'bezier-input' + (props.className ? ' ' + props.className : '')} 
+            id={props.id}>
             
             <div className="bezier-label-top" >{labelTop}</div>
             <div className="bezier-label-y">{labelY}</div>
@@ -66,7 +64,7 @@ export function BezierInput(props){
             <canvas 
                 className="bezier-canvas" 
                 onPointerLeave={(e)=> bezierCanvasRef.current.onCanvasPointerLeave(e, bezierCanvasRef.current)} 
-                onPointerMove={handlePointerMove} 
+                onPointerMove={handleCanvasPointerMove} 
                 onPointerUp={e => bezierCanvasRef.current.onCanvasPointerUp(e)} 
                 onPointerDown={e => bezierCanvasRef.current.onCanvasPointerDown(e)} 
                 ref={canvasElementRef} 

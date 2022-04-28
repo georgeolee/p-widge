@@ -2,11 +2,9 @@ import {Vector} from "p5";
 import { FrameManager } from "./particle-system/FrameManager";
 import { ParticleSystem } from "./particle-system/ParticleSystem";
 import { mouse, particleSettings, flags } from "./globals";
-import { parseHexColorString, randomRange } from "./utilities";
+// import { parseHexColorString, randomRange } from "./utilities";
 
-import { V2D } from "./components/BezierInput/V2D";
-
-import { CubicBezier } from "./components/BezierInput/CubicBezier";
+// import { CubicBezier } from "./components/BezierInput/CubicBezier";
 
 export function sketch(p){
         
@@ -43,6 +41,17 @@ export function sketch(p){
     //     }, 1000)
     // }, 2000)
 
+    // const points = [
+    //     3,3,
+    //     -20003,4,
+    //     500,6385,
+    //     3,300000
+    // ]
+    // const bz = new CubicBezier(...points).normalize();
+    // console.log('NORMALIZE TEST')
+    // console.log(bz)
+
+
     p.setup = function(){
         p.createCanvas(600,600)
         p.background(255)        
@@ -55,7 +64,8 @@ export function sketch(p){
 
         s.pos = p.createVector(p.width/2,p.height/2)
              
-
+        // p.noSmooth();
+        
         // setTimeout(()=>document.querySelectorAll('.bezier-graph').forEach(el => {el.width=400; el.style.width='400px'}),2000)
     }
 

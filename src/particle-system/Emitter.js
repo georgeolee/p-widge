@@ -16,7 +16,6 @@ export class Emitter{
     points;
     nextPointIndex;
     randomOrder;
-    size;
     emissionMap;
     #p5;
 
@@ -25,12 +24,11 @@ export class Emitter{
       this.points = [0,0,0]; // <—— single point, centered at origin, emitting right  
       this.nextPointIndex = 0;
       this.randomOrder = true;
-      this.size = 25;
       this.emissionMap = null;
       this.#p5 = p5Instance;
       //TODO : add support for locally rotating each emitter point
       
-      console.log(`emitter constructor ; has p5: ${!!this.#p5} ; points ${this.points}`)
+      // console.log(`emitter constructor ; has p5: ${!!this.#p5} ; points ${this.points}`)
     }
       
   

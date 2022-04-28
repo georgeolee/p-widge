@@ -1,7 +1,7 @@
 import {DEGREES_TO_RADS, getRandomVelocity} from '../utilities.js'
 import {Vector} from 'p5'
 import { FrameManager } from './FrameManager.js';
-import { ParticleSystemSettings } from './ParticleSystemSettings.js';
+// import { ParticleSystemSettings } from './ParticleSystemSettings.js';
 import { Particle } from './Particle.js';
 import { Emitter } from './Emitter.js';
 
@@ -76,7 +76,7 @@ export class ParticleSystem {
         const BASE_SIZE = Math.min(this.p5.width, this.p5.height);
   
         //offset particle position based on emitter point position, scaled by emitter size
-        const emitterOffset = new Vector(ex * BASE_SIZE * this.emitter.size / 2 / 100, ey * BASE_SIZE * this.emitter.size / 2 / 100); //divide by 2 because emitter points are saved as values between -1 and 1 ; divide by 100 bc emitter.size is a percent value
+        const emitterOffset = new Vector(ex * BASE_SIZE * this.settings.emitterSize / 2 / 100, ey * BASE_SIZE * this.settings.emitterSize / 2 / 100); //divide by 2 because emitter points are saved as values between -1 and 1 ; divide by 100 bc emitter.size is a percent value
   
         o = Vector.add(o, emitterOffset);
   
@@ -134,14 +134,7 @@ export class ParticleSystem {
   
     update(deltaTime){
 
-      let n = 0;
-
-      // if(this.settings.emitAuto || ){
-      //   this.emitPerSecond(this.settings.rate, this.settings.overwrite);
-      // }
-
       for(let i = 0; i < this.particles.length; i++){
-        n++
         const p = this.particles[i];
         if(!p?.active) continue;
         p.update(deltaTime);        

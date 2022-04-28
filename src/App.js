@@ -24,14 +24,14 @@ import { BezierInput } from './components/BezierInput/BezierInput';
 *         > change implementation 
 *             — on pointer up > after N seconds w/o input
 *       
-*       -canvas size - settings?
-*       -randomness sliders
-*       -emitter size slider
+*       -FPS count
+*       
+*       -styling and stuff
 *     
 *       BezierInput: 
-*         -styling - continue transitiion from inline to stylesheet
 *         
-*         -useEffect dependencies? look into this more ; any way to cut down on size of component?
+*         -push to github?
+*         
 *         
 *
 *         
@@ -84,21 +84,26 @@ function App() {
         
         <Slider label='lifetime' min={0} max={2} step={0.01} func={n => particleSettings.particleLifetime = n}/>
         
-        <Slider label='Base Size' min={0} max={200} step={1} defaultValue={150} func={n => particleSettings.particleBaseSize = n}/>
-        <BezierInput labelTop='Size Curve' labelY='% Base Size' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,2,   1,1]} func={lookups => particleSettings.sizeTable = lookups}/>        
+        <Slider label='Max Size' min={0} max={200} step={1} defaultValue={150} func={n => particleSettings.particleBaseSize = n}/>
+        <Slider label='Size Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSizeRandomFactor = n}/>
+        <BezierInput labelTop='Size Curve' labelY='<— Size' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,2,   1,1]} func={lookups => particleSettings.sizeTable = lookups}/>        
         
-        <Slider label='Base Speed' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
-        <BezierInput labelTop='Speed Curve' labelY='% Base Speed' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
+        <Slider label='Max Speed' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
+        <Slider label='Speed Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSpeedRandomFactor = n}/>
+        <BezierInput labelTop='Speed Curve' labelY='<— Speed' labelX='Particle Lifetime —>' points={[0,0,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
       
-        <Checkbox label='dark?' func={b=>{document.body.classList?.toggle('dark')}} init={false}/>
+        <Checkbox label='dark?' func={()=>{document.body.classList?.toggle('dark')}} init={false}/>
       </div>
       
       <div ref={p5ContainerRef} className='p5-container'></div>
       
       <div className='controls-right'>
         <Slider label='rate' min={0} max={500} step={1} func={n => particleSettings.rate = n}/>
+        <Slider label='arc' min={0} max={360} step={1}  defaultValue={360} func={n => particleSettings.arc = n}/>
         <Slider label='rotation' min={0} max={360} step={1} defaultValue={0} func={n => particleSettings.rotation = n}/>
+        <Slider label='size' min={0} max={100} step={1} defaultValue={50} func={n => particleSettings.emitterSize = n}/>
         <Checkbox label='auto emit' func={b => particleSettings.emitAuto = b} checked/>
+        <Checkbox label='rotate particles by velocity' func={b => particleSettings.rotateByVelocity = b}/>
         
 
         <FileInput label='Particle Image' func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}/>
@@ -107,11 +112,10 @@ function App() {
 
         <RadioHeader label='Blend Mode'/>
         <Radio name='blend-mode'label='alpha' func={()=>particleSettings.p5BlendMode = 'blend'} />
-        <Radio name='blend-mode' label='add' func={()=>particleSettings.p5BlendMode = 'add'} checked/>        
+        <Radio name='blend-mode'label='add' func={()=>particleSettings.p5BlendMode = 'add'} checked/>        
         <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />
         <Radio name='blend-mode'label='screen' func={() => particleSettings.p5BlendMode = 'screen'}/>
         <Radio name='blend-mode'label='hard light' func={() => particleSettings.p5BlendMode = 'hard_light'}/>
-        
       </div>      
 
       <div className='controls-center'>
