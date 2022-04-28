@@ -3,7 +3,7 @@
 
     /* size of graph canvas and canvas control points */
     /* these properties are also read by the React component and used for drawing to the canvas */
-    --bezier-control-size: 18px; 
+    --bezier-control-size: 20px; 
     --bezier-canvas-width: 150px;
     --bezier-canvas-height: 120px;    
     
@@ -23,7 +23,8 @@
 
     --label-color: #444;
     --label-font-size: 13px;
-
+    
+    --bezier-background-color: #f4f4f4;
 
     box-sizing: border-box;
     display:flex;
@@ -35,14 +36,14 @@
     padding: var(--outer-padding);
     padding-left: calc(var(--outer-padding) + var(--bezier-control-size));    
 
-    background-color:#e8e8e8;
+    background-color: var(--bezier-background-color);
     border: 1px solid #999;
     border-radius: calc(var(--outer-padding)/2);
     
 }
 
 .dark .bezier-input{
-    --curve-fill: #bf4;
+    --curve-fill: #08a;
     --curve-stroke: #fff;
     --control-fill: #f44;
     --control-hover-fill: #f77;
@@ -50,6 +51,9 @@
     --control-handle-stroke: #444;
     --canvas-border: #444;
     --track-stroke: #aaa;
+    
+    --bezier-background-color: #444;
+    --label-color: #ddd;
 }
 
 .bezier-input.purple{
@@ -72,8 +76,11 @@
 
 .bezier-graph{
     background-color: #c8c8c8;
+    /* background-color: #aaa; */
     position: absolute;
-    inset: var(--bezier-control-size);        
+    inset: var(--bezier-control-size);   
+    
+    box-shadow: inset 0 0 4px #0004;
 }
 
 [class *= bezier-label]{

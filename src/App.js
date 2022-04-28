@@ -30,9 +30,9 @@ import { BezierInput } from './components/BezierInput/BezierInput';
 *     
 *       BezierInput: 
 *         -styling - continue transitiion from inline to stylesheet
-*         -get canvas dimensions from CSS?
-*         -add slightly more space on y axis side
-*         -y axis label off center?
+*         
+*         -useEffect dependencies? look into this more ; any way to cut down on size of component?
+*         
 *
 *         
 *
