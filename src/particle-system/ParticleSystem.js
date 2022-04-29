@@ -19,6 +19,7 @@ export class ParticleSystem {
 
     p5;
 
+
     //NEW CONSTRUCTOR - MOVE SETTINGS INTO SETTINGS CLASS
     constructor(p5Instance, settingsObject = null) {
 
@@ -159,7 +160,7 @@ export class ParticleSystem {
       this.p5.push();
       this.p5.translate(pRotatedX, pRotatedY);   
 
-      if(this.settings.rotateByVelocity) this.p5.rotate(p.vel.heading());  //if rotate by angle, rotate here
+      if(this.settings.rotateByVelocity) this.p5.rotate(p.vel.heading() - this.settings.rotation*DEGREES_TO_RADS);  //if rotate by angle, rotate here
 
       //animate through frames over particle lifetime
       if(this.settings.imageFrames?.length > 0){ 

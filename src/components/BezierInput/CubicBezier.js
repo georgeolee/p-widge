@@ -74,8 +74,8 @@ export class CubicBezier{
     }
 
     /**
-     * Remaps curve points from their current values to the range (0,0) to (1,1). 
-     * In the case of all points sharing the same value for a given coordinate, the remapped value will be zero.
+     * Remap bezier control points to (0, 0) - (1, 1 | yMax). Offsets and scales X values so that xMin is 0 and xMax is 1. Offsets Y values so that yMin is 0 and scales
+     * IF the resulting yMax > 1. In the case of all points sharing the same coordinate, the remapped value will be zero.
      * @returns The CubicBezier with its point values remapped.
      */
     normalize(){
@@ -85,8 +85,9 @@ export class CubicBezier{
         const maxY = Math.max(this.P0.y, this.P1.y, this.P2.y, this.P3.y);
 
         const normalizePoint = P => {
-            P.x = (P.x - minX) / (maxX - minX || 1);
-            P.y = (P.y - minY) / (maxY - minY || 1);
+            P.x = (P.x - minX) / (maxX - minX || 1);                    //offset and scale x values to range from 0 - 1
+            // P.y = (P.y - minY) / (maxY - minY || 1);
+            P.y = (P.y - minY) / (maxY - minY > 1 ? maxY - minY : 1);   //offset y values and scale IF range exceeds 0 - 1
         }
 
         for(const PN of [this.P0, this.P1, this.P2, this.P3]){

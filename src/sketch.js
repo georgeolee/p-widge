@@ -1,10 +1,7 @@
 import {Vector} from "p5";
 import { FrameManager } from "./particle-system/FrameManager";
 import { ParticleSystem } from "./particle-system/ParticleSystem";
-import { mouse, particleSettings, flags } from "./globals";
-// import { parseHexColorString, randomRange } from "./utilities";
-
-// import { CubicBezier } from "./components/BezierInput/CubicBezier";
+import { mouse, particleSettings, flags, fps } from "./globals";
 
 export function sketch(p){
         
@@ -21,36 +18,17 @@ export function sketch(p){
         default: p.ADD
     }
 
-    
+    const frameRate = 60;
 
     let backgroundColor = FrameManager.composeP5Color(s.settings.backgroundColor);
-
+    let mousePressLastFrame = p.mouseIsPressed;
     
 
 
     ////// TESTING STUFF
     console.log('TESTING')
-    // setInterval(()=>console.log(`frames: ${s.settings.imageFrames?.length}`), 1000)
 
-    // setInterval(()=>{
-    //     document.querySelector('.controls-right .bezier-input').classList.add('dark');
-    //     console.log('on')
-    //     setTimeout(()=>{
-    //         document.querySelector('.controls-right .bezier-input').classList.remove('dark')
-    //         console.log('off')
-    //     }, 1000)
-    // }, 2000)
-
-    // const points = [
-    //     3,3,
-    //     -20003,4,
-    //     500,6385,
-    //     3,300000
-    // ]
-    // const bz = new CubicBezier(...points).normalize();
-    // console.log('NORMALIZE TEST')
-    // console.log(bz)
-
+    
 
     p.setup = function(){
         p.createCanvas(600,600)
@@ -63,20 +41,25 @@ export function sketch(p){
         
 
         s.pos = p.createVector(p.width/2,p.height/2)
-             
+        
+        p.frameRate(frameRate);
+
         // p.noSmooth();
         
-        // setTimeout(()=>document.querySelectorAll('.bezier-graph').forEach(el => {el.width=400; el.style.width='400px'}),2000)
     }
 
     p.draw = function(){
-        
+        fps.update()
         handleFlags();
 
         p.blendMode(p.BLEND)
         p.background(backgroundColor);
         
         setParticleBlendMode(s.settings.p5BlendMode);
+
+        if(!s.settings.emitAuto && p.mouseIsPressed && !mousePressLastFrame){
+            s.lastEmitMillis = Date.now()
+        }
 
         if(s.settings.emitAuto || (mouse.overCanvas && p.mouseIsPressed)){
             s.emitPerSecond(s.settings.rate, s.settings.overwrite)
@@ -86,6 +69,10 @@ export function sketch(p){
 
         const targetPosition = mouse.overCanvas ? new Vector(mouse.canvasX, mouse.canvasY) : new Vector(p.width/2, p.height/2);
         s.pos = Vector.lerp(s.pos, targetPosition, 0.2);    // a little bit of damping to motion
+    
+        mousePressLastFrame = p.mouseIsPressed;
+
+        
     }
 
     function handleFlags(){
@@ -95,18 +82,23 @@ export function sketch(p){
         }
 
         if(flags.recolor && s.settings.imageUrl){
-            FrameManager.queueRecolor(frames => s.settings.imageFrames = frames, 4);
+            FrameManager.queueRecolor(frames => s.settings.imageFrames = frames, 8);
             flags.recolor = false;
         }
 
         if(flags.slowRecolor && s.settings.imageUrl){
-            FrameManager.queueRecolor(frames => s.settings.imageFrames = frames, 32);
+            FrameManager.queueRecolor(frames => s.settings.imageFrames = frames, 64);
             flags.slowRecolor = false;
         }
 
         if(flags.dirtyBackground){
             backgroundColor = FrameManager.composeP5Color(s.settings.backgroundColor);
             flags.dirtyBackground = false;
+        }
+
+        if(flags.emitTimerReset){
+            s.lastEmitMillis = Date.now();
+            flags.emitTimerReset = false;
         }
     }
 

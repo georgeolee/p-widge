@@ -12,6 +12,7 @@ export class FrameManager{
     static p5;    
     static startColor;
     static endColor;
+    static buffer;
 
     //static initialization block
     static{
@@ -27,7 +28,14 @@ export class FrameManager{
         
         this.startColor = null;
         this.endColor = null;
+
+        this.buffer = null;
     }
+
+    // static attachP5(p5Instance){
+    //     this.p5 = p5Instance;
+
+    // }
 
     static createFrames(url, count, callback){
         if(!this.p5){
@@ -45,25 +53,31 @@ export class FrameManager{
             return;
         }
 
-        console.log(`creating ${count} frames from url: ${url}`)
-
         this.p5.loadImage(url, (pimg)=>{
-            // console.log(`loaded image from url: ${url}`)
             pimg.loadPixels();
-            const buffer = this.p5.createGraphics(pimg.width,pimg.height);
+
+            //create offscreen p5 canvas if it doesn't exist yet, and resize it to match the incoming image
+            if(!this.buffer) this.buffer = this.p5.createGraphics(pimg.width,pimg.height);
+            else this.buffer.resizeCanvas(pimg.width, pimg.height, false);
+
             const t_step = count > 1 ? 1/(count - 1) : 0;
             const frames = [];
+
+
             for(let n = 0; n < count; n++){
-                buffer.tint(this.composeP5Color( this.lerpColorRGBA(this.startColor, this.endColor, 1 - t_step * n)));
-                buffer.image(pimg, 0, 0);
+                this.buffer.tint(this.composeP5Color( this.lerpColorRGBA(this.startColor, this.endColor, 1 - t_step * n)));
+                this.buffer.image(pimg, 0, 0);
                 const frame = this.p5.createImage(pimg.width, pimg.height);
-                frame.copy(buffer, 0, 0, buffer.width, buffer.height, 0, 0, frame.width, frame.height);
+                frame.copy(this.buffer, 0, 0, this.buffer.width, this.buffer.height, 0, 0, frame.width, frame.height);
                 frames.push(frame);
             }
-            // console.log(`created ${frames.length} frames`)
-            callback?.(frames); //invoke the callback w/ the created frames as an argument
-            
+            console.log(`created ${frames.length} frames`)
+            callback?.(frames); //invoke the callback w/ the created frames as an argument            
         })
+    }
+
+    static removeGraphicsBuffer(){
+        this.buffer?.remove();
     }
 
     static setStartColor(colorObject){
