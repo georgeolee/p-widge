@@ -44,14 +44,24 @@ export class ParticleSystem {
         const i = this.emitter.nextPointIndex;
 
         const [ex, ey, angle] = this.emitter.points.slice(i, i + 3);
-        emissionAngle = angle;
-  
+        // emissionAngle = angle;
+        
+        //TESTING/////////////////
+        emissionAngle = angle + this.settings.rotation;
+        // console.log(this.settings.rotation)
+
         //base size of emitter, determined by canvas size
         const BASE_SIZE = Math.min(this.p5.width, this.p5.height);
-  
+
         //offset particle position based on emitter point position, scaled by emitter size
         const emitterOffset = new Vector(ex * BASE_SIZE * this.settings.emitterSize / 2 / 100, ey * BASE_SIZE * this.settings.emitterSize / 2 / 100); //divide by 2 because emitter points are saved as values between -1 and 1 ; divide by 100 bc emitter.size is a percent value
-  
+        
+
+        //TESTING////////////////
+        emitterOffset.x = emitterOffset.x * Math.cos(-this.settings.rotation * DEGREES_TO_RADS) - emitterOffset.y * Math.sin(-this.settings.rotation * DEGREES_TO_RADS);
+        emitterOffset.y = emitterOffset.x * Math.sin(-this.settings.rotation * DEGREES_TO_RADS) + emitterOffset.y * Math.cos(-this.settings.rotation * DEGREES_TO_RADS);
+        
+
         o = Vector.add(o, emitterOffset);
   
         //next point for random or sequential order
@@ -62,12 +72,17 @@ export class ParticleSystem {
       const particleSpeed = randomRange(this.settings.particleBaseSpeed * (1-this.settings.particleSpeedRandomFactor), this.settings.particleBaseSpeed);
       const v = new Vector(particleSpeed * Math.cos(particleAngle), particleSpeed * Math.sin(particleAngle));
         
+      // console.log(emissionAngle)
+      // console.log(emissionAngle - this.settings.arc/2)
+      // console.log(particleAngle)
       // console.log(particleSpeed)
-
+      
       const cosAngle = Math.cos(particleAngle);
       const sinAngle = Math.sin(particleAngle);
 
       particle.rotationMatrix = [cosAngle, sinAngle, -sinAngle, cosAngle, 0, 0];
+
+      // console.log(v)
 
       //initial particle size
       const randomFactor = this.settings.particleSizeRandomFactor * Math.random() + (1 - this.settings.particleSizeRandomFactor);
@@ -76,6 +91,8 @@ export class ParticleSystem {
       particle.initialize(o, v, this.settings.particleLifetime, s);
       particle.setSpeedTable(this.settings.speedTable);
       particle.setSizeTable(this.settings.sizeTable);                
+
+      // console.log(particle.vel)
     }
   
   
@@ -122,19 +139,25 @@ export class ParticleSystem {
   
     drawParticle(p){
       //particle coordinates relative to its origin
-      const px = p.pos.x - p.systemOrigin.x;
-      const py = p.pos.y - p.systemOrigin.y;
+      // const px = p.pos.x - p.systemOrigin.x;
+      // const py = p.pos.y - p.systemOrigin.y;
 
       //rotate relative X and Y by emitter rotation
-      let pRotatedX = Math.cos(-this.settings.rotation * DEGREES_TO_RADS) * px - Math.sin(-this.settings.rotation * DEGREES_TO_RADS) * py;
-      let pRotatedY = Math.sin(-this.settings.rotation * DEGREES_TO_RADS) * px + Math.cos(-this.settings.rotation * DEGREES_TO_RADS) * py;
+      // let pRotatedX = Math.cos(-this.settings.rotation * DEGREES_TO_RADS) * px - Math.sin(-this.settings.rotation * DEGREES_TO_RADS) * py;
+      // let pRotatedY = Math.sin(-this.settings.rotation * DEGREES_TO_RADS) * px + Math.cos(-this.settings.rotation * DEGREES_TO_RADS) * py;
       
-      //if global mode, add origin position back to get the particle's world position
-      pRotatedX += p.systemOrigin.x;
-      pRotatedY += p.systemOrigin.y;
+      //add origin position back to get the particle's world position after rotation
+      // pRotatedX += p.systemOrigin.x;
+      // pRotatedY += p.systemOrigin.y;
 
       this.p5.push();
-      this.p5.translate(pRotatedX, pRotatedY);   
+      // this.p5.translate(pRotatedX, pRotatedY); 
+      
+      //TEST?////////
+      this.p5.translate(p.pos.x, p.pos.y)
+
+      // console.log(p.pos)
+      // console.log(p.vel)
 
       if(this.settings.rotateByVelocity) this.p5.rotate(p.vel.heading() - this.settings.rotation*DEGREES_TO_RADS);  //if rotate by angle, rotate here
 
