@@ -53,14 +53,21 @@ export class ParticleSystem {
         //base size of emitter, determined by canvas size
         const BASE_SIZE = Math.min(this.p5.width, this.p5.height);
 
+        // ex*= 
+
         //offset particle position based on emitter point position, scaled by emitter size
         const emitterOffset = new Vector(ex * BASE_SIZE * this.settings.emitterSize / 2 / 100, ey * BASE_SIZE * this.settings.emitterSize / 2 / 100); //divide by 2 because emitter points are saved as values between -1 and 1 ; divide by 100 bc emitter.size is a percent value
         
 
         //TESTING////////////////
-        emitterOffset.x = emitterOffset.x * Math.cos(-this.settings.rotation * DEGREES_TO_RADS) - emitterOffset.y * Math.sin(-this.settings.rotation * DEGREES_TO_RADS);
-        emitterOffset.y = emitterOffset.x * Math.sin(-this.settings.rotation * DEGREES_TO_RADS) + emitterOffset.y * Math.cos(-this.settings.rotation * DEGREES_TO_RADS);
+
+        // emitterOffset.x = emitterOffset.x * Math.cos(-this.settings.rotation * DEGREES_TO_RADS) - emitterOffset.y * Math.sin(-this.settings.rotation * DEGREES_TO_RADS);
+        // emitterOffset.y = emitterOffset.x * Math.sin(-this.settings.rotation * DEGREES_TO_RADS) + emitterOffset.y * Math.cos(-this.settings.rotation * DEGREES_TO_RADS);
         
+        [emitterOffset.x, emitterOffset.y] =
+        
+        [emitterOffset.x * Math.cos(this.settings.rotation * DEGREES_TO_RADS) - emitterOffset.y * Math.sin(this.settings.rotation * DEGREES_TO_RADS),
+        emitterOffset.x * Math.sin(this.settings.rotation * DEGREES_TO_RADS) + emitterOffset.y * Math.cos(this.settings.rotation * DEGREES_TO_RADS)]
 
         o = Vector.add(o, emitterOffset);
   
@@ -72,10 +79,6 @@ export class ParticleSystem {
       const particleSpeed = randomRange(this.settings.particleBaseSpeed * (1-this.settings.particleSpeedRandomFactor), this.settings.particleBaseSpeed);
       const v = new Vector(particleSpeed * Math.cos(particleAngle), particleSpeed * Math.sin(particleAngle));
         
-      // console.log(emissionAngle)
-      // console.log(emissionAngle - this.settings.arc/2)
-      // console.log(particleAngle)
-      // console.log(particleSpeed)
       
       const cosAngle = Math.cos(particleAngle);
       const sinAngle = Math.sin(particleAngle);
