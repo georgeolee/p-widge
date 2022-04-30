@@ -14,6 +14,7 @@
   font-size: 14px;
 
   user-select: none;
+  
 }
 
 .App-header {
@@ -35,18 +36,22 @@
   grid-column: 2;
 }
 
-#fps-display{
+#canvas-display-area{
   position: absolute;
   bottom: 0;
   left: 0;
-  min-width: 6em;
-  /* margin: 1em; */
-  padding:1em;
-  /* font-weight: bold; */
+  right: 0;
+  padding: 1em;
+  background-color: #0004;
   color: #fff;
-  background-color: #0008;
 
-  /* box-shadow: 0 0 5px 5px #fff8; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+#particle-count-display{
+  min-width: 12em;
 }
 
 [class|=controls]{

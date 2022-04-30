@@ -15,16 +15,18 @@ import { FileInput } from './components/FileInput';
 
 import { BezierInput } from './components/BezierInput/BezierInput';
 
+import { GetActiveParticleCount } from './particle-system/Particle';
+
 /*
 *   TODO: 
-*       LOTS OF STUFF!
 *       
 *       
-*         
 *       
 *         
 *       
-*       -FPS count
+*         
+*       
+*       
 *       
 *       -styling and stuff
 *     
@@ -80,12 +82,13 @@ function App() {
   //print fps
   useEffect(() => {
     const fpsDisplay = document.getElementById('fps-display');
-    const fpsUpdate = setInterval(
-      ()=> fpsDisplay.innerHTML = `fps: ${Math.round(fps.current * 10**2) / 10**2 || fps.current}`, 
-      100
-      );
+    const particleCountDisplay = document.getElementById('particle-count-display');
+    const displayUpdate = setInterval( ()=> {
+      fpsDisplay.innerHTML = `fps: ${Math.round(fps.current * 10**2) / 10**2 || fps.current}`;
+      particleCountDisplay.innerHTML = `particle count: ${GetActiveParticleCount()}`;
+      }, 100);
 
-    return () => clearInterval(fpsUpdate);
+    return () => clearInterval(displayUpdate);
   }, [])
 
   return (
@@ -108,7 +111,11 @@ function App() {
       </div>
       
       <div ref={p5ContainerRef} className='p5-container'>
-        <div id='fps-display'></div>
+        
+        <div id='canvas-display-area'>
+          <div id='fps-display'></div>
+          <div id='particle-count-display'></div>
+        </div>
       </div>
       
       <div className='controls-right'>
@@ -130,6 +137,13 @@ function App() {
         <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />
         <Radio name='blend-mode'label='screen' func={() => particleSettings.p5BlendMode = 'screen'}/>
         <Radio name='blend-mode'label='hard light' func={() => particleSettings.p5BlendMode = 'hard_light'}/>
+
+
+        <Radio label='top'/>
+        <Radio/>
+        <Radio/>
+        <Radio/>
+        
       </div>      
 
       <div className='controls-center'>

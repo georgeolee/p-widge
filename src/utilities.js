@@ -18,7 +18,7 @@ export function constrain(val, min, max){
  * @returns a random number between min (inclusive) and max (exclusive)
  */
 export function randomRange(minInclusive, maxExclusive){
-    return Math.random() * (maxExclusive - minInclusive) + minInclusive;
+    return (Math.random() * (maxExclusive - minInclusive) + minInclusive);
 }
 
 export function getRandomVelocity(sMin, sMax, aMin, aMax){

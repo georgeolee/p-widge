@@ -1,7 +1,8 @@
 // import p5 from 'p5'
 import {Vector} from 'p5'
-import {lerp, constrain} from '../utilities.js'
+import {lerp} from '../utilities.js'
 
+export const GetActiveParticleCount = () => Particle.activeCount;
 export class Particle{
     
     static activeCount = 0;
@@ -16,6 +17,8 @@ export class Particle{
     baseSize;
     size;
 
+    rotationMatrix;
+
     speedTable;
     sizeTable;
 
@@ -24,7 +27,7 @@ export class Particle{
     constructor(position, velocity, lifetimeSeconds, size = 1){
       this.active = false;
       this.initialize(position, velocity, lifetimeSeconds, size);
-
+      this.rotationMatrix = [1,0,0,1,0,0];
     }
   
     //allow reinitializing particles that have reached the end of their lifetime
@@ -36,9 +39,6 @@ export class Particle{
   
       this.baseSize = startSize;
       this.size = this.baseSize;
-  
-    //   this.speedTable = [];
-    //   this.sizeTable = [];
 
       this.speedTable = null;
       this.sizeTable = null;
@@ -58,7 +58,7 @@ export class Particle{
     setActive(state){
       if(!!this.active === !!state) return;
       this.active = !!state;
-      Particle.activeCount += !!state ? 1 : -1;
+      Particle.activeCount += state ? 1 : -1;
     }
   
     setSpeedTable(st){
@@ -70,18 +70,6 @@ export class Particle{
     }
   
     outOfBounds(){
-      // if(!Particle?.bounds) return false;
-
-
-      //some off-screen check 
-
-      //   
-      //   ( this.pos.x < 0 - offScreenDist ||
-      //     this.pos.x > width + offScreenDist ||
-      //     this.pos.y < 0 -offScreenDist ||
-      //     this.pos.y > height + offScreenDist
-      //   )
-
       //implement later
       return false;
     }
@@ -111,7 +99,7 @@ export class Particle{
 
     //get deltaTime from pinst running the sketch
     update(deltaTime){
-      if(this.active == false) return;
+      if(!this.active) return;
   
       // console.log(this.speedTable)
 

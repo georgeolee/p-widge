@@ -1,15 +1,3 @@
-/*
-      * store emission points as sets of 3 numbers - x,y,angle
-      *
-      * normalize from -1 to 1 in x and y ; leave angle as is
-      *
-      *
-      * loop through each location when emitting from the particle system sequentially or in random order
-      *
-      * encode position & direction as r,g values like in a normal map
-      * use alpha to mask empty locations
-      */
-
 
 export class Emitter{
 
@@ -21,14 +9,11 @@ export class Emitter{
 
     constructor(p5Instance){
       
-      this.points = [0,0,0]; // <—— single point, centered at origin, emitting right  
+      this.points = [0,0,0]; // x, y, radians // <—— single point, centered at origin, emitting right  
       this.nextPointIndex = 0;
       this.randomOrder = true;
       this.emissionMap = null;
-      this.#p5 = p5Instance;
-      //TODO : add support for locally rotating each emitter point
-      
-      // console.log(`emitter constructor ; has p5: ${!!this.#p5} ; points ${this.points}`)
+      this.#p5 = p5Instance;      
     }
       
   
@@ -59,10 +44,7 @@ export class Emitter{
             const x = getX(i);
             const y = getY(i);
   
-            const r = image.pixels[i];
-            const g = image.pixels[i+1];
-            const b = image.pixels[i+2];
-            const a = image.pixels[i+3];
+            const [r,g,b,a] = image.pixels.slice(i, i + 4);
   
             const normalizedB = (b - 128) / 128;  //normalizes the range of b values from 0 — 255 to -1 — 1, with 128 remapped to 0
   
@@ -97,9 +79,7 @@ export class Emitter{
           }
   
           this.points = epoints;
-  
-          console.log( `epoints length: ${this.points.length}`)
-          console.log(`point count: ${(this.points.length)/3}`)
+          console.log(`new emitter point count: ${(this.points.length)/3}`)
       });
     }
   }

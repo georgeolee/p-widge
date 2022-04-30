@@ -1,34 +1,43 @@
 import { useEffect, useRef } from "react";
 
 export function RadioHeader(props){
-    const label = props.label ?? 'Radio Group';
+    const {label = 'Radio Group'} = props;
 
     return(
-        <div className="radio radio-header">{label}</div>
+        <div className="radio radio-header">
+            {label}
+        </div>
     );
 }
 
 export function Radio(props){
 
-    const inputRef = useRef();
+    const inputRef = useRef();  
 
-    const name = props.name ?? 'radio-group-default';
-    const label = props.label ?? 'radio-option-default';    
-    const checked = !!props.checked || false;
-    const init = props.init ?? true;
-    const func = props.func ?? (() => console.log(`radio: selected ${label}`));
-    const onChange = e => {if(e.target.checked) func()}
+    const {
+        name = 'radio-group-default', 
+        label = 'radio-option-default', 
+        func = () => console.log('checked ' + label), 
+        checked = false, 
+        init = true } = props;
 
     useEffect(()=>{
-        inputRef.current.checked = checked;        
-        if(init && checked) func();
+        inputRef.current.checked = !!checked;        
+        if(init && checked) func?.();
     },
-    [inputRef])
+    [init, func, checked])
 
     return(
         <div className="radio">
-            <input className="radio-input" type="radio" ref={inputRef} name={name} onChange={onChange}/>
-            <div className="radio-label">{label}</div>
+            <input 
+                className="radio-input" 
+                type="radio" ref={inputRef} 
+                name={name} 
+                onChange={e => {if(e.target.checked) func?.()}}
+            />
+            <div className="radio-label">
+                {label}
+            </div>
         </div>
     );
 }

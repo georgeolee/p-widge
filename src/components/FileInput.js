@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
-
 export function FileInput(props){
 
-    const label = props.label ?? 'File Input';
-    const accept = props.accept ?? '.png';
-    const func = props.func ?? (url => console.log(`url: ${url}`));
+    const {
+        label = 'File Input',
+        accept = '.png',
+        func = url => console.log(`url: ${url}`),
+    } = props;
     
 
     const onChange = e => {

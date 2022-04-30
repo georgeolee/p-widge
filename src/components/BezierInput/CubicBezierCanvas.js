@@ -69,10 +69,8 @@ export class CubicBezierCanvas{
         const style = getComputedStyle(this.canvas);
         this.color.curveFill = style.getPropertyValue('--curve-fill') || '4af';
         this.color.curveStroke = style.getPropertyValue('--curve-stroke') || 'fff';
-
         this.color.canvasBorder = style.getPropertyValue('--canvas-border') || '444';
         this.color.backgroundFill = style.getPropertyValue('--background-fill') || 'eee';
-
         this.color.trackStroke = style.getPropertyValue('--track-stroke') || 'aaa';
         this.color.controlFill = style.getPropertyValue('--control-fill') || '06f';
         this.color.controlHoverFill = style.getPropertyValue('--control-hover-fill') || '4af'; 
@@ -128,9 +126,7 @@ export class CubicBezierCanvas{
 
     drawControls(bz){
         const ctx = this.canvas.getContext('2d');
-        const cw = this.canvas.width;    //  control canvas height and width
-        const ch = this.canvas.height;   //  equal to the graph canvas dimensions + control size x 2
-
+        const {width:cw, height:ch} = this.canvas;  //canvas dimensions
         const gw = cw - 2*this.controlSize;
         const gh = ch - 2*this.controlSize;
 

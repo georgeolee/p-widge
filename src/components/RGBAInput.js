@@ -1,23 +1,22 @@
 import { useEffect, useRef } from "react";
 import { parseHexColorString } from "../utilities";
-import { mouse } from "../globals";
 
 export function RGBAInput(props){
  
-    const rgb = props.rgb || '#ffffff';
-    const alpha = props.alpha ?? 255;
-    const label = props.label ?? 'rgba-input-default';
+    const {
+        rgb = '#ffffff',
+        alpha = 255,
+        label = 'rgba-input-default',
+        func = color => console.log(color),
+        timeout = 100,
+        timeoutFunc,
+    } = props;
+
     const rgbInputRef = useRef();
     const alphaInputRef = useRef();
-
-    const func = props.func ?? (color => console.log(color));    
-    
-
     const timeoutRef = useRef(null);
 
     
-
-
     const composeColor = () => {
         const color = parseHexColorString(rgbInputRef.current.value);
         color.a = (Number(alphaInputRef.current.value) / 255) ** 2 * 255;
@@ -25,9 +24,9 @@ export function RGBAInput(props){
     }
 
     const onChangeAny = () => {        
-        func(composeColor()); console.log('rgba change; buttons ' + mouse.buttons);
+        func(composeColor());
         if(timeoutRef.current) clearTimeout(timeoutRef.current);
-        if(props.timeoutFunc) timeoutRef.current = setTimeout(props.timeoutFunc, props.timeout ?? 100);
+        if(typeof timeoutFunc === 'function') timeoutRef.current = setTimeout(timeoutFunc, timeout);
     };
     
     //initialize input values

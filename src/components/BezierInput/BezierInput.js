@@ -18,26 +18,34 @@ import './BezierInput.css';
  * @returns 
  */
 export function BezierInput(props){
-    const resolution = props.resolution || 64; 
-    const labelTop = props.labelTop ?? 'New Bezier Input';  
-    const labelX = props.labelX ?? 'x axis label';
-    const labelY = props.labelY ?? 'y axis label';
-    const points = props.points ?? [    
-        0,0,    //P0
-        0,1,    //P1
-        1,0,    //P2
-        1,1     //P3
-    ];    
+
+    const {
+        // func,
+        id,
+        className,
+        resolution = 64,
+        labelTop = 'New Bezier Input',
+        labelX = 'x axis label',
+        labelY = 'y axis label',
+        points = [
+            0,0,    //P0
+            0,1,    //P1
+            1,0,    //P2
+            1,1     //P3
+        ],
+    } = props;
+
     
     const bezierRef = useRef(new CubicBezier(...points).normalize());
     const bezierCanvasRef = useRef(new CubicBezierCanvas(null, bezierRef.current));
     const canvasElementRef = useRef();
 
-    const handleCanvasPointerMove = e => {
-        const func = props.func ?? (lookups => {console.log('bezier lookup values:'); console.log(lookups)});
-        bezierCanvasRef.current.onCanvasPointerMove(e);        
-        
+    const handleCanvasPointerMove = e => {        
+        bezierCanvasRef.current.onCanvasPointerMove(e);                
         if(bezierCanvasRef.current.editPoint){  //editing?
+
+            const func = props.func ?? (lookups => { console.log('bezier lookup table: '); console.log(lookups); })
+
             func(bezierRef.current.createLookupTable(resolution));
         }     
     }
@@ -55,8 +63,8 @@ export function BezierInput(props){
 
     return(        
         <div 
-            className={'bezier-input' + (props.className ? ' ' + props.className : '')} 
-            id={props.id}>
+            className={'bezier-input' + (className ? ' ' + className : '')} 
+            id={id}>
             
             <div className="bezier-label-top" >{labelTop}</div>
             <div className="bezier-label-y">{labelY}</div>

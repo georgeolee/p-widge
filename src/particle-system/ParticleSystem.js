@@ -1,7 +1,5 @@
-import {DEGREES_TO_RADS, getRandomVelocity} from '../utilities.js'
+import {DEGREES_TO_RADS, getRandomVelocity, randomRange} from '../utilities.js'
 import {Vector} from 'p5'
-import { FrameManager } from './FrameManager.js';
-// import { ParticleSystemSettings } from './ParticleSystemSettings.js';
 import { Particle } from './Particle.js';
 import { Emitter } from './Emitter.js';
 
@@ -9,14 +7,11 @@ import { Emitter } from './Emitter.js';
 
 export class ParticleSystem {
 
-    static V00 = new Vector(0,0);
-
     emitter;    
     nextIndex;
     pos;
     rotation;
     lastEmitMillis;   
-
     p5;
 
 
@@ -36,42 +31,20 @@ export class ParticleSystem {
       })
 
       this.emitter = new Emitter(p5Instance);                  
-    }
-
-    //refactor ; find a better way, place to do this
-    setStartColorRGBA = (r,g,b,a) => {
-      FrameManager.startColor = FrameManager.p5.color(r,g,b,a);
-      FrameManager.queueRecolor(frames => this.settings.imageFrames = frames);
-    };
-  
-    setEndColorRGBA = (r,g,b,a) => {
-      FrameManager.endColor = FrameManager.p5.color(r,g,b,a);
-      FrameManager.queueRecolor(frames => this.settings.imageFrames = frames);
-    };
-      
+    } 
   
     initialize(particle){
   
-      //particle origin ; change this ; emit from this.position, set this.position to mouseCoords in sketch
-      // let o = getMouseCoords();
-  
       let o = this.pos; 
-
-  
       let emissionAngle = 0;
   
       //get start position & angle from an emitter point
       if(this.emitter && this.emitter.points.length >= 3){
   
         const i = this.emitter.nextPointIndex;
-        const ex = this.emitter.points[i];
-        const ey = this.emitter.points[i + 1];
-        emissionAngle = this.emitter.points[i + 2];
-  
-        /*
-        * TODO - should this go somewhere else?
-        *
-        */
+
+        const [ex, ey, angle] = this.emitter.points.slice(i, i + 3);
+        emissionAngle = angle;
   
         //base size of emitter, determined by canvas size
         const BASE_SIZE = Math.min(this.p5.width, this.p5.height);
@@ -85,10 +58,16 @@ export class ParticleSystem {
         this.emitter.nextPointIndex = this.emitter.randomOrder ? Math.floor(Math.random() * (this.emitter.points.length / 3)) * 3 : this.emitter.nextPointIndex = (i + 3) % this.emitter.points.length;
       }
   
-      //initial velocity
-      //rotation here is local to each emission point
-      const v = getRandomVelocity(this.settings.particleBaseSpeed * (1 - this.settings.particleSpeedRandomFactor), this.settings.particleBaseSpeed, this.settings.pointRotation + emissionAngle - this.settings.arc/2, this.settings.pointRotation + emissionAngle + this.settings.arc/2)
+      const particleAngle = randomRange(emissionAngle - this.settings.arc/2, emissionAngle + this.settings.arc/2) * DEGREES_TO_RADS;
+      const particleSpeed = randomRange(this.settings.particleBaseSpeed * (1-this.settings.particleSpeedRandomFactor), this.settings.particleBaseSpeed);
+      const v = new Vector(particleSpeed * Math.cos(particleAngle), particleSpeed * Math.sin(particleAngle));
         
+      // console.log(particleSpeed)
+
+      const cosAngle = Math.cos(particleAngle);
+      const sinAngle = Math.sin(particleAngle);
+
+      particle.rotationMatrix = [cosAngle, sinAngle, -sinAngle, cosAngle, 0, 0];
 
       //initial particle size
       const randomFactor = this.settings.particleSizeRandomFactor * Math.random() + (1 - this.settings.particleSizeRandomFactor);
@@ -115,15 +94,12 @@ export class ParticleSystem {
   
         n++;//checking another index
           
-        if(!overwrite && particle?.active){ //don't overwrite active particles if overwrite set to false
-          continue;
-        }
+        if(!overwrite && particle?.active) continue; //don't overwrite active particles if overwrite set to false
   
         this.initialize(particle);        //emit new particle
         particle.systemOrigin = this.pos; //save the position of the particle system at initialization; required for rotation in global mode
         particle.setActive(true);
         emitted++;
-  
         
         this.nextIndex = (i + 1) % this.particles.length; //remember the next index to look at next time emit is called
       }
@@ -162,12 +138,13 @@ export class ParticleSystem {
 
       if(this.settings.rotateByVelocity) this.p5.rotate(p.vel.heading() - this.settings.rotation*DEGREES_TO_RADS);  //if rotate by angle, rotate here
 
+      // if(this.settings.rotateByVelocity) this.p5.applyMatrix(...p.rotationMatrix);
+
       //animate through frames over particle lifetime
       if(this.settings.imageFrames?.length > 0){ 
         const i = Math.floor(this.settings.imageFrames.length * (p.remaining/p.lifetime))
         const theImage = this.settings.imageFrames[i]
         const normalizedSize = 1 / theImage.width;
-        // console.log(`normalized size:  ${normalizedSize}`)
         this.p5.scale(p.size * normalizedSize);
         this.p5.translate(-theImage.width/2, -theImage.height/2);
         this.p5.image(theImage,0,0)

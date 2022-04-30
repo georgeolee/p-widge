@@ -71,7 +71,7 @@ export class FrameManager{
                 frame.copy(this.buffer, 0, 0, this.buffer.width, this.buffer.height, 0, 0, frame.width, frame.height);
                 frames.push(frame);
             }
-            console.log(`created ${frames.length} frames`)
+            console.log(`recolored ${frames.length} frames`)
             callback?.(frames); //invoke the callback w/ the created frames as an argument            
         })
     }
@@ -128,7 +128,7 @@ export class FrameManager{
 
         //busy! — push the recolor job into the queue
         else{
-            console.log(`FM BUSY`); 
+            // console.log(`FM BUSY`); 
             if(this.queue.length >= this.maxQueueSize){
                 this.queue.splice(0,1); //remove the oldest element from the array if reached max queue size
             }
