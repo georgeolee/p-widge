@@ -4,7 +4,8 @@ import { ParticleSystem } from "./particle-system/ParticleSystem";
 import { mouse, particleSettings, flags, fps } from "./globals";
 
 export function sketch(p){
-        
+    
+    p.disableFriendlyErrors = true;
     FrameManager.p5 = p;
     const s = new ParticleSystem(p, particleSettings)
 
@@ -31,7 +32,7 @@ export function sketch(p){
     
 
     p.setup = function(){
-        p.createCanvas(600,600)
+        let cnv = p.createCanvas(600,600)
         p.background(255)        
         
 
@@ -44,8 +45,10 @@ export function sketch(p){
         
         p.frameRate(frameRate);
 
-        // p.noSmooth();
+        p.noSmooth();
         
+        console.log('SMOOTH?')
+        console.log(cnv.elt.getContext('2d').imageSmoothingEnabled)
     }
 
     p.draw = function(){
@@ -99,6 +102,16 @@ export function sketch(p){
         if(flags.emitTimerReset){
             s.lastEmitMillis = Date.now();
             flags.emitTimerReset = false;
+        }
+
+        if(typeof flags.setImageSmoothing === 'boolean'){
+            const setSmoothing = {
+                false : () => p.noSmooth(),
+                true : () => p.smooth()
+            }[flags.setImageSmoothing];
+            
+            setSmoothing();
+            flags.setImageSmoothing = null;
         }
     }
 

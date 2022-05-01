@@ -15,20 +15,17 @@ export class ParticleSystem {
     p5;
 
 
-    //NEW CONSTRUCTOR - MOVE SETTINGS INTO SETTINGS CLASS
     constructor(p5Instance, settingsObject = null) {
 
       this.p5 = p5Instance;
       this.settings = settingsObject;
-
       this.pos = new Vector(0,0);
       this.nextIndex = 0;
       this.lastEmitMillis = Date.now();
-
       this.particles = new Array(this.settings.maxParticleCount).fill(null).map(()=>{
         const v = getRandomVelocity(this.settings.particleBaseSpeed * (1 - this.settings.particleSpeedRandomFactor), this.settings.particleBaseSpeed, this.settings.pointRotation - this.settings.arc/2, this.settings.pointRotation + this.settings.arc/2)
         return new Particle(new Vector(0,0), v, this.settings.particleLifetime, this.settings.particleBaseSize);
-      })
+      });
 
       this.emitter = new Emitter(p5Instance);                  
     } 
@@ -45,27 +42,22 @@ export class ParticleSystem {
 
         const [ex, ey, angle] = this.emitter.points.slice(i, i + 3);
         
-        //TESTING/////////////////
         emissionAngle = angle + this.settings.rotation;
-        // console.log(this.settings.rotation)
 
         //base size of emitter, determined by canvas size
         const BASE_SIZE = Math.min(this.p5.width, this.p5.height);
 
-        // ex*= 
-
         //offset particle position based on emitter point position, scaled by emitter size
         const emitterOffset = new Vector(ex * BASE_SIZE * this.settings.emitterSize / 2 / 100, ey * BASE_SIZE * this.settings.emitterSize / 2 / 100); //divide by 2 because emitter points are saved as values between -1 and 1 ; divide by 100 bc emitter.size is a percent value
         
-
-        //TESTING////////////////
-        
+        //apply emitter rotation to offset
         [ emitterOffset.x, 
           emitterOffset.y] =
-        
+
         [ emitterOffset.x * Math.cos(this.settings.rotation * DEGREES_TO_RADS) - emitterOffset.y * Math.sin(this.settings.rotation * DEGREES_TO_RADS),
           emitterOffset.x * Math.sin(this.settings.rotation * DEGREES_TO_RADS) + emitterOffset.y * Math.cos(this.settings.rotation * DEGREES_TO_RADS)]
 
+        //add offset to particle origin
         o = Vector.add(o, emitterOffset);
   
         //next point for random or sequential order
@@ -75,14 +67,9 @@ export class ParticleSystem {
       const particleAngle = randomRange(emissionAngle - this.settings.arc/2, emissionAngle + this.settings.arc/2) * DEGREES_TO_RADS;
       const particleSpeed = randomRange(this.settings.particleBaseSpeed * (1-this.settings.particleSpeedRandomFactor), this.settings.particleBaseSpeed);
       const v = new Vector(particleSpeed * Math.cos(particleAngle), particleSpeed * Math.sin(particleAngle));
-        
-      
-      const cosAngle = Math.cos(particleAngle);
-      const sinAngle = Math.sin(particleAngle);
-
-      [particle.cosAngle, particle.sinAngle] = [cosAngle, sinAngle];
-
-      // console.log(v)
+    
+      //particle angle doesn't change over lifetime, so save these values now to avoid unnecessary calculations ; used if settings.rotateByVelocity is enabled
+      [particle.cosAngle, particle.sinAngle] = [Math.cos(particleAngle), Math.sin(particleAngle)];
 
       //initial particle size
       const randomFactor = this.settings.particleSizeRandomFactor * Math.random() + (1 - this.settings.particleSizeRandomFactor);
@@ -91,8 +78,6 @@ export class ParticleSystem {
       particle.initialize(o, v, this.settings.particleLifetime, s);
       particle.setSpeedTable(this.settings.speedTable);
       particle.setSizeTable(this.settings.sizeTable);                
-
-      // console.log(particle.vel)
     }
   
   
@@ -145,28 +130,24 @@ export class ParticleSystem {
       if(this.settings.imageFrames?.length > 0){ 
         const i = Math.floor(this.settings.imageFrames.length * (p.remaining/p.lifetime))
         const theImage = this.settings.imageFrames[i]
-        const normalizedSize = 1 / theImage.width;
-        
+        const normalizedSize = 1 / theImage.width;        
         const [u, v] = [-theImage.width/2, -theImage.height/2]; //x & y offset from image top left towards center
         const B = p.size * normalizedSize;  //scale
       
+        //Translate to particle pos, scale by particle size, translate back to center image
         if(!this.settings.rotateByVelocity) this.p5.applyMatrix(
-          B, 0, 
-          
+          B, 0,           
           0, B, 
-
           B * u + p.pos.x,  
           B * v + p.pos.y
-
         );
         
+        //translate to particle pos, rotate by particle angle, scale by size, translate to center image
         else{
           const [c, s] = [p.cosAngle, p.sinAngle];  //cos & sin of particle angle
           this.p5.applyMatrix(
-            c*B,  s*B,
-            
+            c*B,  s*B,            
             -s*B, c*B,
-
             B*u*c - B*v*s + p.pos.x,
             B*u*s + B*v*c + p.pos.y
           );
@@ -176,7 +157,6 @@ export class ParticleSystem {
       }
       
       else{ //no frames - draw magenta error to the canvas
-
         this.p5.translate(p.pos.x, p.pos.y)
         this.p5.stroke(255,0,255)
         this.p5.strokeWeight(15)
@@ -194,19 +174,13 @@ export class ParticleSystem {
         const p = this.particles[i];
         if(!p?.active) continue;
   
-        this.drawParticle(p);
-        
+        this.drawParticle(p);        
       }
-    }
-  
-    isSaturated(){
-      return Particle.getActiveCount() >= this.settings.maxParticleCount
     }
   
     // call this from update
     emitPerSecond(perSecond, overwrite){
-      const perMil = perSecond * 0.001;
-      const numToEmit = (Date.now() - this.lastEmitMillis) * perMil;
+      const numToEmit = (Date.now() - this.lastEmitMillis) * perSecond * 0.001;
       if(numToEmit >= 1){
         this.emit(Math.round(numToEmit), overwrite);
         this.lastEmitMillis = Date.now();

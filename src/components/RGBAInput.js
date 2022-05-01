@@ -46,7 +46,7 @@ export function RGBAInput(props){
             RGB&emsp;<input type="color" className="rgb-input" ref={rgbInputRef} onChange={onChangeAny}/>
             </label>
             <label>
-            Alpha&emsp;<input type="range" min={0} max={255} step={1} className="alpha-input" ref={alphaInputRef} onChange={onChangeAny}/>
+            Alpha&emsp;<input type="range" min={0} max={255} step={0.5} className="alpha-input" ref={alphaInputRef} onChange={onChangeAny}/>
             </label>            
         </div>
     );

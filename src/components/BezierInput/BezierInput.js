@@ -7,7 +7,7 @@ import './BezierInput.css';
 /**
  * A bezier curve with click and drag edit handles. 
  * It passes an array of lookup values to a handler function after initial render and on user input.
- * Lookup values are interpolated
+ * Lookup values are interpolated at regular x intervals
  * @param props
  * @param {function} .func - function to handle lookup values ; logs to console by default
  * @param {number} .resolution - number of lookup entries to generate

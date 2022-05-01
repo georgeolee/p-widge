@@ -1,20 +1,33 @@
 :root{
   box-sizing: border-box;
   color: #f44;
-  background-color: #fafafa;  
-  /* background-color: #222; */
+  color: #666;
+  background-color: #fafafa;    
 }
 
+body.dark{
+  background-color: #222;  
+  color:#fff
+}
 
+#root{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
 .App {  
   margin: 50px;
   display: grid;
-  grid-template-columns: 250px auto 250px;
+  grid-template-columns: calc(250px + var(--col-gap)) auto calc(250px + var(--col-gap));
   font-size: 14px;
 
+  font-size: 12px;
   user-select: none;
-  
+  max-width: 1200px;
+
+  --col-gap: 50px;
 }
 
 .App-header {
@@ -25,14 +38,17 @@
   justify-content: center;
   text-align: center;
   
-  font-size: 24px ;
-  
+  font-size: 30px ;
+  color:#f44;
+  font-weight: bold;
+  margin-bottom:1em;
 }
 
 .p5-container{
   position: relative;
   display: flex;
-  margin: auto;
+
+  margin-bottom: auto;
   grid-column: 2;
 }
 
@@ -70,10 +86,14 @@
 .controls-left{
   grid-column: 1;  
   grid-row: span 2;
+
+  margin-right: var(--col-gap);
 }
 
 .controls-right{
   grid-column: 3;
+
+  margin-left: var(--col-gap);
 }
 
 .controls-center{
@@ -104,6 +124,7 @@
 .rgba-picker{
   display: flex;
   flex-direction: column;
+  
 }
 
 .rgba-picker > label{
@@ -113,4 +134,27 @@
 
 .rgb-input, .apha-input{
   flex-grow: 1;
+}
+
+.horizontal-rule{
+  /* width: 100%; */
+  display: flex;
+  flex: 1;
+  height: 1px;
+  background-color: #8888;
+  /* background-color: #f44; */
+}
+
+.group-name{
+  display: flex;
+  align-items: center;
+  color: #888;
+  font-weight: bold;
+  color: #f44;
+
+  /* margin-top: calc(2em + 50px); */
+}
+.group-name-label{
+  margin: 0 0.5em;
+  font-size: 14px;
 }

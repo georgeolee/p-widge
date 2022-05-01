@@ -43,7 +43,8 @@
 }
 
 .dark .bezier-input{
-    --curve-fill: #08a;
+    --curve-fill: #4af;
+    /* --curve-fill: #08a; */
     --curve-stroke: #fff;
     --control-fill: #f44;
     --control-hover-fill: #f77;
