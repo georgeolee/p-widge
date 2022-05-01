@@ -21,13 +21,13 @@ import { GetActiveParticleCount } from './particle-system/Particle';
 *   TODO: 
 *       
 *       
-*       
-*         
-*       
-*         
-*       
-*       
-*       
+*       ParticleSystem : transform refactor
+*         > rotation should be fixed now
+*         > cleanup
+*         > combine transformation matrices ? translate by particle pos, then:
+*           > ROT - SCALE - TRANS   - rotate by velocity
+*           > SCALE - TRANS         - default
+*           >maybe save 2 versions?
 *       -styling and stuff
 *     
 *       -BezierInput: 

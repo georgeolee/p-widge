@@ -44,7 +44,6 @@ export class ParticleSystem {
         const i = this.emitter.nextPointIndex;
 
         const [ex, ey, angle] = this.emitter.points.slice(i, i + 3);
-        // emissionAngle = angle;
         
         //TESTING/////////////////
         emissionAngle = angle + this.settings.rotation;
@@ -60,14 +59,12 @@ export class ParticleSystem {
         
 
         //TESTING////////////////
-
-        // emitterOffset.x = emitterOffset.x * Math.cos(-this.settings.rotation * DEGREES_TO_RADS) - emitterOffset.y * Math.sin(-this.settings.rotation * DEGREES_TO_RADS);
-        // emitterOffset.y = emitterOffset.x * Math.sin(-this.settings.rotation * DEGREES_TO_RADS) + emitterOffset.y * Math.cos(-this.settings.rotation * DEGREES_TO_RADS);
         
-        [emitterOffset.x, emitterOffset.y] =
+        [ emitterOffset.x, 
+          emitterOffset.y] =
         
-        [emitterOffset.x * Math.cos(this.settings.rotation * DEGREES_TO_RADS) - emitterOffset.y * Math.sin(this.settings.rotation * DEGREES_TO_RADS),
-        emitterOffset.x * Math.sin(this.settings.rotation * DEGREES_TO_RADS) + emitterOffset.y * Math.cos(this.settings.rotation * DEGREES_TO_RADS)]
+        [ emitterOffset.x * Math.cos(this.settings.rotation * DEGREES_TO_RADS) - emitterOffset.y * Math.sin(this.settings.rotation * DEGREES_TO_RADS),
+          emitterOffset.x * Math.sin(this.settings.rotation * DEGREES_TO_RADS) + emitterOffset.y * Math.cos(this.settings.rotation * DEGREES_TO_RADS)]
 
         o = Vector.add(o, emitterOffset);
   
@@ -83,7 +80,7 @@ export class ParticleSystem {
       const cosAngle = Math.cos(particleAngle);
       const sinAngle = Math.sin(particleAngle);
 
-      particle.rotationMatrix = [cosAngle, sinAngle, -sinAngle, cosAngle, 0, 0];
+      [particle.cosAngle, particle.sinAngle] = [cosAngle, sinAngle];
 
       // console.log(v)
 
@@ -140,45 +137,49 @@ export class ParticleSystem {
       this.drawParticles();
     }
   
-    drawParticle(p){
-      //particle coordinates relative to its origin
-      // const px = p.pos.x - p.systemOrigin.x;
-      // const py = p.pos.y - p.systemOrigin.y;
 
-      //rotate relative X and Y by emitter rotation
-      // let pRotatedX = Math.cos(-this.settings.rotation * DEGREES_TO_RADS) * px - Math.sin(-this.settings.rotation * DEGREES_TO_RADS) * py;
-      // let pRotatedY = Math.sin(-this.settings.rotation * DEGREES_TO_RADS) * px + Math.cos(-this.settings.rotation * DEGREES_TO_RADS) * py;
-      
-      //add origin position back to get the particle's world position after rotation
-      // pRotatedX += p.systemOrigin.x;
-      // pRotatedY += p.systemOrigin.y;
+    drawParticle(p){
 
       this.p5.push();
-      // this.p5.translate(pRotatedX, pRotatedY); 
       
-      //TEST?////////
-      this.p5.translate(p.pos.x, p.pos.y)
-
-      // console.log(p.pos)
-      // console.log(p.vel)
-
-      if(this.settings.rotateByVelocity) this.p5.rotate(p.vel.heading() - this.settings.rotation*DEGREES_TO_RADS);  //if rotate by angle, rotate here
-
-      // if(this.settings.rotateByVelocity) this.p5.applyMatrix(...p.rotationMatrix);
-
-      //animate through frames over particle lifetime
       if(this.settings.imageFrames?.length > 0){ 
         const i = Math.floor(this.settings.imageFrames.length * (p.remaining/p.lifetime))
         const theImage = this.settings.imageFrames[i]
         const normalizedSize = 1 / theImage.width;
-        this.p5.scale(p.size * normalizedSize);
-        this.p5.translate(-theImage.width/2, -theImage.height/2);
-        this.p5.image(theImage,0,0)
+        
+        const [u, v] = [-theImage.width/2, -theImage.height/2]; //x & y offset from image top left towards center
+        const B = p.size * normalizedSize;  //scale
+      
+        if(!this.settings.rotateByVelocity) this.p5.applyMatrix(
+          B, 0, 
+          
+          0, B, 
+
+          B * u + p.pos.x,  
+          B * v + p.pos.y
+
+        );
+        
+        else{
+          const [c, s] = [p.cosAngle, p.sinAngle];  //cos & sin of particle angle
+          this.p5.applyMatrix(
+            c*B,  s*B,
+            
+            -s*B, c*B,
+
+            B*u*c - B*v*s + p.pos.x,
+            B*u*s + B*v*c + p.pos.y
+          );
+        }
+
+        this.p5.image(theImage,0,0)      
       }
       
       else{ //no frames - draw magenta error to the canvas
+
+        this.p5.translate(p.pos.x, p.pos.y)
         this.p5.stroke(255,0,255)
-        this.p5.strokeWeight(10)
+        this.p5.strokeWeight(15)
         this.p5.point(0,0)
       }
 

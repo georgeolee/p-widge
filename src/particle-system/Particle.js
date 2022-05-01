@@ -17,7 +17,8 @@ export class Particle{
     baseSize;
     size;
 
-    rotationMatrix;
+    sinAngle;
+    cosAngle;
 
     speedTable;
     sizeTable;
@@ -27,7 +28,7 @@ export class Particle{
     constructor(position, velocity, lifetimeSeconds, size = 1){
       this.active = false;
       this.initialize(position, velocity, lifetimeSeconds, size);
-      this.rotationMatrix = [1,0,0,1,0,0];
+      
     }
   
     //allow reinitializing particles that have reached the end of their lifetime
