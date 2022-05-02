@@ -1,9 +1,10 @@
 import {useEffect, useRef} from 'react';
+import './Slider.css';
 
 export function Slider(props){
     const valueRef = useRef();
     const inputRef = useRef();
-
+    
     const {
         label = 'Slider',
         min = 0,
@@ -15,12 +16,12 @@ export function Slider(props){
     } = props;
     
     const onChange = (e) => {
-        valueRef.current.innerHTML = e.target.value;
+        valueRef.current.textContent = e.target.value;
         func?.(Number(e.target.value));
     }    
 
     useEffect(()=>{        
-        valueRef.current.innerHTML = inputRef.current.value;
+        valueRef.current.textContent = inputRef.current.value;
         if(init) func?.(Number(inputRef.current.value));
     });
 

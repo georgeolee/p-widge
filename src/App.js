@@ -1,10 +1,10 @@
 import './App.css';
 import {sketch} from './sketch.js';
 import p5 from 'p5';
-import { Slider } from './components/Slider';
+import { Slider } from './components/Slider/Slider';
 import { Checkbox } from './components/Checkbox';
 import { Radio, RadioHeader } from './components/Radio';
-import { HR } from './components/HR';
+// import { HR } from './components/HR';
 import { GroupName } from './components/GroupName';
 import {useRef, useEffect} from 'react';
 import { mouse, particleSettings, flags, fps } from './globals';
@@ -18,7 +18,7 @@ import { GetActiveParticleCount } from './particle-system/Particle';
 *   TODO: 
 *       
 *       
-*       - downsample image if over a certain size?
+*       
 *       
 *       -github images 
 *       -styling and stuff  ***
