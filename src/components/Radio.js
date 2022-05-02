@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
+import { HR } from "./HR";
 
 export function RadioHeader(props){
     const {label = 'Radio Group'} = props;
 
     return(
         <div className="radio radio-header">
-            {label}
+            <div>{label}</div>
+            <HR/>
         </div>
     );
 }
@@ -28,7 +30,7 @@ export function Radio(props){
     [init, func, checked])
 
     return(
-        <div className="radio">
+        <div className="radio radio-item">
             <input 
                 className="radio-input" 
                 type="radio" ref={inputRef} 

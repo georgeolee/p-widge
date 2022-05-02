@@ -238,8 +238,8 @@ export class CubicBezierCanvas{
             (p3x - mx)**2 +
             (p3y - my)**2 <
             (this.controlSize/2)**2
-            ) hit = P3;
-
+            ) hit = P3;        
+        
         return hit;
     }
 
@@ -284,6 +284,9 @@ export class CubicBezierCanvas{
                 this.hoverPoint = hp;
                 this.redraw();
             }
+            
+            if(hp) document.body.style.cursor = 'pointer';
+            else document.body.style.cursor = 'default';
         }        
     }
 
@@ -295,6 +298,8 @@ export class CubicBezierCanvas{
     onCanvasPointerUp(e){
         e.target.releasePointerCapture(e.pointerId);
         this.editPoint = null;
+
+        if(!this.hoverPoint) document.body.style.cursor = 'default';
     }
 
     onCanvasPointerLeave(e){
@@ -302,6 +307,8 @@ export class CubicBezierCanvas{
             this.hoverPoint = null;            //  catches mouse leaving if control point is right up against canvas edge
             this.drawControls(this.bezier);    //  redraw the controls with non-hover color
         }
+
+        if(!this.editPoint) document.body.style.cursor = 'default';
     }
 
 }

@@ -45,6 +45,8 @@
 .dark .bezier-input{
     --curve-fill: #4af;
     /* --curve-fill: #08a; */
+    --curve-fill: #bf4;
+
     --curve-stroke: #fff;
     --control-fill: #f44;
     --control-hover-fill: #f77;
@@ -53,6 +55,8 @@
     --canvas-border: #444;
     --track-stroke: #aaa;
     
+    --background-fill: #888;
+
     --bezier-background-color: #444;
     --label-color: #ddd;
 }

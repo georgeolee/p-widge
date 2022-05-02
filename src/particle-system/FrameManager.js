@@ -56,6 +56,13 @@ export class FrameManager{
         this.p5.loadImage(url, (pimg)=>{
             pimg.loadPixels();
 
+            if(pimg.width * pimg.height > 256 * 256){
+                if(pimg.width > pimg.height){
+                    pimg.resize(256, 0);
+                }
+                else pimg.resize(0,256);
+            }
+
             //create offscreen p5 canvas if it doesn't exist yet, and resize it to match the incoming image
             if(!this.buffer) this.buffer = this.p5.createGraphics(pimg.width,pimg.height);
             else this.buffer.resizeCanvas(pimg.width, pimg.height, false);

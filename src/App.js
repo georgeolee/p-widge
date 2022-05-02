@@ -19,7 +19,7 @@ import { GetActiveParticleCount } from './particle-system/Particle';
 *       
 *       
 *       - downsample image if over a certain size?
-*       - toggle for image smoothing
+*       
 *       -github images 
 *       -styling and stuff  ***
 *     
@@ -28,7 +28,7 @@ import { GetActiveParticleCount } from './particle-system/Particle';
 *         >push to github?
 *         
 *       -linter warnings - useEffect deps, etc.  
-*
+*       
 *         
 *
 */
@@ -49,6 +49,9 @@ function App() {
     mouse.overCanvas = mouse.canvasX >= 0 && mouse.canvasY >= 0 && mouse.canvasX <= canvasRect.width && mouse.canvasY <= canvasRect.height;
   }
 
+  const now = new Date();
+  const isNightTime = now.getHours() < 6 || now.getHours > 18;
+
 
   const p5ContainerRef = useRef();
 
@@ -68,22 +71,41 @@ function App() {
   useEffect(() => {
     const fpsDisplay = document.getElementById('fps-display');
     const particleCountDisplay = document.getElementById('particle-count-display');
+    const dcp = 0;
     const displayUpdate = setInterval( ()=> {
-      fpsDisplay.innerHTML = `fps: ${Math.round(fps.current * 10**2) / 10**2 || fps.current}`;
-      particleCountDisplay.innerHTML = `particle count: ${GetActiveParticleCount()}`;
+      fpsDisplay.textContent = `fps: ${Math.round(fps.current * 10**dcp) / 10**dcp || fps.current}`;
+      particleCountDisplay.textContent = `particle count: ${GetActiveParticleCount()}`;
       }, 100);
 
     return () => clearInterval(displayUpdate);
   }, [])
 
+  useEffect(()=>{
+    setTimeout(()=>{
+      const allCaps = parentNode =>{
+        parentNode.childNodes.forEach(node => {
+          if(node.nodeType === node.TEXT_NODE){
+            node.nodeValue = node.nodeValue.toUpperCase();
+          }
+
+          else if (node.childNodes.length > 0){
+            allCaps(node);
+          }
+        });        
+      }
+
+      allCaps(document.body)
+    }, 1000)
+  })
+
   return (
     <div className="App" onPointerMove={onAppPointerMove}>
-      <header className="App-header">p-widget</header>      
+      <h1 className="App-header">p-widget</h1>      
       
       <div className='controls-left'>        
         
         <GroupName label='Particle Lifetime'/>
-        <Slider label='lifetime' min={0} max={2} step={0.01} func={n => particleSettings.particleLifetime = n}/>
+        <Slider label='Seconds' min={0} max={5} step={0.01} func={n => particleSettings.particleLifetime = n}/>
         
         
         <GroupName label='Size'/>
@@ -97,8 +119,7 @@ function App() {
         <Slider label='Max' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
         <Slider label='Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSpeedRandomFactor = n}/>
         <BezierInput labelTop='Speed Curve' labelY='<— Speed' labelX='Particle Lifetime —>' points={[0,0.7,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
-      
-        <Checkbox label='dark?' func={()=>{document.body.classList?.toggle('dark')}} init={false}/>
+
       </div>
       
       <div ref={p5ContainerRef} className='p5-container'>      
@@ -111,7 +132,7 @@ function App() {
       <div className='controls-right'>
 
         <GroupName label='Emitter Settings'/>
-        <Slider label='rate' min={0} max={500} step={1} func={n => particleSettings.rate = n}/>
+        <Slider label='emit / sec' min={0} max={500} step={1} func={n => particleSettings.rate = n}/>
         <Slider label='arc' min={0} max={360} step={1}  defaultValue={360} func={n => particleSettings.arc = n}/>
         <Slider label='rotation' min={0} max={360} step={1} defaultValue={0} func={n => particleSettings.rotation = n}/>
         <Slider label='size' min={0} max={100} step={1} defaultValue={50} func={n => particleSettings.emitterSize = n}/>
@@ -126,10 +147,11 @@ function App() {
         <RadioHeader label='Blend Mode'/>
         <Radio name='blend-mode'label='alpha' func={()=>particleSettings.p5BlendMode = 'blend'} />
         <Radio name='blend-mode'label='add' func={()=>particleSettings.p5BlendMode = 'add'} checked/>        
-        <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />
-        <Radio name='blend-mode'label='screen' func={() => particleSettings.p5BlendMode = 'screen'}/>
-        <Radio name='blend-mode'label='hard light' func={() => particleSettings.p5BlendMode = 'hard_light'}/>
+        <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />      
         
+        <RadioHeader label='Editor Theme'/>
+        <Radio name='editor-theme' label='light' func={()=>document.body.classList.remove('dark')} checked={!isNightTime}/>
+        <Radio name='editor-theme' label='dark' func={()=>document.body.classList.add('dark')} checked={isNightTime}/>
       </div>      
 
       <div className='controls-center'>

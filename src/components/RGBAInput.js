@@ -19,7 +19,7 @@ export function RGBAInput(props){
     
     const composeColor = () => {
         const color = parseHexColorString(rgbInputRef.current.value);
-        color.a = (Number(alphaInputRef.current.value) / 255) ** 2 * 255;
+        color.a = ((Number(alphaInputRef.current.value) / 255) ** 2) * 255;
         return color;
     }
 

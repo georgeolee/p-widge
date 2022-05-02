@@ -12,10 +12,7 @@ export function sketch(p){
     const blendModes = {
         add: p.ADD,
         blend: p.BLEND,
-        multiply: p.MULTIPLY,
-        screen: p.SCREEN,
-        hard_light: p.HARD_LIGHT,
-        
+        multiply: p.MULTIPLY,        
         default: p.ADD
     }
 

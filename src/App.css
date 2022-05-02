@@ -1,15 +1,39 @@
 :root{
   box-sizing: border-box;
-  color: #f44;
-  color: #666;
-  background-color: #fafafa;    
+  --body-color: #666;
+  --primary-color: #f44;
+  /* --primary-color: #68f; */
+  --background-color: #fafafa;  
+  /* --background-color: #eee;   */
+  
+}
+
+body{
+  background-color: var(--background-color);    
+  color: var(--body-color);  
+}
+
+/* CLEAN THIS UP! */
+body, body *{
+  font-family: 'Press Start 2P', 'Courier New', Courier, monospace !important;
+  font-size: 8px !important;
 }
 
 body.dark{
-  background-color: #222;  
-  color:#fff
+  --background-color: #222;  
+  --body-color:#ddd;
+  --primary-color: #fd4;  
 }
 
+.bezier-input{
+  --curve-fill: var(--primary-color) !important;
+  --control-fill: #a9a !important;
+}
+.dark .bezier-input{
+  --curve-fill: var(--primary-color) !important;
+  --control-fill: #cca !important;
+  --control-stroke: #444 !important;
+}
 #root{
   display: flex;
   flex-direction: column;
@@ -38,10 +62,14 @@ body.dark{
   justify-content: center;
   text-align: center;
   
-  font-size: 30px ;
-  color:#f44;
-  font-weight: bold;
+  font-size: 32px ;
+  font-size: 48px ;
+  color: var(--primary-color);
+  /* font-weight: bold; */
   margin-bottom:1em;
+
+  font-size: 16px !important;
+  font-weight: normal;
 }
 
 .p5-container{
@@ -53,6 +81,7 @@ body.dark{
 }
 
 #canvas-display-area{
+  box-sizing: border-box;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -75,7 +104,7 @@ body.dark{
   flex-direction: column;
 }
 
-:is(.controls-right, .controls-left) > :nth-child(n+2):not(.radio+.radio){
+:is(.controls-right, .controls-left) > :nth-child(n+2):not(.radio+.radio-item){
   margin-top: 2em;
 }
 
@@ -105,10 +134,75 @@ body.dark{
 
 .slider{
   display: grid;
-  grid-template-columns: 50px auto 50px;
+  grid-template-columns: 60px auto 60px;
   font-size: 12px;
 
   align-items: flex-start;
+}
+
+input[type="range"]{
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100px;
+
+  --track-height: 10px;
+  --thumb-height: 10px;
+}
+
+input[type="range"]::-webkit-slider-runnable-track{
+  background: #fd4;
+  background: #aaa;
+  height: var(--track-height);
+  border-radius: calc(var(--track-height) / 2);
+  overflow: hidden;
+}
+
+input[type="range"]::-moz-range-track{
+  background: #fd4;
+  height: var(--track-height);
+  border-radius: calc(var(--track-height) / 2);
+}
+
+input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  height: var(--thumb-height);
+  width: var(--thumb-height);
+  border-radius: calc(var(--thumb-height)/2);
+  /* background-color: #fd4; */
+  background-color: #f44;
+  background-color: #eee;
+  /* background-color: var(--background-color); */
+
+  margin-top: calc(var(--track-height)/2 - var(--thumb-height)/2);  
+
+  box-shadow: -100px 0 0 calc(100px - 5px) var(--primary-color), inset 0 0 0 1px #888;
+  /* overflow: hidden; */
+}
+
+input[type="range"]:hover::-webkit-slider-thumb{
+  background-color: #fff;
+  box-shadow: -100px 0 0 calc(100px - 5px) #fe7, inset 0 0 0 1px #888;
+}
+
+input[type="range"]::-moz-range-thumb{
+  -webkit-appearance: none;
+  height: var(--thumb-height);
+  width: var(--thumb-height);
+  border-radius: calc(var(--thumb-height)/2);
+  background-color: #fd4;
+  border: none;
+}
+
+/* input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  width:200px;
+  height:200px;
+  background: #f44;
+} */
+
+input[type=range], input[type=color]{
+  max-width: 100px;
 }
 
 .slider-input{
@@ -119,21 +213,31 @@ body.dark{
 .radio, .checkbox{
   display: flex;
   flex-direction: row;
+  align-items: center;
 }
 
 .rgba-picker{
   display: flex;
   flex-direction: column;
-  
+  line-height: 2em;
+}
+
+.rgba-label{
+  /* font-weight: bold; */
+  color: var(--primary-color);
+  border-bottom: 1px solid #8888;
+  margin-bottom: 1em;
 }
 
 .rgba-picker > label{
   display: flex;
   flex-wrap: nowrap;
+  align-items: center;
 }
 
 .rgb-input, .apha-input{
-  flex-grow: 1;
+  flex-grow: 1;  
+  margin: 0 0 0 auto;  
 }
 
 .horizontal-rule{
@@ -149,11 +253,12 @@ body.dark{
   display: flex;
   align-items: center;
   color: #888;
-  font-weight: bold;
-  color: #f44;
+  /* font-weight: bold; */
+  color: var(--primary-color);
 
   /* margin-top: calc(2em + 50px); */
 }
+
 .group-name-label{
   margin: 0 0.5em;
   font-size: 14px;
