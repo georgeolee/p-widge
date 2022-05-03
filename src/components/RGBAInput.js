@@ -13,39 +13,49 @@ export function RGBAInput(props){
         timeoutFunc,
     } = props;
 
-    const rgbInputRef = useRef();
-    const alphaInputRef = useRef();
+
     const timeoutRef = useRef(null);
 
+    // get alpha as a hex string
+    const a = alpha > 16 ? alpha.toString(16) : '0' + alpha.toString(16);
     
-    const composeColor = () => {
-        const color = parseHexColorString(rgbInputRef.current.value);
-        color.a = ((Number(alphaInputRef.current.value) / 255) ** 2) * 255;
-        return color;
-    }
+    const colorRef = useRef(parseHexColorString(rgb + a))
 
-    const onChangeAny = () => {        
-        func(composeColor());
+
+    const handleInputAny = () => {        
+        func(colorRef.current)
         if(timeoutRef.current) clearTimeout(timeoutRef.current);
         if(typeof timeoutFunc === 'function') timeoutRef.current = setTimeout(timeoutFunc, timeout);
     };
     
-    
-    //initialize input values
+    const handleRGBInput = evt => {
+        const {r, g, b} = parseHexColorString(evt.target.value);
+        colorRef.current.r = r;
+        colorRef.current.g = g;
+        colorRef.current.b = b;        
+        handleInputAny();
+    }
 
-    useEffect(() => {
-        onChangeAny();
-    })
+    const handleAlphaInput = num => {
+        if(colorRef.current) colorRef.current.a = (num**2)/255;        
+        handleInputAny();
+    };
+    
+
+    // don't need this — handleAlphaInput gets called from Slider after render
+    // useEffect(() => {
+        // func(colorRef.current);
+    // });
 
     return(
         <div className="rgba-picker">
             <div className="rgba-label">{label}</div>
             <label>
-            RGB&emsp;<input type="color" className="rgb-input" defaultValue={rgb} ref={rgbInputRef} onChange={onChangeAny}/>
+            RGB&emsp;<input type="color" className="rgb-input" defaultValue={rgb} onChange={handleRGBInput}/>
             </label>
             <label>                
-            Alpha&emsp;<input type="range" min={0} max={255} step={0.5} className="alpha-input" defaultValue={alpha} ref={alphaInputRef} onChange={onChangeAny}/>
-            {/* Alpha&emsp;<Slider type="range" min={0} max={255} step={0.5} className="alpha-input" ref={alphaInputRef} onChange={onChangeAny}/> */}
+            {/* Alpha&emsp;<input type="range" min={0} max={255} step={0.5} className="alpha-input" defaultValue={alpha} ref={alphaInputRef} onChange={onChangeAny}/> */}
+            Alpha&emsp;<Slider type="range" min={0} max={255} step={0.5} defaultValue={alpha} className="alpha-input" func={handleAlphaInput}/>
             </label>            
         </div>
     );

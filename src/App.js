@@ -106,10 +106,7 @@ function App() {
 
   return (
     <div className="App" onPointerMove={onAppPointerMove}>
-      <h1 className="App-header">
-        p-widget
-        <Slider func={n => console.log(n)} id='test'/>
-      </h1>      
+      <h1 className="App-header">p-widget</h1>      
       
       <div className='controls-left'>        
         
