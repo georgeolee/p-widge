@@ -17,6 +17,7 @@ body{
 body, body *{
   font-family: 'Press Start 2P', 'Courier New', Courier, monospace !important;
   font-size: 8px !important;
+  /* font-size: 16px !important; */
 }
 
 body.dark{
@@ -108,6 +109,11 @@ body.dark{
   margin-top: 2em;
 }
 
+/* same as above, but for older browsers */
+:matches(.controls-right, .controls-left) > :nth-child(n+2):not(.radio+.radio-item){
+  margin-top: 2em;
+}
+
 .radio+.radio{
   margin-top: 0.25em;
 }
@@ -132,14 +138,17 @@ body.dark{
   justify-content: space-around;
 }
 
-.slider{
+.labeled-slider{
   display: grid;
-  grid-template-columns: 60px auto 60px;
+  grid-template-columns: 75px auto 75px;
   font-size: 12px;
 
-  align-items: flex-start;
+  align-items: center;
 }
 
+.labeled-slider .slider-value{
+  margin-left: 1em;
+}
 
 input[type=range], input[type=color]{
   max-width: 100px;
@@ -202,4 +211,8 @@ input[type=range], input[type=color]{
 .group-name-label{
   margin: 0 0.5em;
   font-size: 14px;
+}
+
+#test{
+  width: 200px !important;
 }

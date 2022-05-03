@@ -1,7 +1,7 @@
 import './App.css';
 import {sketch} from './sketch.js';
 import p5 from 'p5';
-import { Slider } from './components/Slider/Slider';
+import { LabeledSlider } from './components/LabeledSlider.js';
 import { Checkbox } from './components/Checkbox';
 import { Radio, RadioHeader } from './components/Radio';
 // import { HR } from './components/HR';
@@ -14,12 +14,17 @@ import { FileInput } from './components/FileInput';
 import { BezierInput } from './components/BezierInput/BezierInput';
 import { GetActiveParticleCount } from './particle-system/Particle';
 
+import { Slider } from './components/Slider/Slider';
+
 /*
 *   TODO: 
+*       -SAFARI - broken, of course ... something with selector mishmash for spacing between elements?
 *       
-*       
-*       
-*       
+*       -finish slider stuff
+*         > ref solution?
+*         > integrate into RGBA input
+*         > labeled slider styling
+*
 *       -github images 
 *       -styling and stuff  ***
 *     
@@ -80,44 +85,48 @@ function App() {
     return () => clearInterval(displayUpdate);
   }, [])
 
-  useEffect(()=>{
-    setTimeout(()=>{
-      const allCaps = parentNode =>{
-        parentNode.childNodes.forEach(node => {
-          if(node.nodeType === node.TEXT_NODE){
-            node.nodeValue = node.nodeValue.toUpperCase();
-          }
+  // TEST FOR ALL CAPS APPEARANCE
+  // useEffect(()=>{
+  //   setTimeout(()=>{
+  //     const allCaps = parentNode =>{
+  //       parentNode.childNodes.forEach(node => {
+  //         if(node.nodeType === node.TEXT_NODE){
+  //           node.nodeValue = node.nodeValue.toUpperCase();
+  //         }
 
-          else if (node.childNodes.length > 0){
-            allCaps(node);
-          }
-        });        
-      }
+  //         else if (node.childNodes.length > 0){
+  //           allCaps(node);
+  //         }
+  //       });        
+  //     }
 
-      allCaps(document.body)
-    }, 1000)
-  })
+  //     allCaps(document.body)
+  //   }, 1000)
+  // })
 
   return (
     <div className="App" onPointerMove={onAppPointerMove}>
-      <h1 className="App-header">p-widget</h1>      
+      <h1 className="App-header">
+        p-widget
+        <Slider func={n => console.log(n)} id='test'/>
+      </h1>      
       
       <div className='controls-left'>        
         
         <GroupName label='Particle Lifetime'/>
-        <Slider label='Seconds' min={0} max={5} step={0.01} func={n => particleSettings.particleLifetime = n}/>
+        <LabeledSlider label='Seconds' min={0} max={5} step={0.01} func={n => particleSettings.particleLifetime = n}/>
         
         
         <GroupName label='Size'/>
-        <Slider label='Max' min={0} max={200} step={1} defaultValue={150} func={n => particleSettings.particleBaseSize = n}/>
-        <Slider label='Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSizeRandomFactor = n}/>
+        <LabeledSlider label='Max' min={0} max={200} step={1} defaultValue={150} func={n => particleSettings.particleBaseSize = n}/>
+        <LabeledSlider label='Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSizeRandomFactor = n}/>
         <BezierInput labelTop='Size Curve' labelY='<— Size' labelX='Particle Lifetime —>' points={[0,0.4,   0.5,1,   0.2,0.3,   1,0]} func={lookups => particleSettings.sizeTable = lookups}/>        
         
         
 
         <GroupName label='Speed'/>
-        <Slider label='Max' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
-        <Slider label='Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSpeedRandomFactor = n}/>
+        <LabeledSlider label='Max' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
+        <LabeledSlider label='Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSpeedRandomFactor = n}/>
         <BezierInput labelTop='Speed Curve' labelY='<— Speed' labelX='Particle Lifetime —>' points={[0,0.7,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
 
       </div>
@@ -132,10 +141,10 @@ function App() {
       <div className='controls-right'>
 
         <GroupName label='Emitter Settings'/>
-        <Slider label='emit / sec' min={0} max={500} step={1} func={n => particleSettings.rate = n}/>
-        <Slider label='arc' min={0} max={360} step={1}  defaultValue={360} func={n => particleSettings.arc = n}/>
-        <Slider label='rotation' min={0} max={360} step={1} defaultValue={0} func={n => particleSettings.rotation = n}/>
-        <Slider label='size' min={0} max={100} step={1} defaultValue={50} func={n => particleSettings.emitterSize = n}/>
+        <LabeledSlider label='emit / sec' min={0} max={500} step={1} func={n => particleSettings.rate = n}/>
+        <LabeledSlider label='arc' min={0} max={360} step={1}  defaultValue={360} func={n => particleSettings.arc = n}/>
+        <LabeledSlider label='rotation' min={0} max={360} step={1} defaultValue={0} func={n => particleSettings.rotation = n}/>
+        <LabeledSlider label='size' min={0} max={100} step={1} defaultValue={50} func={n => particleSettings.emitterSize = n}/>
         <Checkbox label='auto emit' func={b => {particleSettings.emitAuto = b; flags.emitTimerReset = true}} checked/>
         <Checkbox label='rotate particles by velocity' func={b => particleSettings.rotateByVelocity = b}/>
         <Checkbox label='image smoothing' func={b => flags.setImageSmoothing = b}/>

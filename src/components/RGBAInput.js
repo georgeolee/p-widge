@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { parseHexColorString } from "../utilities";
+import { Slider } from "./Slider/Slider";
 
 export function RGBAInput(props){
  
@@ -29,11 +30,8 @@ export function RGBAInput(props){
         if(typeof timeoutFunc === 'function') timeoutRef.current = setTimeout(timeoutFunc, timeout);
     };
     
+    
     //initialize input values
-    useEffect(()=>{
-        rgbInputRef.current.value = rgb;
-        alphaInputRef.current.value = alpha;
-    }, [rgb, alpha]);
 
     useEffect(() => {
         onChangeAny();
@@ -43,10 +41,11 @@ export function RGBAInput(props){
         <div className="rgba-picker">
             <div className="rgba-label">{label}</div>
             <label>
-            RGB&emsp;<input type="color" className="rgb-input" ref={rgbInputRef} onChange={onChangeAny}/>
+            RGB&emsp;<input type="color" className="rgb-input" defaultValue={rgb} ref={rgbInputRef} onChange={onChangeAny}/>
             </label>
-            <label>
-            Alpha&emsp;<input type="range" min={0} max={255} step={0.5} className="alpha-input" ref={alphaInputRef} onChange={onChangeAny}/>
+            <label>                
+            Alpha&emsp;<input type="range" min={0} max={255} step={0.5} className="alpha-input" defaultValue={alpha} ref={alphaInputRef} onChange={onChangeAny}/>
+            {/* Alpha&emsp;<Slider type="range" min={0} max={255} step={0.5} className="alpha-input" ref={alphaInputRef} onChange={onChangeAny}/> */}
             </label>            
         </div>
     );
