@@ -42,12 +42,14 @@
   border-radius: 0.5em;
 
   top:max(100%, 2.5em);
+  left: 0;
+  
   color: #444;
   padding: 2em;
   line-height: 1.75em;
   content: attr(data-tooltip);    
 
-  max-width: 300px;
+  max-width: 200px;
   width: max-content;
   
   font-size: 8px;
@@ -170,6 +172,10 @@ body .App .bezier-input{
   --bezier-canvas-border: var(--low-contrast-color);
   --bezier-control-stroke: var(--low-contrast-color);
 
+
+
+  /* test */
+  /* --bezier-canvas-border: #444; */
 }
 
 

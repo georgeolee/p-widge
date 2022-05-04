@@ -16,8 +16,11 @@ import { GetActiveParticleCount } from './particle-system/Particle';
 /*
 *   TODO: 
 *       
-*       tooltips?
+*       tooltips - size / positioning ; 300px + padding pushes past viewport width on right side controls; show on different side for each col?
+*       continue tooltips - rgba
 *       continue stylesheet cleanup
+*       theme cleanup
+*       control cleanup
 *
 *       -github images 
 *       -styling and stuff  ***
@@ -88,17 +91,45 @@ function App() {
       <div className='controls-left'>        
         
         <GroupName label='Lifetime'/>
-        <LabeledSlider label='Seconds' min={0} max={5} step={0.01} func={n => particleSettings.particleLifetime = n}/>
+        <LabeledSlider 
+          label='Lifetime' 
+          min={0} 
+          max={5} 
+          step={0.01} 
+          func={n => particleSettings.particleLifetime = n}
+          suffix=' s'
+          tooltip='How many seconds each particle remains active for after being emitted.'/>
         
         
         <GroupName label='Size'/>
-        <LabeledSlider label='Max' min={0} max={200} step={1} defaultValue={150} func={n => particleSettings.particleBaseSize = n}/>
-        <LabeledSlider label='Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSizeRandomFactor = n}/>
-        <BezierInput labelTop='Size Curve' labelY='<— Size' labelX='Particle Lifetime —>' points={[0,0.4,   0.5,1,   0.2,0.3,   1,0]} func={lookups => particleSettings.sizeTable = lookups}/>        
+        <LabeledSlider 
+          label='Max' 
+          min={0} 
+          max={200} 
+          step={1} 
+          defaultValue={150} 
+          func={n => particleSettings.particleBaseSize = n}
+          tooltip='Max size of each particle, before applying randomness.'/>
         
+        <LabeledSlider 
+          label='Random Factor' 
+          min={0} 
+          max={1} 
+          step={0.01} 
+          func={n => particleSettings.particleSizeRandomFactor = n}
+          tooltip='size'/>
         
+        <div className='bezier-tooltip' data-tooltip='size curve'>
+          <BezierInput 
+            labelTop='Size Curve' 
+            labelY='<— Size' 
+            labelX='Particle Lifetime —>' 
+            points={[0,0.4,   0.5,1,   0.2,0.3,   1,0]} 
+            func={lookups => particleSettings.sizeTable = lookups}/>                
+        </div>        
 
         <GroupName label='Speed'/>
+
         <LabeledSlider 
           label='Max' 
           min={0} 
@@ -114,15 +145,15 @@ function App() {
           max={1} 
           step={0.01} 
           func={n => particleSettings.particleSpeedRandomFactor = n}
-          tooltip='rando'/>
+          tooltip='The max speed of each emitted particle gets multiplied by a random number between 1 and 1 minus this number.'/>
         
         <div className='bezier-tooltip' data-tooltip="Modifies the speed of a particle over its lifetime. Click and drag to edit the curve points.">
-        <BezierInput 
-          labelTop='Speed Curve' 
-          labelY='<— Speed' 
-          labelX='Particle Lifetime —>' 
-          points={[0,0.7,   0.5,1,   0.5,0,   1,1]} 
-          func={lookups => particleSettings.speedTable = lookups}/>
+          <BezierInput 
+            labelTop='Speed Curve' 
+            labelY='<— Speed' 
+            labelX='Particle Lifetime —>' 
+            points={[0,0.7,   0.5,1,   0.5,0,   1,1]} 
+            func={lookups => particleSettings.speedTable = lookups}/>
         </div>
 
       </div>
@@ -259,9 +290,30 @@ function App() {
       <div className='controls-center'>
         <GroupName label="Colors"/>
         <div className='color-inputs'>
-          <RGBAInput label='start color' rgb='#ff6600' alpha={255} func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} timeoutFunc={()=> flags.slowRecolor = true} timeout={500}/>
-          <RGBAInput label='end color' rgb='#ff0066' alpha={0} func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} timeoutFunc={()=> flags.slowRecolor = true} timeout={500}/>
-          <RGBAInput label='background color' rgb='#000000' alpha={255} func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}/>
+          <RGBAInput 
+            label='start color' 
+            rgb='#ff6600' 
+            alpha={255} 
+            func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} 
+            timeoutFunc={()=> flags.slowRecolor = true} 
+            timeout={500}
+            tooltip='Tint color for each particle at the start of its lifetime.&#xa;Particle tint will transition between this and end color over its lifetime.'/>
+
+          <RGBAInput 
+            label='end color' 
+            rgb='#ff0066' 
+            alpha={0} 
+            func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} 
+            timeoutFunc={()=> flags.slowRecolor = true} 
+            timeout={500}
+            tooltip='Tint color for each particle at the end of its lifetime.'/>
+            
+          <RGBAInput 
+            label='background color' 
+            rgb='#000000' 
+            alpha={255} 
+            func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}
+            tooltip='Background color to paint over canvas at the start of each frame. &#xa; If alpha is less than fully opaque, some of the previous frame will remain.'/>
         </div>        
       </div>
 

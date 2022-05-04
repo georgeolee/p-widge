@@ -11,6 +11,7 @@ export function RGBAInput(props){
         func = color => console.log(color),
         timeout = 100,
         timeoutFunc,
+        tooltip,
     } = props;
 
 
@@ -48,7 +49,7 @@ export function RGBAInput(props){
     // });
 
     return(
-        <div className="rgba-picker">
+        <div className="rgba-picker" data-tooltip={tooltip}>
             <div className="rgba-label">{label}</div>
             <label>
             RGB&emsp;<input type="color" className="rgb-input" defaultValue={rgb} onChange={handleRGBInput}/>
