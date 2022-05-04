@@ -1,7 +1,5 @@
 import { useEffect, useRef } from "react";
 
-//label to right or left??????? BIG QUESTIONS?!
-
 export function Checkbox(props){
 
     const inputRef = useRef();
@@ -11,6 +9,7 @@ export function Checkbox(props){
         label = 'Checkbox',
         init = true,
         func = b => console.log(`checkbox value: ${b}`),
+        tooltip,
     } = props;
 
     const onChange = e => func(e.target.checked);
@@ -22,7 +21,7 @@ export function Checkbox(props){
 
     return(
         <div className="checkbox">            
-            <input type="checkbox" className="checkbox-input" ref={inputRef} onChange={onChange}/>
+            <input type="checkbox" className="checkbox-input" ref={inputRef} onChange={onChange} data-tooltip={tooltip}/>
             <div className="checkbox-label">{label}</div>
         </div>
     );

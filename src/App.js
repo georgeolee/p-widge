@@ -4,7 +4,6 @@ import p5 from 'p5';
 import { LabeledSlider } from './components/LabeledSlider.js';
 import { Checkbox } from './components/Checkbox';
 import { Radio, RadioHeader } from './components/Radio';
-// import { HR } from './components/HR';
 import { GroupName } from './components/GroupName';
 import {useRef, useEffect} from 'react';
 import { mouse, particleSettings, flags, fps } from './globals';
@@ -85,8 +84,7 @@ function App() {
 
   return (
     <div className="App" onPointerMove={onAppPointerMove}>
-      <h1 className="App-header">p-widget</h1>      
-      
+      <h1 className="App-header" data-tooltip="words and stuff">p-widget</h1>            
       <div className='controls-left'>        
         
         <GroupName label='Lifetime'/>
@@ -101,9 +99,31 @@ function App() {
         
 
         <GroupName label='Speed'/>
-        <LabeledSlider label='Max' min={0} max={500} step={1} defaultValue={175} func={n => particleSettings.particleBaseSpeed = n}/>
-        <LabeledSlider label='Random Factor' min={0} max={1} step={0.01} func={n => particleSettings.particleSpeedRandomFactor = n}/>
-        <BezierInput labelTop='Speed Curve' labelY='<— Speed' labelX='Particle Lifetime —>' points={[0,0.7,   0.5,1,   0.5,0,   1,1]} func={lookups => particleSettings.speedTable = lookups}/>
+        <LabeledSlider 
+          label='Max' 
+          min={0} 
+          max={500} 
+          step={1} 
+          defaultValue={175} 
+          func={n => particleSettings.particleBaseSpeed = n}
+          tooltip='Set the maximum particle speed. This corresponds to the top of the bezier graph below.'/>
+
+        <LabeledSlider 
+          label='Random Factor' 
+          min={0} 
+          max={1} 
+          step={0.01} 
+          func={n => particleSettings.particleSpeedRandomFactor = n}
+          tooltip='rando'/>
+        
+        <div className='bezier-tooltip' data-tooltip="Modifies the speed of a particle over its lifetime. Click and drag to edit the curve points.">
+        <BezierInput 
+          labelTop='Speed Curve' 
+          labelY='<— Speed' 
+          labelX='Particle Lifetime —>' 
+          points={[0,0.7,   0.5,1,   0.5,0,   1,1]} 
+          func={lookups => particleSettings.speedTable = lookups}/>
+        </div>
 
       </div>
       
@@ -117,31 +137,120 @@ function App() {
       <div className='controls-right'>
 
         <GroupName label='Emitter Settings'/>
-        <LabeledSlider label='rate' min={0} max={500} step={1} suffix='/s' func={n => particleSettings.rate = n}/>
-        <LabeledSlider label='arc' min={0} max={360} step={1} suffix='º' defaultValue={360} func={n => particleSettings.arc = n}/>
-        <LabeledSlider label='rotation' min={0} max={360} step={1} suffix='º' defaultValue={0} func={n => particleSettings.rotation = n}/>
-        <LabeledSlider label='size' min={0} max={100} step={1} suffix='%' defaultValue={50} func={n => particleSettings.emitterSize = n}/>
-        <Checkbox label='auto emit' func={b => {particleSettings.emitAuto = b; flags.emitTimerReset = true}} checked/>
-        <Checkbox label='rotate particles by velocity' func={b => particleSettings.rotateByVelocity = b}/>
-        <Checkbox label='image smoothing' func={b => flags.setImageSmoothing = b}/>
+        
+        <LabeledSlider 
+          label='rate' 
+          min={0} 
+          max={500} 
+          step={1} 
+          suffix='/s' 
+          func={n => particleSettings.rate = n}
+          tooltip='Set the number of particles emitted per second.'/>
+        
+        <LabeledSlider 
+          label='arc' 
+          min={0} 
+          max={360} 
+          step={1} 
+          suffix='º' 
+          defaultValue={360} 
+          func={n => particleSettings.arc = n}
+          tooltip='Set the emission arc for each point defined by the current emitter.'/>
+        
+        <LabeledSlider 
+          label='rotation' 
+          min={0} 
+          max={360} 
+          step={1} 
+          suffix='º' 
+          defaultValue={0} 
+          func={n => particleSettings.rotation = n}
+          tooltip='Rotate the entire emitter around its center.'/>
+        
+        <LabeledSlider 
+          label='size' 
+          min={0} 
+          max={100} 
+          step={1} 
+          suffix='%' 
+          defaultValue={50} 
+          func={n => particleSettings.emitterSize = n}
+          tooltip='Set emitter size as a percentage of canvas size. Has no effect on the default emitter, which is a single point.'/>
+        
+        <Checkbox 
+          label='auto emit' 
+          func={b => {particleSettings.emitAuto = b; flags.emitTimerReset = true}} 
+          tooltip='Emit particles continuously. If unchecked, you can still click + hold over the canvas to spawn particles.'
+          checked/>
 
-        <FileInput label='Load Particle Image' func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}/>
+        <Checkbox 
+          label='rotate image by velocity' 
+          func={b => particleSettings.rotateByVelocity = b}
+          tooltip='Rotate particle images to match the direction of their movement.&#xa;SLOW!'/>
 
-        <FileInput label='Load Emission Map' func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}/>
+        <Checkbox 
+          label='image smoothing' 
+          func={b => flags.setImageSmoothing = b}
+          tooltip='Toggles bilinear filtering on or off.&#xa;&#xa;SLOW! Leave this off by default.'/>
+
+        
+        <FileInput 
+            label='Load Particle Image' 
+            func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}
+            tooltip="Import a PNG image to use for particles."
+            />          
+        
+        <FileInput 
+          label='Load E-Map' 
+          func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}
+          tooltip="Import a PNG image that defines a set of particle emission vectors."
+          />
+        
 
         <div style={{display:'flex', justifyContent:'space-between'}}>
           <div>
-            <RadioHeader label='Blend Mode'/>
-            <Radio name='blend-mode'label='alpha' func={()=>particleSettings.p5BlendMode = 'blend'} />
-            <Radio name='blend-mode'label='add' func={()=>particleSettings.p5BlendMode = 'add'} checked/>        
-            <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />      
+            <RadioHeader label='Blend Mode' tooltip='Choose how the canvas blends overlapping colors together.'/>
+            <Radio 
+              name='blend-mode'
+              label='alpha' 
+              func={()=>particleSettings.p5BlendMode = 'blend'} 
+              tooltip='"Normal" blend mode. Alpha values are used to blend colors together.'/>
+
+            <Radio 
+              name='blend-mode'
+              label='add' 
+              func={()=>particleSettings.p5BlendMode = 'add'} 
+              tooltip='RGB values are added together. The result is always brighter.' 
+              checked/>
+
+            <Radio 
+              name='blend-mode'
+              label='multiply' 
+              func={()=>particleSettings.p5BlendMode = 'multiply'} 
+              tooltip='RGB values (scaled between 0 and 1) are multiplied together. The result is always darker.&#xa;Note: SLOW!'/>      
+          
           </div>
           
           <div>
-            <RadioHeader label='Editor Theme'/>
-            <Radio name='editor-theme' label='light' func={()=>document.body.classList.remove('dark')} checked={!isNightTime}/>
-            <Radio name='editor-theme' label='dark' func={()=>document.body.classList.add('dark')} checked={isNightTime}/>
+            <RadioHeader label='Editor Theme' tooltip='Choose a color theme for the editor.'/>
+            
+            <Radio 
+              name='editor-theme' 
+              label='light' 
+              func={()=>document.body.classList.remove('dark', 'toast')} 
+              checked={!isNightTime}/>
+
+            <Radio 
+              name='editor-theme' 
+              label='dark' 
+              func={()=>{document.body.classList.remove('toast'); document.body.classList.add('dark')}} 
+              checked={isNightTime}/>
+
+            <Radio name='editor-theme' 
+              label='toast' 
+              func={()=>{document.body.classList.remove('dark', 'light'); document.body.classList.add('toast')}}/>
           </div>
+
         </div>
         
                 

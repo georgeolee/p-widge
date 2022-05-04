@@ -14,6 +14,7 @@ export function LabeledSlider(props){
         func = n => console.log(`${label} value: ${n}`),
         init = true,
         suffix = '',
+        tooltip,
     } = props;
     
     //this gets called on change from inside <Slider/>
@@ -26,7 +27,7 @@ export function LabeledSlider(props){
     return(
         <div className='labeled-slider'>
             <div className='slider-label'>{label}</div>            
-            <Slider className='slider-input' func={handleInput} defaultValue={defaultValue} min={min} max={max} step={step} init={init}/>
+            <Slider className='slider-input' func={handleInput} defaultValue={defaultValue} min={min} max={max} step={step} init={init} tooltip={tooltip}/>
             <div className='slider-value' ref={valueRef}></div>
         </div>
     );

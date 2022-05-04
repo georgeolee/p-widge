@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 
 export function RadioHeader(props){
-    const {label = 'Radio Group'} = props;
+    const {
+        label = 'Radio Group',
+        tooltip } = props;
 
     return(
-        <div className="radio radio-header">
+        <div className="radio radio-header" data-tooltip={tooltip}>
             {label}
         </div>
     );
@@ -19,7 +21,8 @@ export function Radio(props){
         label = 'radio-option-default', 
         func = () => console.log('checked ' + label), 
         checked = false, 
-        init = true } = props;
+        init = true,
+        tooltip } = props;
 
     useEffect(()=>{
         inputRef.current.checked = !!checked;        
@@ -34,6 +37,7 @@ export function Radio(props){
                 type="radio" ref={inputRef} 
                 name={name} 
                 onChange={e => {if(e.target.checked) func?.()}}
+                data-tooltip={tooltip}
             />
             <div className="radio-label">
                 {label}

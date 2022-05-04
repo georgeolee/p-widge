@@ -27,6 +27,53 @@
   --highlight-color-hover: #cf4;
 }
 
+[data-tooltip]{
+ --hover-time: 1s; 
+ position: relative;
+}
+
+[data-tooltip]::after{
+  white-space: pre-wrap;
+  display: block;
+  position: absolute;
+  visibility: hidden;
+  background-color: #ccce;
+
+  border-radius: 0.5em;
+
+  top:max(100%, 2.5em);
+  color: #444;
+  padding: 2em;
+  line-height: 1.75em;
+  content: attr(data-tooltip);    
+
+  max-width: 300px;
+  width: max-content;
+  
+  font-size: 8px;
+  
+  pointer-events: none;
+
+  transition: all 0s;  
+
+  z-index: 10000;
+}
+
+[data-tooltip]:hover::after{
+  visibility: visible;  
+  transition: all 0s var(--hover-time);
+  box-shadow: 0 8px 8px -5px #8888;
+}
+
+.bezier-tooltip{
+  width: fit-content;
+  height: fit-content;
+}
+.bezier-tooltip[data-tooltip]::after{
+  top: 0;
+  left: 100%;
+}
+
 body{
   background-color: var(--background-color);    
   color: var(--body-color); 
@@ -54,9 +101,30 @@ body.dark{
   --highlight-color-hover: #fc9;
 }
 
+body.toast{
+  background: linear-gradient(
+    180deg,
+    #dc9 50%,
+    #278 50%,
+    #278 80%,   
+    #fa9 80%
+  );
+
+  background-attachment: fixed;
+  --background-color: transparent;  
+  --body-color:#ddd;
+
+  --primary-color: #fbb;
+
+  --low-contrast-color: #444;
+  --highlight-color: #fa7;
+  --highlight-color-hover: #fc9;
+
+  color: #888;
+}
 
 
-.dark .App .bezier-input{
+.dark .App .bezier-input, .toast .App .bezier-input{
 
   --bezier-curve-stroke: #fff;
   
@@ -78,12 +146,14 @@ body.dark{
   --group-header-color: #555;
 }
 
-
+.App .slider{
+  --slider-progress-color: var(--primary-color);
+}
 .dark .App .slider{
   --slider-track-color: #888;
   --slider-track-color-hover: #777;
 
-  --slider-progress-color: var(--primary-color);
+  
   /* --slider-progress-color: #c9c; */
   /* --slider-progress-color: #4aa; */
   --slider-progress-color-hover: #f88;
@@ -99,6 +169,7 @@ body .App .bezier-input{
   --bezier-control-handle-stroke: var(--low-contrast-color);
   --bezier-canvas-border: var(--low-contrast-color);
   --bezier-control-stroke: var(--low-contrast-color);
+
 }
 
 
@@ -112,13 +183,14 @@ body .App .bezier-input{
 .App {  
   margin: 50px;
   display: grid;
-  grid-template-columns: 300px var(--col-gap) auto var(--col-gap) 300px;
+  grid-template-columns: var(--col-side) var(--col-gap) auto var(--col-gap) var(--col-side);
   font-size: 14px;
 
   font-size: 12px;
   user-select: none;
   max-width: 1400px;
 
+  --col-side: 300px;
   --col-gap: 50px;
 
   font-size: 8px;
@@ -128,16 +200,6 @@ body .App .bezier-input{
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-input{
-  -webkit-font-smoothing : auto;
-  -moz-osx-font-smoothing: auto;
-}
-
-/* input *{
-  -webkit-font-smoothing : none;
-  -moz-osx-font-smoothing: grayscale;
-} */
 
 .App *{
   font-size: 8px;
@@ -208,22 +270,19 @@ input{
   margin-top: 2em;
 }
 
-
 .controls-left{
   grid-column: 1;  
   grid-row: span 2;
 }
 
+
 .controls-right{
   grid-column: 5;
-
-  /* margin-left: var(--col-gap); */
+  grid-row: span 2;
 }
 
 .controls-center{
   grid-column: 3;
-  display: flex;
-  flex-direction: column;
 }
 
 .controls-center > .color-inputs{
@@ -235,8 +294,6 @@ input{
 .labeled-slider{
   display: grid;
   grid-template-columns: 75px auto 75px;
-  /* font-size: 12px; */
-
   align-items: center;
 }
 
@@ -263,15 +320,19 @@ input[type=range], input[type=color]{
   display: flex;
   flex-direction: column;
   line-height: 2em;
+
+
+  border: 1px solid #8888;
+  margin-top: 2em;
+  border-radius: 0.5em;
+  padding: 5px;
+  background-color: var(--low-contrast-color);
 }
 
 .rgba-picker > *{
   margin-top: 1em;
 }
 .rgba-label{
-  /* font-weight: bold; */
-  /* color: var(--primary-color); */
-  border-bottom: 1px solid #8888;
   margin-bottom: 1em;
 }
 
@@ -286,44 +347,25 @@ input[type=range], input[type=color]{
   margin: 0 0 0 auto;  
 }
 
-.horizontal-rule{
-  /* width: 100%; */
-  display: flex;
-  flex: 1;
-  height: 1px;
-  /* border: 2px outset #888; */
-  background-color: #8888;
-  /* background-color: #f44; */
-}
-
 .group-name{
   display: flex;
   align-items: center;  
   justify-content: center;
-
+  font-size: 16px;
   
   --group-header-color: #aaa;
-  /* font-weight: bold; */
+
   color: var(--primary-color);
-
-  /* margin-top: calc(2em + 50px); */
-
 
   background-color: var(--group-header-color);
   border: 1em outset var(--group-header-color);
   border-radius: 2px;
-  /* border-radius: 8px; */
 }
 
 .App [class*="controls"] > .group-name:not(:first-child){
   margin-top: calc(2em + 50px);
 }
 
-.group-name-label{
-  margin: 0 0.5em;
-  /* font-size: 16px; */
-  font-size: 16px;
-}
 
 .file-input{
   display: flex;
@@ -332,21 +374,18 @@ input[type=range], input[type=color]{
   align-items: center;
 }
 
-.file-input > *+*{
-  margin-right: 1em;
-}
 .file-input input[type="file"]{
   display: none;
 }
 
 .file-input button{
-  padding: 16px;
+  appearance: none; -webkit-appearance: none;  
   --file-button-color: var(--primary-color);
   background-color: var(--file-button-color);
   background-image: url(../public/images/file-open-white.png);
   background-size: contain;
+  padding: 16px;
   border: 1em solid var(--file-button-color);
-  /* border-radius: 0.5em; */
   image-rendering: pixelated;
   box-shadow: 0 0 0 4px #aaa;
   margin: 4px;
@@ -356,17 +395,14 @@ input[type=range], input[type=color]{
   background-image: url(../public/images/file-open-black.png);
 }
 
-.file-input-label::before{  
-  content: ' ';
-}
+.file-input-label::before {  content: ' '; }
 .file-input button:hover{
   --file-button-color: var(--highlight-color-hover);
-  /* background-image: url(../public/images/file-open-black.png); */
   cursor: pointer;
 }
 
 
-input[type="checkbox"]{
+input[type="checkbox"], input[type="radio"]{
   --checkbox-color: var(--neutral-color);  
   --checkbox-color-hover: var(--neutral-color-hover);
   --checkbox-color-checked: var(--highlight-color);
@@ -375,88 +411,33 @@ input[type="checkbox"]{
   appearance: none; -webkit-appearance: none;
   width: 20px;
   height: 20px;
-  
-
   background-color: var(--checkbox-color);  
   border: 4px outset var(--checkbox-color);
-
-  box-shadow: 0 0 0 2px #aaa;
-
-  
+  box-shadow: 0 0 0 2px #aaa;  
 }
 
-input[type="checkbox"]:checked{
+input[type="checkbox"]:checked, input[type="radio"]:checked{
   --checkbox-color: var(--checkbox-color-checked);
   --checkbox-color-hover: var(--checkbox-color-checked-hover);
 
   border-style: inset;
 }
 
-input[type="checkbox"]:hover{
+input[type="checkbox"]:hover, input[type="radio"]:hover{
   --checkbox-color: var(--checkbox-color-hover);
   cursor: pointer;  
 }
 
-.checkbox-label::before{
-  margin:0 1em;
-  content: '-';
-}
 
-
-
-input[type="radio"]{
-  --radio-color: var(--neutral-color);
-  --radio-color-hover: var(--neutral-color-hover);
-  --radio-color-checked: var(--highlight-color);
-  --radio-color-checked-hover: var(--highlight-color-hover);
-
-  appearance: none; -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  background-color: var(--radio-color);  
-  border: 4px outset var(--radio-color);
-  margin: 0;
-  padding: 0; 
-
-  margin: 2px;
-  box-shadow: 0 0 0 2px #aaa;
-}
-
-input[type="radio"]:checked{
-  --radio-color: var(--radio-color-checked);
-  --radio-color-hover: var(--radio-color-checked-hover);
-  border-style: inset;
-}
-
-input[type="radio"]:hover{
-  --radio-color: var(--radio-color-hover);
-  cursor: pointer;
-}
+.radio-label::before, .checkbox-label::before {  content: ' - '; }
 
 .radio-item+.radio-item input[type="radio"]{
   margin-top: 0;
 }
 
-.radio-label::before{
-  /* width: 1em; */
-  padding: 0 1em;
-  content: '-';
-}
-
 .radio-header{
   border-bottom: 1px solid #8888;
   margin-bottom: 1em;
-}
-
-.rgba-label{
-  border: none;  
-}
-.rgba-picker{
-  border: 1px solid #8888;
-  margin-top: 2em;
-  border-radius: 0.5em;
-  padding: 5px;
-  background-color: var(--low-contrast-color);
 }
 
 
