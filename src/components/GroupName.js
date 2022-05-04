@@ -3,9 +3,9 @@ export function GroupName(props){
     const{label = 'Group Name'} = props;
     return(
         <div className="group-name">
-            <HR/>
+            {/* <HR/> */}
             <div className='group-name-label'>{label}</div>
-            <HR/>
+            {/* <HR/> */}
         </div>
     )
 }

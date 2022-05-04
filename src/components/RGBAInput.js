@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { parseHexColorString } from "../utilities";
 import { Slider } from "./Slider/Slider";
 

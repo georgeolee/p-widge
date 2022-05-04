@@ -16,6 +16,7 @@ export function FileInput(props){
     return(
         <div className="file-input">
             <div className="file-input-label">{label}</div>
+            <button className="file-input-button" onClick={e => e.target.parentNode.querySelector('input[type="file"]').click()}/>                        
             <input type="file" accept={accept} className='file-input-button' onChange={onChange}/>
         </div>
     );

@@ -22,7 +22,7 @@ export function Slider(props){
         const normalizedValue = (Number(el.value) - el.min) / (el.max - el.min);
 
         const style = getComputedStyle(el);
-        const thumbWidth = Number(style.getPropertyValue('--thumb-width').replace('px',''));
+        const thumbWidth = Number(style.getPropertyValue('--slider-thumb-width').replace('px',''));
         const sliderWidth = Number(style.getPropertyValue('width').replace('px', ''));
 
         

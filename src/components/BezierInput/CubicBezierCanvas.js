@@ -67,15 +67,15 @@ export class CubicBezierCanvas{
 
     getCanvasColorsFromCSS(){
         const style = getComputedStyle(this.canvas);
-        this.color.curveFill = style.getPropertyValue('--curve-fill') || '4af';
-        this.color.curveStroke = style.getPropertyValue('--curve-stroke') || 'fff';
-        this.color.canvasBorder = style.getPropertyValue('--canvas-border') || '444';
-        this.color.backgroundFill = style.getPropertyValue('--background-fill') || 'eee';
-        this.color.trackStroke = style.getPropertyValue('--track-stroke') || 'aaa';
-        this.color.controlFill = style.getPropertyValue('--control-fill') || '06f';
-        this.color.controlHoverFill = style.getPropertyValue('--control-hover-fill') || '4af'; 
-        this.color.controlStroke = style.getPropertyValue('--control-stroke') || 'fff';
-        this.color.controlHandleStroke = style.getPropertyValue('--control-handle-stroke') || '444';
+        this.color.curveFill = style.getPropertyValue('--bezier-curve-fill') || '4af';
+        this.color.curveStroke = style.getPropertyValue('--bezier-curve-stroke') || 'fff';
+        this.color.canvasBorder = style.getPropertyValue('--bezier-canvas-border') || '444';
+        this.color.backgroundFill = style.getPropertyValue('--bezier-background-fill') || 'eee';
+        this.color.trackStroke = style.getPropertyValue('--bezier-track-stroke') || 'aaa';
+        this.color.controlFill = style.getPropertyValue('--bezier-control-fill') || '06f';
+        this.color.controlHoverFill = style.getPropertyValue('--bezier-control-hover-fill') || '4af'; 
+        this.color.controlStroke = style.getPropertyValue('--bezier-control-stroke') || 'fff';
+        this.color.controlHandleStroke = style.getPropertyValue('--bezier-control-handle-stroke') || '444';
     }
 
     getCanvasDimensionsFromCSS(){

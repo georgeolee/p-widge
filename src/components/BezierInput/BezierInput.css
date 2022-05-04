@@ -7,23 +7,23 @@
     --bezier-canvas-width: 180px;
     --bezier-canvas-height: 150px;    
     
-    --outer-padding: 10px; /*padding around the canvas controls; this is where the labels go*/
+    --bezier-outer-padding: 10px; /*padding around the canvas controls; this is where the labels go*/
 
-    --label-color: #444;
-    --label-font-size: 13px;
+    --bezier-label-color: #444;
+    --bezier-label-font-size: 13px;
     --bezier-background-color: #f4f4f4;
 
 
     /* color properties used by CubicBezierCanvas for drawing to canvas element*/
-    --curve-fill: #4af;
-    --curve-stroke: #fff;
-    --control-fill: #06f;
-    --control-hover-fill: #4af;
-    --control-stroke: #fff;
-    --control-handle-stroke: #444;
-    --canvas-border: #888;
-    --track-stroke: #aaa;
-    --background-fill: #e1e1e1;
+    --bezier-curve-fill: #4af;
+    --bezier-curve-stroke: #fff;
+    --bezier-control-fill: #06f;
+    --bezier-control-hover-fill: #4af;
+    --bezier-control-stroke: #fff;
+    --bezier-control-handle-stroke: #444;
+    --bezier-canvas-border: #888;
+    --bezier-track-stroke: #aaa;
+    --bezier-background-fill: #e1e1e1;
 
 
     box-sizing: border-box;
@@ -33,37 +33,30 @@
     width: fit-content;
     height: fit-content;
 
-    padding: var(--outer-padding);
-    padding-left: calc(var(--outer-padding) + var(--bezier-control-size));    
+    padding: var(--bezier-outer-padding);
+    padding-left: calc(var(--bezier-outer-padding) + var(--bezier-control-size));    
 
     background-color: var(--bezier-background-color);
     border: 1px solid #999;
-    border-radius: calc(var(--outer-padding)/2);
+    border-radius: calc(var(--bezier-outer-padding)/2);
     
 }
 
 .dark .bezier-input{
-    --curve-fill: #4af;
-    /* --curve-fill: #08a; */
-    --curve-fill: #bf4;
-
-    --curve-stroke: #fff;
-    --control-fill: #f44;
-    --control-hover-fill: #f77;
-    --control-stroke: #fff;
-    --control-handle-stroke: #444;
-    --canvas-border: #444;
-    --track-stroke: #aaa;
-    
-    --background-fill: #888;
-
+    --bezier-curve-fill: #4af;    
+    --bezier-curve-fill: #bf4;
+    --bezier-curve-stroke: #fff;
+    --bezier-control-fill: #f44;
+    --bezier-control-hover-fill: #f77;
+    --bezier-control-stroke: #fff;
+    --bezier-control-handle-stroke: #444;
+    --bezier-canvas-border: #444;
+    --bezier-track-stroke: #aaa;    
+    --bezier-background-fill: #888;
     --bezier-background-color: #444;
-    --label-color: #ddd;
+    --bezier-label-color: #ddd;
 }
 
-.bezier-input.purple{
-    --curve-fill: #82f;
-}
 
 .bezier-canvas{
     display: flex;
@@ -85,13 +78,13 @@
     justify-content: center;
     align-items: center;    
 
-    color: var(--label-color);
-    font-size: var(--label-font-size);
+    color: var(--bezier-label-color);
+    font-size: var(--bezier-label-font-size);
 }
 
 .bezier-label-top, .bezier-label-x{
     width: calc(100% - var(--bezier-control-size));
-    height: calc(var(--outer-padding) + var(--bezier-control-size));
+    height: calc(var(--bezier-outer-padding) + var(--bezier-control-size));
 }
 
 .bezier-label-top{
@@ -108,8 +101,8 @@
     left:0;
     top:0;
 
-    height: calc(var(--outer-padding) + var(--bezier-control-size));
-    width: calc(var(--bezier-canvas-height) + 2*var(--outer-padding));
+    height: calc(var(--bezier-outer-padding) + var(--bezier-control-size));
+    width: calc(var(--bezier-canvas-height) + 2*var(--bezier-outer-padding));
     transform: translate(0,-100%) rotate(90deg);
     transform-origin: 0 100%;
 }

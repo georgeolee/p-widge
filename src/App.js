@@ -14,16 +14,11 @@ import { FileInput } from './components/FileInput';
 import { BezierInput } from './components/BezierInput/BezierInput';
 import { GetActiveParticleCount } from './particle-system/Particle';
 
-import { Slider } from './components/Slider/Slider';
-
 /*
 *   TODO: 
-*       -SAFARI - broken, of course ... something with selector mishmash for spacing between elements?
 *       
-*       -finish slider stuff
-*         > ref solution?
-*         > integrate into RGBA input
-*         > labeled slider styling
+*       tooltips?
+*       continue stylesheet cleanup
 *
 *       -github images 
 *       -styling and stuff  ***
@@ -55,7 +50,7 @@ function App() {
   }
 
   const now = new Date();
-  const isNightTime = now.getHours() < 6 || now.getHours > 18;
+  const isNightTime = now.getHours() < 6 || now.getHours() > 18;
 
 
   const p5ContainerRef = useRef();
@@ -82,27 +77,11 @@ function App() {
       particleCountDisplay.textContent = `particle count: ${GetActiveParticleCount()}`;
       }, 100);
 
+      console.log(getComputedStyle(document.body).getPropertyValue('font-family'))
+
     return () => clearInterval(displayUpdate);
   }, [])
 
-  // TEST FOR ALL CAPS APPEARANCE
-  // useEffect(()=>{
-  //   setTimeout(()=>{
-  //     const allCaps = parentNode =>{
-  //       parentNode.childNodes.forEach(node => {
-  //         if(node.nodeType === node.TEXT_NODE){
-  //           node.nodeValue = node.nodeValue.toUpperCase();
-  //         }
-
-  //         else if (node.childNodes.length > 0){
-  //           allCaps(node);
-  //         }
-  //       });        
-  //     }
-
-  //     allCaps(document.body)
-  //   }, 1000)
-  // })
 
   return (
     <div className="App" onPointerMove={onAppPointerMove}>
@@ -110,7 +89,7 @@ function App() {
       
       <div className='controls-left'>        
         
-        <GroupName label='Particle Lifetime'/>
+        <GroupName label='Lifetime'/>
         <LabeledSlider label='Seconds' min={0} max={5} step={0.01} func={n => particleSettings.particleLifetime = n}/>
         
         
@@ -138,32 +117,43 @@ function App() {
       <div className='controls-right'>
 
         <GroupName label='Emitter Settings'/>
-        <LabeledSlider label='emit / sec' min={0} max={500} step={1} func={n => particleSettings.rate = n}/>
-        <LabeledSlider label='arc' min={0} max={360} step={1}  defaultValue={360} func={n => particleSettings.arc = n}/>
-        <LabeledSlider label='rotation' min={0} max={360} step={1} defaultValue={0} func={n => particleSettings.rotation = n}/>
-        <LabeledSlider label='size' min={0} max={100} step={1} defaultValue={50} func={n => particleSettings.emitterSize = n}/>
+        <LabeledSlider label='rate' min={0} max={500} step={1} suffix='/s' func={n => particleSettings.rate = n}/>
+        <LabeledSlider label='arc' min={0} max={360} step={1} suffix='º' defaultValue={360} func={n => particleSettings.arc = n}/>
+        <LabeledSlider label='rotation' min={0} max={360} step={1} suffix='º' defaultValue={0} func={n => particleSettings.rotation = n}/>
+        <LabeledSlider label='size' min={0} max={100} step={1} suffix='%' defaultValue={50} func={n => particleSettings.emitterSize = n}/>
         <Checkbox label='auto emit' func={b => {particleSettings.emitAuto = b; flags.emitTimerReset = true}} checked/>
         <Checkbox label='rotate particles by velocity' func={b => particleSettings.rotateByVelocity = b}/>
         <Checkbox label='image smoothing' func={b => flags.setImageSmoothing = b}/>
 
-        <FileInput label='Particle Image' func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}/>
+        <FileInput label='Load Particle Image' func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}/>
 
-        <FileInput label='Emission Map' func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}/>
+        <FileInput label='Load Emission Map' func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}/>
 
-        <RadioHeader label='Blend Mode'/>
-        <Radio name='blend-mode'label='alpha' func={()=>particleSettings.p5BlendMode = 'blend'} />
-        <Radio name='blend-mode'label='add' func={()=>particleSettings.p5BlendMode = 'add'} checked/>        
-        <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />      
+        <div style={{display:'flex', justifyContent:'space-between'}}>
+          <div>
+            <RadioHeader label='Blend Mode'/>
+            <Radio name='blend-mode'label='alpha' func={()=>particleSettings.p5BlendMode = 'blend'} />
+            <Radio name='blend-mode'label='add' func={()=>particleSettings.p5BlendMode = 'add'} checked/>        
+            <Radio name='blend-mode'label='multiply' func={()=>particleSettings.p5BlendMode = 'multiply'} />      
+          </div>
+          
+          <div>
+            <RadioHeader label='Editor Theme'/>
+            <Radio name='editor-theme' label='light' func={()=>document.body.classList.remove('dark')} checked={!isNightTime}/>
+            <Radio name='editor-theme' label='dark' func={()=>document.body.classList.add('dark')} checked={isNightTime}/>
+          </div>
+        </div>
         
-        <RadioHeader label='Editor Theme'/>
-        <Radio name='editor-theme' label='light' func={()=>document.body.classList.remove('dark')} checked={!isNightTime}/>
-        <Radio name='editor-theme' label='dark' func={()=>document.body.classList.add('dark')} checked={isNightTime}/>
+                
       </div>      
 
       <div className='controls-center'>
-        <RGBAInput label='start color' rgb='#ff6600' alpha={255} func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} timeoutFunc={()=> flags.slowRecolor = true} timeout={500}/>
-        <RGBAInput label='end color' rgb='#ff0066' alpha={0} func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} timeoutFunc={()=> flags.slowRecolor = true} timeout={500}/>
-        <RGBAInput label='background color' rgb='#000000' alpha={255} func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}/>
+        <GroupName label="Colors"/>
+        <div className='color-inputs'>
+          <RGBAInput label='start color' rgb='#ff6600' alpha={255} func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} timeoutFunc={()=> flags.slowRecolor = true} timeout={500}/>
+          <RGBAInput label='end color' rgb='#ff0066' alpha={0} func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} timeoutFunc={()=> flags.slowRecolor = true} timeout={500}/>
+          <RGBAInput label='background color' rgb='#000000' alpha={255} func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}/>
+        </div>        
       </div>
 
     </div>

@@ -6,31 +6,31 @@
     
     --slider-progress-percent: 50%;
   
-    --track-height: 12px;    
+    --slider-track-height: 12px;    
 
-    --thumb-width: 16px;
-    --thumb-height: var(--thumb-width);
-    --progress-color: #f44;
-    --progress-color-hover:#f66;
+    --slider-thumb-width: 16px;
+    --slider-thumb-height: var(--slider-thumb-width);
+    --slider-progress-color: #f44;
+    --slider-progress-color-hover:#f66;
   
-    --track-color: #aaa;
-    --track-color-hover: #bbb;
+    --slider-track-color: #aaa;
+    --slider-track-color-hover: #bbb;
   
-    --thumb-color: var(--progress-color);
-    --thumb-color-hover: var(--progress-color-hover);
+    --slider-thumb-color: var(--slider-progress-color);
+    --slider-thumb-color-hover: var(--slider-progress-color-hover);
   
-    border-radius: calc(var(--track-height)/2);
+    border-radius: calc(var(--slider-track-height)/2);
   }
   
   .slider::-webkit-slider-runnable-track{
-    background: var(--track-color);
-    height: var(--track-height);
-    border-radius: calc(var(--track-height) / 2);
+    background: var(--slider-track-color);
+    height: var(--slider-track-height);
+    border-radius: calc(var(--slider-track-height) / 2);
 
     background-image: linear-gradient(
         90deg,
-        var(--progress-color) var(--slider-progress-percent),
-        var(--track-color) var(--slider-progress-percent)
+        var(--slider-progress-color) var(--slider-progress-percent),
+        var(--slider-track-color) var(--slider-progress-percent)
     );
 
   }
@@ -38,22 +38,22 @@
   .slider:hover::-webkit-slider-runnable-track{
     background-image: linear-gradient(
         90deg,
-        var(--progress-color-hover) var(--slider-progress-percent),
-        var(--track-color-hover) var(--slider-progress-percent)
+        var(--slider-progress-color-hover) var(--slider-progress-percent),
+        var(--slider-track-color-hover) var(--slider-progress-percent)
     );
   }
 
   .slider::-webkit-slider-thumb{
     -webkit-appearance: none;
-    height: var(--thumb-height);
-    width: var(--thumb-width);
-    border-radius: calc(var(--thumb-height)/2);
-    background-color: var(--thumb-color);
-    margin-top: calc(var(--track-height)/2 - var(--thumb-height)/2);  
+    height: var(--slider-thumb-height);
+    width: var(--slider-thumb-width);
+    border-radius: calc(var(--slider-thumb-height)/2);
+    background-color: var(--slider-thumb-color);
+    margin-top: calc(var(--slider-track-height)/2 - var(--slider-thumb-height)/2);  
   }
   
   .slider:hover::-webkit-slider-thumb{
-      background-color: var(--thumb-color-hover);
+      background-color: var(--slider-thumb-color-hover);
   }
 
 
@@ -67,22 +67,22 @@
 
 
   .slider::-moz-range-track{
-    /* background: var(--track-color); */
-    height: var(--track-height);
-    border-radius: calc(var(--track-height) / 2);
+    /* background: var(--slider-track-color); */
+    height: var(--slider-track-height);
+    border-radius: calc(var(--slider-track-height) / 2);
   
     background-image: linear-gradient(
         90deg,
-        var(--progress-color) var(--slider-progress-percent),
-        var(--track-color) var(--slider-progress-percent)
+        var(--slider-progress-color) var(--slider-progress-percent),
+        var(--slider-track-color) var(--slider-progress-percent)
     );
   }
   
   .slider:hover::-moz-range-track{
     background-image: linear-gradient(
         90deg,
-        var(--progress-color-hover) var(--slider-progress-percent),
-        var(--track-color-hover) var(--slider-progress-percent)
+        var(--slider-progress-color-hover) var(--slider-progress-percent),
+        var(--slider-track-color-hover) var(--slider-progress-percent)
     );
   }
   
@@ -90,15 +90,15 @@
   
   .slider::-moz-range-thumb{
     /* -webkit-appearance: none; */
-    margin-top: calc(var(--track-height/2) - var(--thumb-height)/2);
-    height: var(--thumb-height);
-    width: var(--thumb-width);
-    border-radius: calc(var(--thumb-height)/2);
-    background-color: var(--thumb-color);
+    margin-top: calc(var(--slider-track-height/2) - var(--slider-thumb-height)/2);
+    height: var(--slider-thumb-height);
+    width: var(--slider-thumb-width);
+    border-radius: calc(var(--slider-thumb-height)/2);
+    background-color: var(--slider-thumb-color);
     border: none;  
   }
 
   .slider:hover::-moz-range-thumb{
-      background-color: var(--thumb-color-hover);
+      background-color: var(--slider-thumb-color-hover);
   }
   

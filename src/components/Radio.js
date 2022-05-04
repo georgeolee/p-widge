@@ -1,13 +1,11 @@
 import { useEffect, useRef } from "react";
-import { HR } from "./HR";
 
 export function RadioHeader(props){
     const {label = 'Radio Group'} = props;
 
     return(
         <div className="radio radio-header">
-            <div>{label}</div>
-            <HR/>
+            {label}
         </div>
     );
 }

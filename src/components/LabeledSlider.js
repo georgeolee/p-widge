@@ -1,10 +1,9 @@
-import {useEffect, useRef} from 'react';
+import {useRef} from 'react';
 import { Slider } from './Slider/Slider';
 
 
 export function LabeledSlider(props){
     const valueRef = useRef();
-    const inputRef = useRef();
     
     const {
         label = 'Slider',
@@ -14,22 +13,18 @@ export function LabeledSlider(props){
         defaultValue = (min + max) / 2,
         func = n => console.log(`${label} value: ${n}`),
         init = true,
+        suffix = '',
     } = props;
     
-    
+    //this gets called on change from inside <Slider/>
+    //and also on render, if init is true
     const handleInput = num => {
-        valueRef.current.textContent = num;
+        valueRef.current.textContent = num + suffix;
         func?.(num);
     }    
 
-    useEffect(()=>{       
-        const sliderValue = valueRef.current.parentNode.querySelector('input').value;
-        valueRef.current.textContent = sliderValue;
-        if(init) func?.(Number(sliderValue));
-    });
-
     return(
-        <div className='slider labeled-slider'>
+        <div className='labeled-slider'>
             <div className='slider-label'>{label}</div>            
             <Slider className='slider-input' func={handleInput} defaultValue={defaultValue} min={min} max={max} step={step} init={init}/>
             <div className='slider-value' ref={valueRef}></div>
