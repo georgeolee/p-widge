@@ -13,10 +13,17 @@ import { FileInput } from './components/FileInput';
 import { BezierInput } from './components/BezierInput/BezierInput';
 import { GetActiveParticleCount } from './particle-system/Particle';
 
+
 /*
 *   TODO: 
 *       
-*       tooltips - size / positioning ; 300px + padding pushes past viewport width on right side controls; show on different side for each col?
+*
+*       -figure out font situation *** 
+*       -emap link & icon cleanup ; black open icon rework?       
+*       
+
+*       -delete filter stuff
+*      
 *       continue tooltips - rgba
 *       continue stylesheet cleanup
 *       theme cleanup
@@ -34,6 +41,7 @@ import { GetActiveParticleCount } from './particle-system/Particle';
 *         
 *
 */
+
 
 function App() {
 
@@ -86,7 +94,10 @@ function App() {
 
 
   return (
-    <div className="App" onPointerMove={onAppPointerMove}>
+    <div className="App" onPointerMove={onAppPointerMove}>      
+
+
+
       <h1 className="App-header" data-tooltip="words and stuff">p-widget</h1>            
       <div className='controls-left'>        
         
@@ -224,18 +235,20 @@ function App() {
           func={b => flags.setImageSmoothing = b}
           tooltip='Toggles bilinear filtering on or off.&#xa;&#xa;SLOW! Leave this off by default.'/>
 
+        <div style={{display:'flex'}}>
+          <FileInput 
+              label='Load Particle Image' 
+              func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}
+              tooltip="Import a PNG image to use for particles."
+              />          
+          
+          <FileInput 
+            label='Load E-Map' 
+            func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}
+            tooltip="Import a PNG image that defines a set of particle emission vectors."
+            />
+        </div>
         
-        <FileInput 
-            label='Load Particle Image' 
-            func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}
-            tooltip="Import a PNG image to use for particles."
-            />          
-        
-        <FileInput 
-          label='Load E-Map' 
-          func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}
-          tooltip="Import a PNG image that defines a set of particle emission vectors."
-          />
         
 
         <div style={{display:'flex', justifyContent:'space-between'}}>
@@ -284,7 +297,10 @@ function App() {
 
         </div>
         
-                
+        <div style={{display:'flex', alignItems:'center'}}>
+          <a href="https://georgelee.space/build" target='_blank'></a> create an emission map
+        </div>
+
       </div>      
 
       <div className='controls-center'>

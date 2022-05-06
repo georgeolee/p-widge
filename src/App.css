@@ -7,6 +7,50 @@
 
 }
 
+@font-face {
+  font-family: 'visitor2';
+  src: url('./fonts/visitor2.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'basis33';
+  src: url('./fonts/basis33/basis33-webfont.woff2') format('woff2'),
+       url('./fonts/basis33/basis33-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[href^="https://georgelee.space"]{
+  text-decoration: none;
+  color: var(--primary-color);
+  font-size: 16px;
+}
+[href^="https://georgelee.space"]{
+  background-image: url(../public/images/link-black.png);
+  image-rendering: pixelated;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-color: var(--primary-color);
+  width: 32px;
+  height: 32px;
+  box-shadow: 0 0 0 8px var(--primary-color), 0 0 0 12px var(--neutral-color);
+  
+  margin: 12px;
+  /* content: dddd; */  
+}
+
+[href^="https://georgelee.space"]::after{
+ content: ' ';
+}
+
+[href^="https://georgelee.space"]:hover{
+  background-color: var(--highlight-color-hover);
+  box-shadow: 0 0 0 8px var(--highlight-color-hover), 0 0 0 12px var(--neutral-color);
+ }
+
+
 :root{
   box-sizing: border-box;
   --body-color: #666;
@@ -37,7 +81,7 @@
   display: block;
   position: absolute;
   visibility: hidden;
-  background-color: #ccce;
+  background-color: #ccccccf4;
 
   border-radius: 0.5em;
 
@@ -56,14 +100,26 @@
   
   pointer-events: none;
 
-  transition: all 0s;  
+  transition: visibility 0s;  
 
   z-index: 10000;
 }
 
+.controls-right [data-tooltip]::after{
+  left: unset;
+  top: 0;
+  right: 100%;
+}
+
+.controls-left [data-tooltip]::after{
+  top: 0;
+  left: 100%;
+  right: unset;
+}
+
 [data-tooltip]:hover::after{
   visibility: visible;  
-  transition: all 0s var(--hover-time);
+  transition: visibility 0s var(--hover-time);
   box-shadow: 0 8px 8px -5px #8888;
 }
 
@@ -82,13 +138,17 @@ body{
 }
 
 /* CLEAN THIS UP! */
-body, body *{
+body, body *, [data-tooltip]::after{
   /* font-family: 'Courier New', Courier, monospace; */
   font-family: 'press_start_2p', 'Courier New', Courier, monospace;
-  /* font-size: 8px !important; */
-  /* font-size: 16px !important; */
-}
+  font-family: 'basis33', 'Courier New', Courier, monospace;;
+  
+  font-weight: normal;
+  /* color: #222; */
 
+  /* font-size: 8px !important; */
+  font-size: 18px !important;
+}
 
 body.dark{
   --background-color: #222;  
@@ -173,9 +233,10 @@ body .App .bezier-input{
   --bezier-control-stroke: var(--low-contrast-color);
 
 
+  --bezier-border: transparent;
+  --bezier-border: #222;
 
-  /* test */
-  /* --bezier-canvas-border: #444; */
+  box-shadow: 0 4px 4px -2px #888;
 }
 
 
@@ -194,17 +255,72 @@ body .App .bezier-input{
 
   font-size: 12px;
   user-select: none;
-  max-width: 1400px;
+  max-width: min(1400px, 100vw);
 
   --col-side: 300px;
-  --col-gap: 50px;
+  --col-gap: 100px;
 
   font-size: 8px;
-
-  font-smooth: never;
-  -webkit-font-smoothing : none;
-  -moz-osx-font-smoothing: grayscale;
 }
+
+
+
+
+/* TEST */
+/* TEST */
+/* TEST */
+/* TEST */
+/* TEST */
+/* TEST */
+
+[class|=controls]{
+  border: 1px solid black;
+}
+
+
+.slider::-webkit-slider-runnable-track{
+  box-shadow: 0 5px 5px -5px #444;
+}
+
+.group-name{
+  
+
+  background-image: linear-gradient(90deg, #4af 80%, #8af 90%);
+
+  border-radius: 3px;
+  padding: 2px;
+
+  box-shadow: 0 2px 5px -2px #888;
+
+  display: flex;
+  align-items: center;  
+  justify-content: center;  
+  --group-header-color: #aaa;
+
+  font-size: 24px !important;
+
+}
+
+.group-name-label{
+  color: #222 !important;
+  width: 100%;
+  height: 100%;
+
+  box-sizing: border-box;
+  padding: 0.5em;
+  background-color: #f44;
+
+  background-color: var(--background-color);
+
+  border-radius: 3px;
+
+  display: flex;
+  justify-content: center;
+
+  font-size: inherit !important;
+  /* font-family: 'visitor2'; */  
+}
+
 
 
 .App *{
@@ -220,12 +336,8 @@ body .App .bezier-input{
   text-align: center;
   
   font-size: 32px ;
-  /* font-size: 48px ; */
   color: var(--primary-color);
-  /* font-weight: bold; */
   margin-bottom:1em;
-
-  /* font-size: 16px !important; */
   font-weight: normal;
 }
 
@@ -236,12 +348,6 @@ body .App .bezier-input{
   margin-bottom: auto;
   grid-column: 3;  
 }
-
-/* .p5-container canvas{
-  box-shadow: 0 0 0 8px #444, 0 0 0 16px #888;
-  border-radius: 10%;
-} */
-
 
 #canvas-display-area{
   box-sizing: border-box;
@@ -267,13 +373,8 @@ body .App .bezier-input{
   flex-direction: column;
 }
 
-:is(.controls-right, .controls-left) > :nth-child(n+2):not(.radio+.radio-item){
-  margin-top: 2em;
-}
-
-/* same as above, but for older browsers */
-:matches(.controls-right, .controls-left) > :nth-child(n+2):not(.radio+.radio-item){
-  margin-top: 2em;
+[class|="controls"] > :nth-child(n+2):not(.radio+.radio-item){
+  margin-top: 1em;
 }
 
 .controls-left{
@@ -311,35 +412,23 @@ input[type=range], input[type=color]{
   max-width: 100px;
 }
 
-.slider-input{
-  margin: 0 auto;
-  max-width: 150px;
+.slider-input-wrapper{
+  width: fit-content;
+  justify-self: center;
 }
 
-.radio, .checkbox{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
+
 
 .rgba-picker{
   display: flex;
   flex-direction: column;
-  line-height: 2em;
 
 
-  border: 1px solid #8888;
-  margin-top: 2em;
-  border-radius: 0.5em;
-  padding: 5px;
-  background-color: var(--low-contrast-color);
-}
+  border: 1px solid #888;
+  border-radius: 5px;
+  padding: 10px;
 
-.rgba-picker > *{
-  margin-top: 1em;
-}
-.rgba-label{
-  margin-bottom: 1em;
+  background-color: var(--low-contrast-color);  
 }
 
 .rgba-picker > label{
@@ -348,28 +437,15 @@ input[type=range], input[type=color]{
   align-items: center;
 }
 
-.rgb-input, .apha-input{
+.rgba-picker input{
   flex-grow: 1;  
   margin: 0 0 0 auto;  
 }
 
-.group-name{
-  display: flex;
-  align-items: center;  
-  justify-content: center;
-  font-size: 16px;
-  
-  --group-header-color: #aaa;
 
-  color: var(--primary-color);
 
-  background-color: var(--group-header-color);
-  border: 1em outset var(--group-header-color);
-  border-radius: 2px;
-}
-
-.App [class*="controls"] > .group-name:not(:first-child){
-  margin-top: calc(2em + 50px);
+.App [class|="controls"] > .group-name:not(:first-child){
+  /* margin-top: calc(2em + 50px); */
 }
 
 
@@ -401,12 +477,19 @@ input[type=range], input[type=color]{
   background-image: url(../public/images/file-open-black.png);
 }
 
-.file-input-label::before {  content: ' '; }
+.file-input-label{
+  margin: 1em;
+}
 .file-input button:hover{
   --file-button-color: var(--highlight-color-hover);
   cursor: pointer;
 }
 
+.radio, .checkbox{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 
 input[type="checkbox"], input[type="radio"]{
   --checkbox-color: var(--neutral-color);  
@@ -414,6 +497,7 @@ input[type="checkbox"], input[type="radio"]{
   --checkbox-color-checked: var(--highlight-color);
   --checkbox-color-checked-hover: var(--highlight-color-hover);
 
+  
   appearance: none; -webkit-appearance: none;
   width: 20px;
   height: 20px;

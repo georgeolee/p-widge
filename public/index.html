@@ -29,6 +29,46 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+
+    <svg>
+      <defs>
+
+        <filter id="flood" filterUnits="objectBoundingBox">
+<!-- 
+          <feComponentTransfer>
+            <feFuncA type="discrete" tableValues="0 1">
+              
+            </feFuncA>
+          </feComponentTransfer> -->
+
+          <feMorphology operator="dilate" radius="1" in="SourceAlpha" result="bev1"/>
+          
+          <feConvolveMatrix order="3,3" kernelMatrix=
+          "1 0 0
+          0 1 0
+          0 0 1" in="bev1" result="bev2"/>                  
+
+          <feOffset dx="2" dy="2" in="bev1" result="bev2"/>
+
+          <feComposite operator="out" in="bev2" in2="bev1" result="bev3"/>
+
+          <feFlood flood-color="#289" flood-opacity="1" result="col"/>
+
+          <feComposite in="col" in2="bev3" operator="in" result="bev4" />        
+
+          <feMerge>
+            <feMergeNode in="bev4"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+
+        </filter>
+
+
+
+
+      </defs>
+    </svg>
+
     <div id="root"></div>
     <!--
       This HTML file is a template.

@@ -13,7 +13,7 @@ export function Slider(props){
         init = true,
         id,
         className,
-        tooltip,
+        // tooltip,
     } = props;
     
     const setProgressPercentCSS = () => {
@@ -56,7 +56,7 @@ export function Slider(props){
                 min={min} 
                 max={max} 
                 step={step}
-                data-tooltip={tooltip}
+                // data-tooltip={tooltip}
             />
     );
 }

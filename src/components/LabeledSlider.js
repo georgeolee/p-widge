@@ -27,7 +27,9 @@ export function LabeledSlider(props){
     return(
         <div className='labeled-slider'>
             <div className='slider-label'>{label}</div>            
-            <Slider className='slider-input' func={handleInput} defaultValue={defaultValue} min={min} max={max} step={step} init={init} tooltip={tooltip}/>
+            <div className='slider-input-wrapper' data-tooltip={tooltip}>
+            <Slider className='slider-input' func={handleInput} defaultValue={defaultValue} min={min} max={max} step={step} init={init}/>
+            </div>            
             <div className='slider-value' ref={valueRef}></div>
         </div>
     );

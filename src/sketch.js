@@ -22,10 +22,6 @@ export function sketch(p){
     let mousePressLastFrame = p.mouseIsPressed;
     
 
-
-    ////// TESTING STUFF
-    console.log('TESTING')
-
     
 
     p.setup = function(){

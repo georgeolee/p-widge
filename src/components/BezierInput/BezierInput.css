@@ -13,6 +13,7 @@
     --bezier-label-font-size: 13px;
     --bezier-background-color: #f4f4f4;
 
+    --bezier-border: #999;
 
     /* color properties used by CubicBezierCanvas for drawing to canvas element*/
     --bezier-curve-fill: #4af;
@@ -37,7 +38,7 @@
     padding-left: calc(var(--bezier-outer-padding) + var(--bezier-control-size));    
 
     background-color: var(--bezier-background-color);
-    border: 1px solid #999;
+    border: 1px solid var(--bezier-border);
     border-radius: calc(var(--bezier-outer-padding)/2);
     
 }
