@@ -22,39 +22,24 @@
   font-style: normal;
 }
 
-[href^="https://georgelee.space"]{
-  text-decoration: none;
-  color: var(--primary-color);
-  font-size: 16px;
-}
-[href^="https://georgelee.space"]{
-  background-image: url(../public/images/link-black.png);
-  image-rendering: pixelated;
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-color: var(--primary-color);
-  width: 32px;
-  height: 32px;
-  box-shadow: 0 0 0 8px var(--primary-color), 0 0 0 12px var(--neutral-color);
-  
-  margin: 12px;
-  /* content: dddd; */  
+@font-face {
+  font-family: 'extrude';
+  src: url('./fonts/extrude/extrude-webfont.woff2') format('woff2'),
+       url('./fonts/extrude/extrude-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
 }
 
-[href^="https://georgelee.space"]::after{
- content: ' ';
-}
 
-[href^="https://georgelee.space"]:hover{
-  background-color: var(--highlight-color-hover);
-  box-shadow: 0 0 0 8px var(--highlight-color-hover), 0 0 0 12px var(--neutral-color);
- }
 
 
 :root{
   box-sizing: border-box;
   --body-color: #666;
   --primary-color: #f44;
+
+  --primary-color-hover: #f88;
+
   /* --primary-color: #68f; */
   --background-color: #fafafa;  
   /* --background-color: #eee;   */
@@ -78,7 +63,8 @@
 
 [data-tooltip]::after{
   white-space: pre-wrap;
-  display: block;
+  display: flex;
+  text-align: left;
   position: absolute;
   visibility: hidden;
   background-color: #ccccccf4;
@@ -96,13 +82,16 @@
   max-width: 200px;
   width: max-content;
   
-  font-size: 8px;
-  
   pointer-events: none;
 
   transition: visibility 0s;  
 
   z-index: 10000;
+
+}
+
+body .App [data-tooltip]::after{
+  font-size: 16px;
 }
 
 .controls-right [data-tooltip]::after{
@@ -120,7 +109,7 @@
 [data-tooltip]:hover::after{
   visibility: visible;  
   transition: visibility 0s var(--hover-time);
-  box-shadow: 0 8px 8px -5px #8888;
+  box-shadow: 0 8px 8px -8px #0004;
 }
 
 .bezier-tooltip{
@@ -144,10 +133,6 @@ body, body *, [data-tooltip]::after{
   font-family: 'basis33', 'Courier New', Courier, monospace;;
   
   font-weight: normal;
-  /* color: #222; */
-
-  /* font-size: 8px !important; */
-  font-size: 18px !important;
 }
 
 body.dark{
@@ -210,14 +195,11 @@ body.toast{
 
 .App .slider{
   --slider-progress-color: var(--primary-color);
+  --slider-progress-color-hover: var(--primary-color-hover);
 }
 .dark .App .slider{
   --slider-track-color: #888;
   --slider-track-color-hover: #777;
-
-  
-  /* --slider-progress-color: #c9c; */
-  /* --slider-progress-color: #4aa; */
   --slider-progress-color-hover: #f88;
 }
 
@@ -225,7 +207,8 @@ body .App .bezier-input{
   --bezier-curve-fill: var(--primary-color);
   --bezier-control-fill: #a9a;
   --bezier-control-hover-fill: #6bd;
-  --bezier-label-font-size: 8px;
+  
+  --bezier-label-font-size: 18px;
 
   --bezier-background-color: var(--low-contrast-color);
   --bezier-control-handle-stroke: var(--low-contrast-color);
@@ -233,12 +216,23 @@ body .App .bezier-input{
   --bezier-control-stroke: var(--low-contrast-color);
 
 
-  --bezier-border: transparent;
-  --bezier-border: #222;
+  /* --bezier-border: transparent; */
+  /* --bezier-border: #222; */
 
-  box-shadow: 0 4px 4px -2px #888;
+
+  /* --bezier-control-size: 20px; */
+  /* --bezier-outer-padding: 10px; */
+
+  /* full width - 2*padding - 3*control size */
+  --bezier-canvas-width: 150px;
+  --bezier-canvas-height: 150px;
+
+  box-shadow: 0 4px 4px -2px #0004;
 }
 
+.bezier-tooltip{
+  align-self: center;
+}
 
 #root{
   display: flex;
@@ -251,16 +245,13 @@ body .App .bezier-input{
   margin: 50px;
   display: grid;
   grid-template-columns: var(--col-side) var(--col-gap) auto var(--col-gap) var(--col-side);
-  font-size: 14px;
-
-  font-size: 12px;
+  font-size: 18px;
+  
   user-select: none;
   max-width: min(1400px, 100vw);
 
   --col-side: 300px;
   --col-gap: 100px;
-
-  font-size: 8px;
 }
 
 
@@ -274,60 +265,52 @@ body .App .bezier-input{
 /* TEST */
 
 [class|=controls]{
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }
 
 
 .slider::-webkit-slider-runnable-track{
-  box-shadow: 0 5px 5px -5px #444;
+  box-shadow: 0 4px 4px -4px #4448;
 }
 
 .group-name{
   
-
-  background-image: linear-gradient(90deg, #4af 80%, #8af 90%);
-
-  border-radius: 3px;
-  padding: 2px;
-
-  box-shadow: 0 2px 5px -2px #888;
-
   display: flex;
   align-items: center;  
   justify-content: center;  
   --group-header-color: #aaa;
 
-  font-size: 24px !important;
+  font-size: 12px;
 
+  font-family: 'press_start_2p';
+}
+
+.group-name:nth-child(n + 2){
+  margin-top: 50px !important;
 }
 
 .group-name-label{
-  color: #222 !important;
+  color: #444;
   width: 100%;
   height: 100%;
 
   box-sizing: border-box;
   padding: 0.5em;
-  background-color: #f44;
+  /* background-color: #f44; */
 
-  background-color: var(--background-color);
+  /* background-color: var(--background-color); */
 
   border-radius: 3px;
 
   display: flex;
   justify-content: center;
 
-  font-size: inherit !important;
-  /* font-family: 'visitor2'; */  
+  font-size: inherit;
+  font-family: inherit;  
 }
 
 
-
-.App *{
-  font-size: 8px;
-}
-
-.App-header {
+/* .App-header {
   grid-column: 3;
   display: flex;
   flex-direction: column;
@@ -338,8 +321,128 @@ body .App .bezier-input{
   font-size: 32px ;
   color: var(--primary-color);
   margin-bottom:1em;
+
+
   font-weight: normal;
+
+  font-size: 48px;
+  font-family: 'extrude';
+} */
+
+/* TEST START */
+
+@property --col-a{
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #0bb;
 }
+
+@property --col-b{
+  syntax: '<color>';
+  inherits: false;
+  initial-value: #bb0;
+}
+
+@property --stop-a{
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+@property --stop-b{
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+.App-header {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;  
+
+  /* inverse of gradient colors */
+  --inverse-a: #0bb; 
+  --inverse-b: #bb0;
+
+  --col-a: var(--inverse-a);
+  --col-b: var(--inverse-b);
+
+  /* --col-b: #11b; */
+  margin-bottom:1em;
+
+
+  /* non animated */
+  background-image: linear-gradient(45deg, var(--col-a) 30%, var(--col-b) 70%);
+
+  /* animated wipe ; needs custom property defs */
+  /* background-image: linear-gradient(45deg, var(--col-b) var(--stop-a), var(--col-a) var(--stop-b)); */
+
+  /* background-image: linear-gradient(90deg, hsl(calc(180 - var(--hue-a)) 50% 50%) 0%, hsl(calc(180 + var(--hu-a)) 50% 50%) 100%); */
+
+  mix-blend-mode: difference;
+
+  margin: auto;
+
+  animation: h1anim 5s linear infinite forwards;
+
+}
+
+/* doesn't work in firefox */
+/* @keyframes h1anim {
+ 0%{
+  --col-a: var(--inverse-a);
+  --col-b: var(--inverse-b);
+
+  --stop-a: 0%;
+  --stop-b: 10%;
+ }
+ 50%{
+  --col-a: var(--inverse-a);
+  --col-b: var(--inverse-b);
+
+  --stop-a: 90%;
+  --stop-b: 100%;
+ }
+ 50.01%{
+  --col-a: var(--inverse-b);
+
+  --col-b: var(--inverse-a);
+  --stop-a: 0%;
+  --stop-b: 10%;
+ }
+ 99.99%{
+  --col-a: var(--inverse-b);
+
+  --col-b: var(--inverse-a);
+  --stop-a: 90%;
+  --stop-b: 100%;
+ }
+} */
+
+.App-header > div{
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;  
+  font-size: 32px ;
+
+  font-weight: normal;
+  font-size: 72px;
+  font-family: 'extrude';
+
+
+  /* padding: 1px; */
+  padding: 1em;
+  color: #fff;
+  background-color: #000;
+  mix-blend-mode: multiply;
+
+  box-shadow: 0 0 0px 1px #000;
+}
+
+/* TEST END */
 
 .p5-container{
   position: relative;
@@ -373,7 +476,7 @@ body .App .bezier-input{
   flex-direction: column;
 }
 
-[class|="controls"] > :nth-child(n+2):not(.radio+.radio-item){
+[class|="controls"] > :nth-child(n+2):not(.radio+.radio-item):not(.labeled-slider+.labeled-slider){
   margin-top: 1em;
 }
 
@@ -381,7 +484,6 @@ body .App .bezier-input{
   grid-column: 1;  
   grid-row: span 2;
 }
-
 
 .controls-right{
   grid-column: 5;
@@ -448,11 +550,15 @@ input[type=range], input[type=color]{
   /* margin-top: calc(2em + 50px); */
 }
 
+div.buttons{
+  display: grid;
+  grid-template-columns: 50% 50%;
+
+}
 
 .file-input{
   display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-end;
+  flex-direction: row;
   align-items: center;
 }
 
@@ -460,18 +566,24 @@ input[type=range], input[type=color]{
   display: none;
 }
 
-.file-input button{
+.file-input button, .link-button button{
   appearance: none; -webkit-appearance: none;  
   --file-button-color: var(--primary-color);
   background-color: var(--file-button-color);
   background-image: url(../public/images/file-open-white.png);
   background-size: contain;
   padding: 16px;
-  border: 1em solid var(--file-button-color);
+  border: 8px solid var(--file-button-color);  
   image-rendering: pixelated;
-  box-shadow: 0 0 0 4px #aaa;
+  border-radius: 5px;
   margin: 4px;
 }
+
+.file-input.pimage-input button{  background-image: url(../public/images/file-open-p-white.png);  }
+.dark .file-input.pimage-input button{  background-image: url(../public/images/file-open-p-black.png);  }
+
+.file-input.emap-input button{  background-image: url(../public/images/file-open-e-white.png);  }
+.dark .file-input.emap-input button{  background-image: url(../public/images/file-open-e-black.png);  }
 
 .dark .file-input button{
   background-image: url(../public/images/file-open-black.png);
@@ -480,8 +592,31 @@ input[type=range], input[type=color]{
 .file-input-label{
   margin: 1em;
 }
-.file-input button:hover{
+.file-input button:hover, .link-button button:hover{
   --file-button-color: var(--highlight-color-hover);
+  --file-button-color: var(--primary-color-hover);
+}
+
+.link-button{
+  display: flex;
+
+}
+.link-button button{  background-image: url(../public/images/link-white.png); pointer-events: all;}
+.link-button.emap-link button { background-image: url(../public/images/link-e-white.png); }
+.dark .link-button.emap-link button { background-image: url(../public/images/link-e-black.png); }
+.link-button label{ 
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.link-button label :first-child{
+  margin-right: 1em;
+}
+.link-button a  { visibility: hidden; width: 0; height: 0; }
+
+
+input:hover, button:hover, a:hover{
   cursor: pointer;
 }
 
@@ -513,10 +648,7 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
   border-style: inset;
 }
 
-input[type="checkbox"]:hover, input[type="radio"]:hover{
-  --checkbox-color: var(--checkbox-color-hover);
-  cursor: pointer;  
-}
+input[type="checkbox"]:hover, input[type="radio"]:hover{  --checkbox-color: var(--checkbox-color-hover) }
 
 
 .radio-label::before, .checkbox-label::before {  content: ' - '; }

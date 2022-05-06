@@ -5,6 +5,8 @@ export function FileInput(props){
         accept = '.png',
         func = url => console.log(`url: ${url}`),
         tooltip,
+        className,
+        id,
     } = props;
     
 
@@ -15,9 +17,9 @@ export function FileInput(props){
     }
 
     return(
-        <div className="file-input" data-tooltip={tooltip}>
+        <div className={'file-input' + (className ? ' ' + className : '')} id={id} data-tooltip={tooltip}>            
+            <button className="file-input-button" onClick={e => e.target.parentElement.querySelector('input[type="file"]').click()}/>                        
             <div className="file-input-label">{label}</div>
-            <button className="file-input-button" onClick={e => e.target.parentNode.querySelector('input[type="file"]').click()}/>                        
             <input type="file" accept={accept} className='file-input-button' onChange={onChange}/>
         </div>
     );

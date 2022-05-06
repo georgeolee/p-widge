@@ -30,7 +30,7 @@
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
 
-    <svg>
+    <svg style="height: 0; width:0; z-index: -1000; visibility: none; position: fixed">
       <defs>
 
         <filter id="flood" filterUnits="objectBoundingBox">
@@ -63,8 +63,22 @@
 
         </filter>
 
+        <filter id="alpha-clip">
 
+          <!-- <feConvolveMatrix order="3,3" kernelMatrix=
+          "0 1 0
+          1 1 1
+          0 1 0" result="blurred"/> -->
+          <feComponentTransfer>
+            <feFuncA type="discrete" tableValues="0 1"/>
+          </feComponentTransfer>
+<!-- 
+          <feConvolveMatrix order="3,3" in="clipped" kernelMatrix=
+          "0 -1 0
+          -1 5 -1
+          0 -1 0"/>           -->
 
+        </filter>        
 
       </defs>
     </svg>

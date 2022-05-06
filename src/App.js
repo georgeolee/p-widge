@@ -11,6 +11,8 @@ import { RGBAInput } from './components/RGBAInput';
 import { FrameManager } from './particle-system/FrameManager';
 import { FileInput } from './components/FileInput';
 import { BezierInput } from './components/BezierInput/BezierInput';
+import { LinkButton } from './components/LinkButton';
+
 import { GetActiveParticleCount } from './particle-system/Particle';
 
 
@@ -98,7 +100,7 @@ function App() {
 
 
 
-      <h1 className="App-header" data-tooltip="words and stuff">p-widget</h1>            
+      <h1 className="App-header"><div>p-widget</div></h1>            
       <div className='controls-left'>        
         
         <GroupName label='Lifetime'/>
@@ -123,7 +125,7 @@ function App() {
           tooltip='Max size of each particle, before applying randomness.'/>
         
         <LabeledSlider 
-          label='Random Factor' 
+          label='Randomness' 
           min={0} 
           max={1} 
           step={0.01} 
@@ -151,7 +153,7 @@ function App() {
           tooltip='Set the maximum particle speed. This corresponds to the top of the bezier graph below.'/>
 
         <LabeledSlider 
-          label='Random Factor' 
+          label='Randomness' 
           min={0} 
           max={1} 
           step={0.01} 
@@ -234,20 +236,6 @@ function App() {
           label='image smoothing' 
           func={b => flags.setImageSmoothing = b}
           tooltip='Toggles bilinear filtering on or off.&#xa;&#xa;SLOW! Leave this off by default.'/>
-
-        <div style={{display:'flex'}}>
-          <FileInput 
-              label='Load Particle Image' 
-              func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}
-              tooltip="Import a PNG image to use for particles."
-              />          
-          
-          <FileInput 
-            label='Load E-Map' 
-            func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}
-            tooltip="Import a PNG image that defines a set of particle emission vectors."
-            />
-        </div>
         
         
 
@@ -297,10 +285,31 @@ function App() {
 
         </div>
         
-        <div style={{display:'flex', alignItems:'center'}}>
-          <a href="https://georgelee.space/build" target='_blank'></a> create an emission map
-        </div>
+        
 
+        <div className='buttons'>
+
+          <FileInput 
+                label='Load Particle Image' 
+                className='pimage-input'
+                func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}
+                tooltip="Import a PNG image to use for particles."
+                />          
+            
+          <FileInput 
+            label='Load E-Map' 
+            className='emap-input'
+            func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}
+            tooltip="Import a PNG image that defines a set of particle emission vectors."
+            />
+
+          <LinkButton 
+            label='Create E-map'
+            className="emap-link" 
+            href='https://georgelee.space/build'             
+            tooltip="Create a new particle emitter. This link will open in a new tab."/>
+
+        </div>
       </div>      
 
       <div className='controls-center'>
