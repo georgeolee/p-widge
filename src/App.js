@@ -15,18 +15,19 @@ import { LinkButton } from './components/LinkButton';
 
 import { GetActiveParticleCount } from './particle-system/Particle';
 
+const version = '0.1.0';
 
 /*
 *   TODO: 
 *       
 *
-*       -figure out font situation *** 
-*       -emap link & icon cleanup ; black open icon rework?       
-*       
-
+*       -figure out header
+*          
+*       -bezier size?
+        -favicon
 *       -delete filter stuff
 *      
-*       continue tooltips - rgba
+*       continue tooltips - rgba, placement (currently, left slider values get covered up), appearance & timing
 *       continue stylesheet cleanup
 *       theme cleanup
 *       control cleanup
@@ -98,16 +99,80 @@ function App() {
   return (
     <div className="App" onPointerMove={onAppPointerMove}>      
 
-
-
-      <h1 className="App-header"><div>p-widget</div></h1>            
-      <div className='controls-left'>        
+      <div className='App-header'>
+        <div className='title'><h1>p-widget </h1></div>
         
+        <div className='sub'>
+          2D particle scratch pad
+          <br/>
+          version {version}
+          <br/>
+          © 2022 george lee
+        </div>                
+      </div>
+      
+      
+      <div className='controls-center'>
+        <div className='color-inputs'>
+          <RGBAInput 
+            label='Start Color' 
+            rgb='#ff6600' 
+            alpha={255} 
+            func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} 
+            timeoutFunc={()=> flags.slowRecolor = true} 
+            timeout={500}
+            tooltip='Tint color for each particle at the start of its lifetime.&#xa;Particle tint will transition between this and end color over its lifetime.'/>
+
+          <RGBAInput 
+            label='End Color' 
+            rgb='#ff0066' 
+            alpha={0} 
+            func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} 
+            timeoutFunc={()=> flags.slowRecolor = true} 
+            timeout={500}
+            tooltip='Tint color for each particle at the end of its lifetime.'/>
+            
+          <RGBAInput 
+            label='Background Color' 
+            rgb='#1b2727' 
+            alpha={255} 
+            func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}
+            tooltip='Background color to paint over canvas at the start of each frame. &#xa; If alpha is less than fully opaque, some of the previous frame will show through.'/>
+        </div>        
+      </div>
+
+
+      <div className='buttons'>
+          <FileInput 
+                label='Load Image' 
+                className='pimage-input'
+                func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}
+                tooltip="Import a PNG image to use for particles."
+                />          
+            
+          <FileInput 
+            label='Load E&#8209;Map' 
+            className='emap-input'
+            func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}
+            tooltip="Import a PNG image that defines a set of particle emission vectors. &#xa;—&#xa;To create an emission map, click the 'Create E-Map' button."
+            />
+
+          <LinkButton 
+            label='Create E&#8209;Map'
+            className="emap-link" 
+            href='https://georgelee.space/build'             
+            tooltip="Create a new particle emission map. &#xa;—&#xa;Links to a new tab where you can design an emitter shape."/>
+        </div>
+
+      <div className='horizontal-gutter'></div>
+
+      <div className='controls-left'>        
         <GroupName label='Lifetime'/>
         <LabeledSlider 
           label='Lifetime' 
           min={0} 
           max={5} 
+          defaultValue={1.5}
           step={0.01} 
           func={n => particleSettings.particleLifetime = n}
           suffix=' s'
@@ -120,7 +185,7 @@ function App() {
           min={0} 
           max={200} 
           step={1} 
-          defaultValue={150} 
+          defaultValue={100} 
           func={n => particleSettings.particleBaseSize = n}
           tooltip='Max size of each particle, before applying randomness.'/>
         
@@ -199,7 +264,7 @@ function App() {
           suffix='º' 
           defaultValue={360} 
           func={n => particleSettings.arc = n}
-          tooltip='Set the emission arc for each point defined by the current emitter.'/>
+          tooltip='Set the emission arc for each point defined by the current emitter'/>
         
         <LabeledSlider 
           label='rotation' 
@@ -219,12 +284,12 @@ function App() {
           suffix='%' 
           defaultValue={50} 
           func={n => particleSettings.emitterSize = n}
-          tooltip='Set emitter size as a percentage of canvas size. Has no effect on the default emitter, which is a single point.'/>
+          tooltip='Set emitter size as a percentage of canvas size. &#xa;—&#xa;Has no effect on the default emitter, which is a single point.'/>
         
         <Checkbox 
           label='auto emit' 
           func={b => {particleSettings.emitAuto = b; flags.emitTimerReset = true}} 
-          tooltip='Emit particles continuously. If unchecked, you can still click + hold over the canvas to spawn particles.'
+          tooltip='Toggles between continuous emission mode (default) and emit on mouse press only.'
           checked/>
 
         <Checkbox 
@@ -235,25 +300,26 @@ function App() {
         <Checkbox 
           label='image smoothing' 
           func={b => flags.setImageSmoothing = b}
-          tooltip='Toggles bilinear filtering on or off.&#xa;&#xa;SLOW! Leave this off by default.'/>
+          tooltip='Toggles bilinear filtering off (default) or on (SLOW!)'/>
         
         
 
         <div style={{display:'flex', justifyContent:'space-between'}}>
-          <div>
+          <div className='radio-group'>
             <RadioHeader label='Blend Mode' tooltip='Choose how the canvas blends overlapping colors together.'/>
             <Radio 
               name='blend-mode'
               label='alpha' 
               func={()=>particleSettings.p5BlendMode = 'blend'} 
-              tooltip='"Normal" blend mode. Alpha values are used to blend colors together.'/>
+              tooltip='"Normal" blend mode. Alpha values are used to blend colors together.'
+              checked/>
 
             <Radio 
               name='blend-mode'
               label='add' 
               func={()=>particleSettings.p5BlendMode = 'add'} 
               tooltip='RGB values are added together. The result is always brighter.' 
-              checked/>
+              />
 
             <Radio 
               name='blend-mode'
@@ -263,7 +329,7 @@ function App() {
           
           </div>
           
-          <div>
+          <div className='radio-group'>
             <RadioHeader label='Editor Theme' tooltip='Choose a color theme for the editor.'/>
             
             <Radio 
@@ -287,60 +353,8 @@ function App() {
         
         
 
-        <div className='buttons'>
-
-          <FileInput 
-                label='Load Particle Image' 
-                className='pimage-input'
-                func={url=>{particleSettings.imageUrl = url; flags.recolor = true}}
-                tooltip="Import a PNG image to use for particles."
-                />          
-            
-          <FileInput 
-            label='Load E-Map' 
-            className='emap-input'
-            func={url => {particleSettings.emapUrl = url; flags.loadEmap = true}}
-            tooltip="Import a PNG image that defines a set of particle emission vectors."
-            />
-
-          <LinkButton 
-            label='Create E-map'
-            className="emap-link" 
-            href='https://georgelee.space/build'             
-            tooltip="Create a new particle emitter. This link will open in a new tab."/>
-
-        </div>
-      </div>      
-
-      <div className='controls-center'>
-        <GroupName label="Colors"/>
-        <div className='color-inputs'>
-          <RGBAInput 
-            label='start color' 
-            rgb='#ff6600' 
-            alpha={255} 
-            func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} 
-            timeoutFunc={()=> flags.slowRecolor = true} 
-            timeout={500}
-            tooltip='Tint color for each particle at the start of its lifetime.&#xa;Particle tint will transition between this and end color over its lifetime.'/>
-
-          <RGBAInput 
-            label='end color' 
-            rgb='#ff0066' 
-            alpha={0} 
-            func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} 
-            timeoutFunc={()=> flags.slowRecolor = true} 
-            timeout={500}
-            tooltip='Tint color for each particle at the end of its lifetime.'/>
-            
-          <RGBAInput 
-            label='background color' 
-            rgb='#000000' 
-            alpha={255} 
-            func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}
-            tooltip='Background color to paint over canvas at the start of each frame. &#xa; If alpha is less than fully opaque, some of the previous frame will remain.'/>
-        </div>        
-      </div>
+        
+      </div>            
 
     </div>
   );

@@ -42,7 +42,7 @@ export class ParticleSystemSettings{
         this.speedTable = s?.speedTable || [1,0];
         this.sizeTable = s?.sizeTable || [1,0];
 
-        this.imageUrl = s?.imageUrl || './images/default-particle.png';
+        this.imageUrl = s?.imageUrl || './images/default-particle-16.png';
         this.emapUrl = s?.emapUrl || null;
         this.p5BlendMode = s?.p5BlendMode || 'add';
 

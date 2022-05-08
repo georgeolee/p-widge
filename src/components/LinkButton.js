@@ -9,7 +9,7 @@ export function LinkButton(props){
     } = props;
 
     return(
-        <div className={'link-button' + (className ? ' ' + className : '')} id={id}>
+        <div className={'link-button app-button' + (className ? ' ' + className : '')} id={id}>
             <label>
                 <button onClick={e => e.target.parentElement.nextElementSibling?.click()} data-tooltip={tooltip}/>
                 {label}

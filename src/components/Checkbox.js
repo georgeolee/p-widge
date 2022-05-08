@@ -21,7 +21,7 @@ export function Checkbox(props){
 
     return(
         <div className="checkbox">            
-            <input type="checkbox" className="checkbox-input" ref={inputRef} onChange={onChange} data-tooltip={tooltip}/>
+            <input type="checkbox" ref={inputRef} onChange={onChange} data-tooltip={tooltip}/>
             <div className="checkbox-label">{label}</div>
         </div>
     );
