@@ -1,3 +1,6 @@
+[data-tooltip]::after{
+  /* pointer-events: none !important; */
+}
 
 @font-face {
   font-family: 'visitor2';
@@ -22,6 +25,12 @@
   font-style: normal;
 }
 
+::before, ::after{
+  /* pointer-events: none !important;
+  color: red !important;
+  background-color: #f002 !important; */
+}
+
 
 
 @media screen and (max-width: 799px) {
@@ -29,9 +38,7 @@
     --canvas-size: 300px;
   }
 
-  .App{
-    /* position: relative; */
-  }
+  
 
   .horizontal-gutter{
     display: none;
@@ -47,7 +54,6 @@
 
   .App .controls-center .color-inputs{
     flex-direction: column;
-    /* flex-wrap: wrap; */
   }
 
   .color-inputs > *+*{
@@ -92,31 +98,6 @@
     --bezier-canvas-height: 120px;
   }
 
-  /* .App .p5-container{
- 
-
-    position: fixed;    
-    z-index: 1000;    
-    opacity: 0.2;
-    transition: opacity 0.5s;
-  }
-
-  .App::before{
-    position: fixed;
-    margin-top: -1em;    
-    justify-self: center;
-    content: 'hover to show canvas';
-  }
-
-  
-  .App .p5-container:hover{
-    opacity: 1;
-  }
-
-  .App-header{
-
-    margin-top: calc(var(--canvas-size) + 20px);
-  } */
 
 }
 
@@ -471,8 +452,11 @@ body .App .bezier-input{
 
 [data-panel-tag]::after{
   position: absolute;
-  inset: calc(-1 * var(--panel-border-width));
-  bottom: unset;
+
+  top:calc(-1 * var(--panel-border-width));
+  left: calc(-1 * var(--panel-border-width));
+  right:calc(-1 * var(--panel-border-width));
+
   margin: var(--panel-border-width);
   border-radius: var(--panel-border-radius) var(--panel-border-radius) 0 0;
   padding: var(--panel-padding);

@@ -92,12 +92,18 @@ function App() {
   }, [])
 
 
-  //attach mouse listener
+  // attach mouse listener
   useEffect(()=>{
     document.body.addEventListener('pointermove', onAppPointerMove);
 
     return () => document.body.removeEventListener('pointermove', onAppPointerMove);
   });
+
+  // useEffect(()=>{
+  //   const getTarget = e => {console.log(e.target); console.log(`\tpointer-events: ${getComputedStyle(e.target).getPropertyValue('pointer-events')}`)};
+  //   document.body.addEventListener('pointermove', getTarget);
+    
+  // })
 
   return (
     <div className="App">      
