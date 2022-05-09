@@ -22,10 +22,20 @@ export function sketch(p){
     let mousePressLastFrame = p.mouseIsPressed;
     
 
-    
+    function getCanvasSizeProperty(){
+        const style = getComputedStyle(document.body);
+        return Number(style.getPropertyValue('--canvas-size').replace('px',''));
+    }
+
+    p.windowResized = function(){
+        const size = getCanvasSizeProperty();
+        if(size !== p.width) p.resizeCanvas(size,size);
+    }
 
     p.setup = function(){
-        let cnv = p.createCanvas(600,600)
+
+        const size = getCanvasSizeProperty();
+        let cnv = p.createCanvas(size,size)
         p.background(255)        
         
 

@@ -4,7 +4,6 @@ import p5 from 'p5';
 import { LabeledSlider } from './components/LabeledSlider.js';
 import { Checkbox } from './components/Checkbox';
 import { Radio, RadioHeader } from './components/Radio';
-import { GroupName } from './components/GroupName';
 import {useRef, useEffect} from 'react';
 import { mouse, particleSettings, flags, fps } from './globals';
 import { RGBAInput } from './components/RGBAInput';
@@ -15,17 +14,17 @@ import { LinkButton } from './components/LinkButton';
 
 import { GetActiveParticleCount } from './particle-system/Particle';
 
-const version = '0.1.0';
+const version = '0.1.1';
 
 /*
 *   TODO: 
+*         
+        -safari - panel header positioning issue
+*       -speed and size tags
+*       -figure out group heading / panel heading / tag situation *****
+*       -major css housekeeping 
 *       
-*
-*       -figure out header
-*          
-*       -bezier size?
         -favicon
-*       -delete filter stuff
 *      
 *       continue tooltips - rgba, placement (currently, left slider values get covered up), appearance & timing
 *       continue stylesheet cleanup
@@ -37,7 +36,7 @@ const version = '0.1.0';
 *     
 *       -BezierInput: 
 *         - separate lookup res from sample res?
-*         >push to github?
+*         >github update
 *         
 *       -linter warnings - useEffect deps, etc.  
 *       
@@ -70,7 +69,6 @@ function App() {
 
   //attach p5 instance
   useEffect(()=>{
-    console.log('useEffect')
     const p = new p5(sketch, p5ContainerRef.current);
 
     return () => {
@@ -78,7 +76,7 @@ function App() {
       p.remove()
     };
 
-  },[])
+  },[]);
  
   //print fps & particle count to screen
   useEffect(() => {
@@ -90,17 +88,22 @@ function App() {
       particleCountDisplay.textContent = `particle count: ${GetActiveParticleCount()}`;
       }, 100);
 
-      console.log(getComputedStyle(document.body).getPropertyValue('font-family'))
-
     return () => clearInterval(displayUpdate);
   }, [])
 
 
+  //attach mouse listener
+  useEffect(()=>{
+    document.body.addEventListener('pointermove', onAppPointerMove);
+
+    return () => document.body.removeEventListener('pointermove', onAppPointerMove);
+  });
+
   return (
-    <div className="App" onPointerMove={onAppPointerMove}>      
+    <div className="App">      
 
       <div className='App-header'>
-        <div className='title'><h1>p-widget </h1></div>
+        <div className='title'><h1>p-widge </h1></div>
         
         <div className='sub'>
           2D particle scratch pad
@@ -112,28 +115,32 @@ function App() {
       </div>
       
       
-      <div className='controls-center'>
+      <div className='controls-center' data-panel-tag="color settings">
         <div className='color-inputs'>
+
+          <div>
           <RGBAInput 
-            label='Start Color' 
+            label='Particle Start' 
             rgb='#ff6600' 
             alpha={255} 
             func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} 
             timeoutFunc={()=> flags.slowRecolor = true} 
             timeout={500}
             tooltip='Tint color for each particle at the start of its lifetime.&#xa;Particle tint will transition between this and end color over its lifetime.'/>
+          </div>
 
           <RGBAInput 
-            label='End Color' 
+            label='Particle End'             
             rgb='#ff0066' 
             alpha={0} 
             func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} 
             timeoutFunc={()=> flags.slowRecolor = true} 
             timeout={500}
             tooltip='Tint color for each particle at the end of its lifetime.'/>
-            
+
+
           <RGBAInput 
-            label='Background Color' 
+            label='Background' 
             rgb='#1b2727' 
             alpha={255} 
             func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}
@@ -166,8 +173,9 @@ function App() {
 
       <div className='horizontal-gutter'></div>
 
-      <div className='controls-left'>        
-        <GroupName label='Lifetime'/>
+      <div className='controls-left' data-panel-tag="particle properties">        
+        
+        
         <LabeledSlider 
           label='Lifetime' 
           min={0} 
@@ -179,23 +187,25 @@ function App() {
           tooltip='How many seconds each particle remains active for after being emitted.'/>
         
         
-        <GroupName label='Size'/>
-        <LabeledSlider 
-          label='Max' 
-          min={0} 
-          max={200} 
-          step={1} 
-          defaultValue={100} 
-          func={n => particleSettings.particleBaseSize = n}
-          tooltip='Max size of each particle, before applying randomness.'/>
+
         
-        <LabeledSlider 
-          label='Randomness' 
-          min={0} 
-          max={1} 
-          step={0.01} 
-          func={n => particleSettings.particleSizeRandomFactor = n}
-          tooltip='size'/>
+          <LabeledSlider 
+            label='Max Size' 
+            min={0} 
+            max={200} 
+            step={1} 
+            defaultValue={100} 
+            func={n => particleSettings.particleBaseSize = n}
+            tooltip='Max size of each particle, before applying randomness.'/>
+          
+          <LabeledSlider 
+            label='Randomness' 
+            min={0} 
+            max={1} 
+            step={0.01} 
+            func={n => particleSettings.particleSizeRandomFactor = n}
+            tooltip='size'/>
+        
         
         <div className='bezier-tooltip' data-tooltip='size curve'>
           <BezierInput 
@@ -206,24 +216,26 @@ function App() {
             func={lookups => particleSettings.sizeTable = lookups}/>                
         </div>        
 
-        <GroupName label='Speed'/>
 
-        <LabeledSlider 
-          label='Max' 
-          min={0} 
-          max={500} 
-          step={1} 
-          defaultValue={175} 
-          func={n => particleSettings.particleBaseSpeed = n}
-          tooltip='Set the maximum particle speed. This corresponds to the top of the bezier graph below.'/>
 
-        <LabeledSlider 
-          label='Randomness' 
-          min={0} 
-          max={1} 
-          step={0.01} 
-          func={n => particleSettings.particleSpeedRandomFactor = n}
-          tooltip='The max speed of each emitted particle gets multiplied by a random number between 1 and 1 minus this number.'/>
+          <LabeledSlider 
+            label='Max Speed' 
+            min={0} 
+            max={500} 
+            step={1} 
+            defaultValue={175} 
+            func={n => particleSettings.particleBaseSpeed = n}
+            tooltip='Set the maximum particle speed. This corresponds to the top of the bezier graph below.'/>
+
+          <LabeledSlider 
+            label='Randomness' 
+            min={0} 
+            max={1} 
+            step={0.01} 
+            func={n => particleSettings.particleSpeedRandomFactor = n}
+            tooltip='The max speed of each emitted particle gets multiplied by a random number between 1 and 1 minus this number.'/>
+
+        
         
         <div className='bezier-tooltip' data-tooltip="Modifies the speed of a particle over its lifetime. Click and drag to edit the curve points.">
           <BezierInput 
@@ -236,6 +248,8 @@ function App() {
 
       </div>
       
+      
+      
       <div ref={p5ContainerRef} className='p5-container'>      
         <div id='canvas-display-area'>
           <div id='fps-display'></div>
@@ -243,9 +257,9 @@ function App() {
         </div>
       </div>
       
-      <div className='controls-right'>
+      <div className='controls-right' data-panel-tag="emitter properties">
 
-        <GroupName label='Emitter Settings'/>
+        
         
         <LabeledSlider 
           label='rate' 
@@ -306,7 +320,7 @@ function App() {
 
         <div style={{display:'flex', justifyContent:'space-between'}}>
           <div className='radio-group'>
-            <RadioHeader label='Blend Mode' tooltip='Choose how the canvas blends overlapping colors together.'/>
+            <RadioHeader label='Blend Mode'/>
             <Radio 
               name='blend-mode'
               label='alpha' 
@@ -330,7 +344,7 @@ function App() {
           </div>
           
           <div className='radio-group'>
-            <RadioHeader label='Editor Theme' tooltip='Choose a color theme for the editor.'/>
+            <RadioHeader label='Editor Theme'/>
             
             <Radio 
               name='editor-theme' 

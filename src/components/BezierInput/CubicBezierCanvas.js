@@ -10,6 +10,7 @@ export class CubicBezierCanvas{
     editPoint;
     hoverPoint;
     classChangeObserver;
+    sizeChangeObserver;
 
     /**
      * 
@@ -23,12 +24,19 @@ export class CubicBezierCanvas{
         this.hoverPoint = null;
 
         const updateCanvasColors = () => {
-            this.getCanvasColorsFromCSS();
+            this.setCanvasColorsFromCSS();
             this.redraw();
         };
 
         //allow changing canvas colors by toggling CSS class
         this.classChangeObserver = new MutationObserver(updateCanvasColors);
+
+
+        const updateCanvasSize = () => {
+            this.setCanvasDimensionsFromCSS();
+            this.redraw();
+        }
+        this.sizeChangeObserver = new ResizeObserver(updateCanvasSize);        
 
         if(canvasElement) this.attachCanvas(canvasElement);
         this.bezier = cubicBezier;
@@ -51,21 +59,23 @@ export class CubicBezierCanvas{
 
         if(this.canvas){            
             this.classChangeObserver.disconnect();  //observer cleanup
+            this.sizeChangeObserver.disconnect();
         }
 
         this.canvas = canvasElement;
-        this.getCanvasColorsFromCSS(canvasElement);
-        this.getCanvasDimensionsFromCSS(canvasElement);
-        this.canvas.width = this.width;
-        this.canvas.height = this.height;
+        this.setCanvasColorsFromCSS(canvasElement);
+        this.setCanvasDimensionsFromCSS(canvasElement);
         
         this.classChangeObserver.observe(this.canvas, {attributes:true, attributeFilter: ['class']});       // watch canvas for changes
         this.classChangeObserver.observe(document.body, {attributes:true, attributeFilter: ['class']});     // watch document body for changes
 
+        this.sizeChangeObserver.observe(document.body);
+        this.sizeChangeObserver.observe(this.canvas);
+
         this.redraw();
     }
 
-    getCanvasColorsFromCSS(){
+    setCanvasColorsFromCSS(){
         const style = getComputedStyle(this.canvas);
         this.color.curveFill = style.getPropertyValue('--bezier-curve-fill') || '4af';
         this.color.curveStroke = style.getPropertyValue('--bezier-curve-stroke') || 'fff';
@@ -78,11 +88,13 @@ export class CubicBezierCanvas{
         this.color.controlHandleStroke = style.getPropertyValue('--bezier-control-handle-stroke') || '444';
     }
 
-    getCanvasDimensionsFromCSS(){
+    setCanvasDimensionsFromCSS(){
         const style = getComputedStyle(this.canvas);
-        this.width = Number(style.getPropertyValue('--bezier-canvas-width').replace('px','')) || 150;
-        this.height = Number(style.getPropertyValue('--bezier-canvas-height').replace('px','')) || 120;
-        this.controlSize = Number(style.getPropertyValue('--bezier-control-size').replace('px','')) || 18;        
+        this.canvas.width = Number(style.getPropertyValue('--bezier-canvas-width').replace('px','')) || 150;
+        this.canvas.height = Number(style.getPropertyValue('--bezier-canvas-height').replace('px','')) || 120;
+        this.controlSize = Number(style.getPropertyValue('--bezier-control-size').replace('px','')) || 18; 
+        
+    
     }
 
     drawBezier(bz){
@@ -94,7 +106,7 @@ export class CubicBezierCanvas{
 
         ctx.save();
 
-        ctx.translate(0, this.height);    // flip coordinate plane so positive y axis points up
+        ctx.translate(0, this.canvas.height);    // flip coordinate plane so positive y axis points up
         ctx.scale(1, -1);
 
         ctx.translate(this.controlSize, this.controlSize);  //inset to leave empty space around the graph edge for controls
@@ -132,7 +144,7 @@ export class CubicBezierCanvas{
 
         ctx.save();
 
-        ctx.translate(0, this.height);   //flip to positive up
+        ctx.translate(0, this.canvas.height);   //flip to positive up
         ctx.scale(1, -1);
 
         ctx.translate(this.controlSize, this.controlSize);    //use same origin as bezier graph
@@ -197,8 +209,8 @@ export class CubicBezierCanvas{
         const my = rect.height - (e.clientY - rect.top); //match flipped canvas origin for y
 
         //graph area width and height
-        const gw = this.width - this.controlSize * 2;
-        const gh = this.height - this.controlSize * 2;
+        const gw = this.canvas.width - this.controlSize * 2;
+        const gh = this.canvas.height - this.controlSize * 2;
 
         
         const [P0, P1, P2, P3] = [this.bezier.P0, this.bezier.P1, this.bezier.P2, this.bezier.P3];
@@ -245,9 +257,9 @@ export class CubicBezierCanvas{
 
     clearCanvas(){
         const ctx = this.canvas.getContext('2d');
-        ctx.clearRect(0,0,this.width, this.height);
+        ctx.clearRect(0,0,this.canvas.width, this.canvas.height);
         ctx.fillStyle = this.color.backgroundFill;
-        ctx.fillRect(this.controlSize,this.controlSize,this.width - 2 * this.controlSize, this.height - 2 * this.controlSize);
+        ctx.fillRect(this.controlSize,this.controlSize,this.canvas.width - 2 * this.controlSize, this.canvas.height - 2 * this.controlSize);
     }
 
     redraw(){

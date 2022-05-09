@@ -14,6 +14,7 @@
     --bezier-background-color: #f4f4f4;
 
     --bezier-border: #999;
+    --bezier-border-width: 1px;
 
     /* color properties used by CubicBezierCanvas for drawing to canvas element*/
     --bezier-curve-fill: #4af;
@@ -38,24 +39,9 @@
     padding-left: calc(var(--bezier-outer-padding) + var(--bezier-control-size));    
 
     background-color: var(--bezier-background-color);
-    border: 1px solid var(--bezier-border);
+    border: var(--bezier-border-width) solid var(--bezier-border);
     border-radius: calc(var(--bezier-outer-padding)/2);
     
-}
-
-.dark .bezier-input{
-    --bezier-curve-fill: #4af;    
-    --bezier-curve-fill: #bf4;
-    --bezier-curve-stroke: #fff;
-    --bezier-control-fill: #f44;
-    --bezier-control-hover-fill: #f77;
-    --bezier-control-stroke: #fff;
-    --bezier-control-handle-stroke: #444;
-    --bezier-canvas-border: #444;
-    --bezier-track-stroke: #aaa;    
-    --bezier-background-fill: #888;
-    --bezier-background-color: #444;
-    --bezier-label-color: #ddd;
 }
 
 .bezier-canvas{

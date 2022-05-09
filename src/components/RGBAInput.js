@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { parseHexColorString } from "../utilities";
 import { Slider } from "./Slider/Slider";
 
@@ -20,7 +20,8 @@ export function RGBAInput(props){
     // get alpha as a hex string
     const a = alpha > 16 ? alpha.toString(16) : '0' + alpha.toString(16);
     
-    const colorRef = useRef(parseHexColorString(rgb + a))
+    const colorRef = useRef(parseHexColorString(rgb + a));
+    const buttonRef = useRef();
 
 
     const handleInputAny = () => {        
@@ -35,6 +36,7 @@ export function RGBAInput(props){
         colorRef.current.g = g;
         colorRef.current.b = b;        
         handleInputAny();
+        buttonRef.current.style.backgroundColor = evt.target.value;
     }
 
     const handleAlphaInput = num => {
@@ -43,16 +45,19 @@ export function RGBAInput(props){
     };
     
 
-    // don't need this — handleAlphaInput gets called from Slider after render
-    // useEffect(() => {
-        // func(colorRef.current);
-    // });
+    // just need to set button color here — handleAlphaInput gets called from Slider after render
+    useEffect(() => {
+        buttonRef.current.style.backgroundColor = rgb;
+    });
 
     return(
         <div className="rgba-picker" data-tooltip={tooltip}>
             <div className="rgba-label">{label}</div>
             <label>
-            RGB&emsp;<input type="color" className="rgb-input" defaultValue={rgb} onChange={handleRGBInput}/>
+            RGB&emsp;
+                <button onClick={e => e.target.querySelector('input[type="color"]')?.click()} ref={buttonRef}>
+                    <input type="color" defaultValue={rgb} onChange={handleRGBInput}/>
+                </button>
             </label>
             <label>                
             {/* Alpha&emsp;<input type="range" min={0} max={255} step={0.5} className="alpha-input" defaultValue={alpha} ref={alphaInputRef} onChange={onChangeAny}/> */}
