@@ -22,7 +22,8 @@ export function Radio(props){
         func = () => console.log('checked ' + label), 
         checked = false, 
         init = true,
-        tooltip } = props;
+        tooltip,
+        className } = props;
 
     useEffect(()=>{
         inputRef.current.checked = !!checked;        
@@ -31,7 +32,7 @@ export function Radio(props){
     [init, func, checked])
 
     return(
-        <div className="radio radio-item">
+        <div className={'radio radio-item' + (className ? ' ' + className : '')}>
             <input 
                 className="radio-input" 
                 type="radio" ref={inputRef} 

@@ -55,12 +55,11 @@ export function RGBAInput(props){
             <div className="rgba-label">{label}</div>
             <label>
             RGB&emsp;
-                <button onClick={e => e.target.querySelector('input[type="color"]')?.click()} ref={buttonRef}>
+                <button ref={buttonRef}>
                     <input type="color" defaultValue={rgb} onChange={handleRGBInput}/>
                 </button>
             </label>
-            <label>                
-            {/* Alpha&emsp;<input type="range" min={0} max={255} step={0.5} className="alpha-input" defaultValue={alpha} ref={alphaInputRef} onChange={onChangeAny}/> */}
+            <label>                            
             Alpha&emsp;<Slider type="range" min={0} max={255} step={0.5} defaultValue={alpha} className="alpha-input" func={handleAlphaInput}/>
             </label>            
         </div>

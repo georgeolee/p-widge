@@ -40,7 +40,8 @@ export function BezierInput(props){
     const bezierCanvasRef = useRef(new CubicBezierCanvas(null, bezierRef.current));
     const canvasElementRef = useRef();
 
-    const handleCanvasPointerMove = e => {        
+    const handleCanvasPointerMove = e => {                
+
         bezierCanvasRef.current.onCanvasPointerMove(e);                
         if(bezierCanvasRef.current.editPoint){  //editing?
 
@@ -70,7 +71,7 @@ export function BezierInput(props){
             <div className="bezier-label-y">{labelY}</div>
             
             <canvas 
-                className="bezier-canvas" 
+                className="bezier-canvas"                 
                 onPointerLeave={(e)=> bezierCanvasRef.current.onCanvasPointerLeave(e, bezierCanvasRef.current)} 
                 onPointerMove={handleCanvasPointerMove} 
                 onPointerUp={e => bezierCanvasRef.current.onCanvasPointerUp(e)} 

@@ -19,8 +19,14 @@ const version = '0.1.1';
 /*
 *   TODO: 
 *         
-        -safari - panel header positioning issue
-*       -speed and size tags
+        THIS : !          
+          -safari - blurry bg image on  buttons ; issue w/ image rendering: pixelated?
+              look into > image rendering, pixelated vs crisp edges vs vendor prefixed
+                            
+  *       -speed and size tags
+          -mid tone / low contrast theme
+          -css breakpoints for in-between window sizes ; 2 col layout?
+
 *       -figure out group heading / panel heading / tag situation *****
 *       -major css housekeeping 
 *       
@@ -99,11 +105,6 @@ function App() {
     return () => document.body.removeEventListener('pointermove', onAppPointerMove);
   });
 
-  // useEffect(()=>{
-  //   const getTarget = e => {console.log(e.target); console.log(`\tpointer-events: ${getComputedStyle(e.target).getPropertyValue('pointer-events')}`)};
-  //   document.body.addEventListener('pointermove', getTarget);
-    
-  // })
 
   return (
     <div className="App">      
@@ -147,7 +148,7 @@ function App() {
 
           <RGBAInput 
             label='Background' 
-            rgb='#1b2727' 
+            rgb='#2d3434' 
             alpha={255} 
             func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}
             tooltip='Background color to paint over canvas at the start of each frame. &#xa; If alpha is less than fully opaque, some of the previous frame will show through.'/>

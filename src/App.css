@@ -25,27 +25,25 @@
   font-style: normal;
 }
 
-::before, ::after{
-  /* pointer-events: none !important;
-  color: red !important;
-  background-color: #f002 !important; */
+
+:root{
+  --canvas-size: 300px;
 }
 
-
-
-@media screen and (max-width: 799px) {
+@media screen and (min-width: 501px) {
   :root{
-    --canvas-size: 300px;
-  }
+    --canvas-size: 400px;
+  }  
+}
 
-  
+@media screen and (max-width: 799px) {  
 
   .horizontal-gutter{
     display: none;
   }  
 
   .rgba-picker{
-    --input-size: 50px;
+    --input-size: 120px;
   }
 
   body .App{    
@@ -101,9 +99,9 @@
 
 }
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 800px) and (max-width: 1149px){
   :root{
-    --canvas-size: 400px;
+    --canvas-size: 600px;
   }
 
   .App{
@@ -111,7 +109,7 @@
   }
 
   .rgba-picker{
-    --input-size: 60px;
+    --input-size: 100px;
   }
 
   body .App .bezier-input{
@@ -119,9 +117,50 @@
     --bezier-canvas-height: 120px;
   }
 
+
+  body div.App{
+    --col-gap: 20px;
+    grid-template-columns: auto var(--col-gap) auto;
+  }
+
+  body .App div.controls-center{
+    grid-column: 1 / span 3;
+    grid-row: 2;
+  }
+
+  body div.horizontal-gutter{
+    display: none;
+  }
+
+  body div.controls-center{
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  body div.controls-right{
+    grid-column: 3;
+  }
+
+  div.controls-center .color-inputs{
+    /* flex-direction: column; */
+  }
+
+  body div.buttons{
+    grid-column: 3;
+    /* grid-row: 2; */
+  }
+
+  body div.p5-container{
+    grid-column: 1 / span 3;
+    grid-row: 3;
+  }
+
 }
 
-@media screen and (min-width: 1000px) {
+@media screen and (min-width: 1150px) {
+
+
+
   :root{
     --canvas-size: 500px;
   }
@@ -137,7 +176,7 @@
   }
 }
 
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 1280px) {
   :root{
     --canvas-size: 600px;
   }
@@ -214,41 +253,29 @@ body, body *, [data-tooltip]::after{
 body.dark, body.dark .App{
   --background-color: #222;  
   --body-color:#ddd;
-  --primary-color: #fd6;  
-  --primary-color: #2ca;
-
-  --primary-color: #acd;
-
+  --primary-color: #4f8f9f;
   --low-contrast-color: #444;
   --highlight-color: #fa7;
   --highlight-color-hover: #fc9;
 }
 
 body.toast{
-  background: linear-gradient(
-    180deg,
-    #dc9 90%,
-    #278 90%,
-    #278 95%,   
-    #fa9 95%
-  );
-
-  background-attachment: fixed;
-  --background-color: transparent;  
+  --background-color: #b96;  
   --body-color:#ddd;
-
-  --primary-color: #fbb;
+  --primary-color: #fa9;
 
   --low-contrast-color: #444;
   --highlight-color: #fa7;
   --highlight-color-hover: #fc9;
 
-  color: #888;
+  --body-color:#878;
 }
 
+.toast .App .bezier-input{
+  --bezier-background-color: var(--panel-background-color);
+}
 
 .App {  
-  /* overflow: hidden; */
   position: relative;
   margin: 20px;
   display: grid;
@@ -305,14 +332,22 @@ body.toast{
   
 }
 
+
+
 body .App [data-tooltip]::after{
   font-size: var(--font-size);
 }
+
 
 [data-tooltip]:hover::after{
   visibility: visible;  
   transition: visibility 0s var(--hover-time);
   box-shadow: 0 12px 4px -8px #0004;
+}
+
+[data-tooltip]:active::after{
+  transition: visibility 0s;
+  visibility: hidden;
 }
 
 .controls-right [data-tooltip]::after{
@@ -345,22 +380,12 @@ body .App [data-tooltip]::after{
 
 
 
-.dark .App .bezier-input, .toast .App .bezier-input{
+.dark .App .bezier-input{
 
   --bezier-curve-stroke: #fff;
   
-  --bezier-control-hover-fill: #f77;
-  
-  
-  
   --bezier-track-stroke: #aaa;    
-  --bezier-background-fill: #888;
-  
-  --bezier-label-color: #ddd;
-
-  
-  --bezier-control-fill: #9aa;
-  
+  --bezier-background-fill: #888;  
 }
 
 .dark .App .group-name{
@@ -372,9 +397,12 @@ body .App [data-tooltip]::after{
   --slider-progress-color-hover: var(--primary-color-hover);
 }
 .dark .App .slider{
-  --slider-track-color: #888;
+  --slider-track-color: #666;
   --slider-track-color-hover: #777;
-  --slider-progress-color-hover: #f88;
+  /* --slider-progress-color-hover: #f88; */
+
+  --slider-progress-color-hover: #3ab;
+  --slider-progress-color-hover:  #5f9faf
 }
 
 body .App .bezier-input{
@@ -382,7 +410,7 @@ body .App .bezier-input{
   
   --bezier-curve-fill: var(--primary-color);
 
-
+  --bezier-label-color: var(--body-color);
 
   --bezier-control-fill: #a9a;
   --bezier-control-hover-fill: #6bd;
@@ -394,9 +422,6 @@ body .App .bezier-input{
   --bezier-canvas-border: var(--low-contrast-color);
   --bezier-control-stroke: var(--low-contrast-color);
 
-
-  /* --bezier-control-stroke:#f0f; */
-
   --bezier-control-fill: var(--highlight-color);
   --bezier-control-hover-fill: var(--highlight-color-hover);
 
@@ -405,10 +430,9 @@ body .App .bezier-input{
   
   /* --bezier-border: #222; */
   /* --bezier-background-color: var(--panel-background-color); */
+  
+  
   --bezier-border: var(--panel-border-color);
-
-  /* --bezier-control-size: 20px; */
-  /* --bezier-outer-padding: 10px; */
 
   /* full width - 2*padding - 3*control size */
   
@@ -497,7 +521,10 @@ body .App .bezier-input{
   font-family: 'extrude';
   box-shadow: inset 0 0 0 1px var(--background-color);
   padding: 1px;
+
+
 }
+
 
 .p5-container{
   position: relative;
@@ -508,11 +535,13 @@ body .App .bezier-input{
 
   width: fit-content;
   height: fit-content;
+  --border-radius: var(--panel-border-radius);
+
 }
 
 
 .p5-container canvas{
-  border-radius: 5px;
+  border-radius: var(--border-radius);
 }
 
 .p5-container #canvas-display-area{  
@@ -527,7 +556,7 @@ body .App .bezier-input{
   flex-direction: row;
   justify-content: space-between;
 
-  border-radius: 0 0 5px 5px;
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
 
 }
 
@@ -574,13 +603,16 @@ body .App .bezier-input{
   display: grid;
   grid-template-columns: 75px auto 75px;
   grid-template-columns: 75px auto 4em;
-  align-items: center;
+  
 }
 
 .labeled-slider .slider{
   max-width: 110px;
 }
-
+.slider-input-wrapper{
+  display: flex;
+  align-items: center;
+}
 .slider-value::before{
 content: ' ';
 }
@@ -605,7 +637,6 @@ content: ' ';
   border: 4px solid #aaa;
 
   position: relative;
-
   height: 32px;
 }
 
@@ -615,11 +646,17 @@ content: ' ';
 }
 
 .rgba-picker input[type="color"]{
-  visibility: hidden;
-  width: 0;
-  height: 0;
-  padding: 0;
-  margin: 0;
+  /* visibility: hidden; */
+
+  border-radius: 0;
+  border: none;
+  position: absolute;
+
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  opacity: 0;
 }
 
 .rgba-picker label{
@@ -691,7 +728,7 @@ div.buttons > :nth-child(n + 3){
 .file-input.pimage-input button{  background-image: url(../public/images/file-open-p-white.png);  }
 .dark .file-input.pimage-input button{  background-image: url(../public/images/file-open-p-black.png);  }
 
-.file-input.emap-input button{  background-image: url(../public/images/file-open-e-white.png);  }
+.file-input.emap-input button{  background-image: url(../public/images/file-open-e-white-128.png);  }
 .dark .file-input.emap-input button{  background-image: url(../public/images/file-open-e-black.png);  }
 
 .dark .file-input button{
@@ -713,7 +750,13 @@ div.buttons > :nth-child(n + 3){
   background-size: contain;
   padding: 16px;
   border: var(--border-width) solid var(--button-color);  
+  
+
   image-rendering: pixelated;
+  image-rendering: crisp-edges;
+
+  image-rendering: -webkit-optimize-contrast;
+
   border-radius: 5px;    
 }
 
@@ -761,7 +804,7 @@ input[type="checkbox"], input[type="radio"]{
   --checkbox-color-checked: var(--highlight-color);
   --checkbox-color-checked-hover: var(--highlight-color-hover);
 
-  --border-width: 4px;
+  --border-width: 5px;
   --shadow-width: 4px;
   --border-radius: var(--border-width);
 
@@ -769,10 +812,17 @@ input[type="checkbox"], input[type="radio"]{
   width: 24px;
   height: 24px;
   background-color: var(--checkbox-color);  
-  border: var(--border-width) outset var(--checkbox-color);
-  box-shadow: 0 0 0 var(--shadow-width) #aaa;  
+  border: var(--border-width) solid transparent;
+  
+  --lighter: #fff4;
+  --darker: #0003;
 
-  /* border-radius: var(--border-radius); */
+  /* border-top-color: var(--lighter);
+  border-left-color: var(--lighter); */
+  border-bottom-color: var(--darker);
+  border-right-color: var(--darker);
+
+  box-shadow: 0 0 0 var(--shadow-width) #aaa;  
   
   margin: var(--shadow-width);
 }
@@ -781,12 +831,17 @@ input[type="checkbox"]{
   border-radius: var(--border-radius);
 }
 
-.radio-header+.radio-item input{
+.radio-item input{
+  border-radius: 0;
+}
+
+:not(.radio-item)+.radio-item > input,
+.radio-item:first-child > input{
   border-top-left-radius: var(--border-radius);
   border-top-right-radius: var(--border-radius);
 }
 
-.radio-group :last-child input{
+.radio-item:last-child input{
   border-bottom-left-radius: var(--border-radius);
   border-bottom-right-radius: var(--border-radius);
 }
@@ -795,7 +850,12 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
   --checkbox-color: var(--checkbox-color-checked);
   --checkbox-color-hover: var(--checkbox-color-checked-hover);
 
-  border-style: inset;
+  border-color: transparent;
+  border-top-color: var(--darker);
+  border-left-color: var(--darker);
+  /* border-bottom-color: var(--lighter);
+  border-right-color: var(--lighter); */
+  
 }
 
 input[type="checkbox"]:hover, input[type="radio"]:hover{  --checkbox-color: var(--checkbox-color-hover) }
