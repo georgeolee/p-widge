@@ -20,9 +20,7 @@ const version = '0.1.1';
 *   TODO: 
 *         
         THIS : !          
-          -safari - blurry bg image on  buttons ; issue w/ image rendering: pixelated?
-              look into > image rendering, pixelated vs crisp edges vs vendor prefixed
-                            
+          
   *       -speed and size tags
           -mid tone / low contrast theme
           -css breakpoints for in-between window sizes ; 2 col layout?
@@ -258,10 +256,11 @@ function App() {
       
       
       <div ref={p5ContainerRef} className='p5-container'>      
+        <input type="checkbox"/>
         <div id='canvas-display-area'>
           <div id='fps-display'></div>
           <div id='particle-count-display'></div>
-        </div>
+        </div>        
       </div>
       
       <div className='controls-right' data-panel-tag="emitter properties">

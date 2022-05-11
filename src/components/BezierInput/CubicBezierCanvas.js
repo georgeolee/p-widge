@@ -11,6 +11,15 @@ export class CubicBezierCanvas{
     hoverPoint;
     classChangeObserver;
     sizeChangeObserver;
+    
+    
+
+    density;
+    curveStrokeWidth;
+    controlStrokeWidth;
+    controlStrokeInset;
+    handleStrokeWidth
+    boundsStrokeWidth;
 
     /**
      * 
@@ -22,6 +31,16 @@ export class CubicBezierCanvas{
         this.color = {};
         this.editPoint = null;
         this.hoverPoint = null;
+
+
+        // resolution of canvas in proportion to computed css size
+        this.density = 2;
+
+        this.curveStrokeWidth = 4 * this.density;
+        this.controlStrokeWidth = 1.5 * this.density;
+        this.controlStrokeInset = 2 * this.density;
+        this.boundsStrokeWidth = 1 * this.density;
+        this.handleStrokeWidth = 1 * this.density;
 
         const updateCanvasColors = () => {
             this.setCanvasColorsFromCSS();
@@ -92,9 +111,14 @@ export class CubicBezierCanvas{
         const style = getComputedStyle(this.canvas);
         this.canvas.width = Number(style.getPropertyValue('--bezier-canvas-width').replace('px','')) || 150;
         this.canvas.height = Number(style.getPropertyValue('--bezier-canvas-height').replace('px','')) || 120;
+        
+
         this.controlSize = Number(style.getPropertyValue('--bezier-control-size').replace('px','')) || 18; 
         
     
+        this.canvas.width *= this.density;
+        this.canvas.height *= this.density;
+        this.controlSize *= this.density;
     }
 
     drawBezier(bz){
@@ -113,7 +137,7 @@ export class CubicBezierCanvas{
 
         const drawCurve = () => {
             ctx.beginPath();
-            ctx.lineWidth = 4;
+            ctx.lineWidth = this.curveStrokeWidth;
             ctx.strokeStyle = this.color.curveStroke;
             ctx.fillStyle = this.color.curveFill;
             ctx.moveTo(bz.P0.x * gw, bz.P0.y * gh);        
@@ -127,7 +151,7 @@ export class CubicBezierCanvas{
         drawCurve();
 
         //bounds        
-        ctx.lineWidth = 1;
+        ctx.lineWidth = this.boundsStrokeWidth;
         ctx.strokeStyle=this.color.canvasBorder;
         ctx.strokeRect(0,0,gw,gh)
         ctx.restore();
@@ -159,8 +183,8 @@ export class CubicBezierCanvas{
             ctx.arc(PN.x * gw + xOffset, PN.y * gh, this.controlSize/2, 0, 2 * Math.PI);
             ctx.fill();
             
-            ctx.lineWidth = 1.5;
-            const strokeRadius = this.controlSize/2 - 2;
+            ctx.lineWidth = this.controlStrokeWidth;
+            const strokeRadius = this.controlSize/2 - this.controlStrokeInset;
 
             ctx.beginPath();
             ctx.strokeStyle = this.color.controlStroke;
@@ -171,7 +195,7 @@ export class CubicBezierCanvas{
 
         const drawHandle = (PA, PB) => {
             ctx.strokeStyle = this.color.controlHandleStroke;
-            ctx.lineWidth = 1;
+            ctx.lineWidth = this.handleStrokeWidth;
             ctx.beginPath()
             ctx.moveTo(PA.x * gw, PA.y * gh);
             ctx.lineTo(PB.x * gw, PB.y * gh);
@@ -205,8 +229,9 @@ export class CubicBezierCanvas{
     getControlPointUnderMouse(e){
         //mouse coords relative to canvas
         const rect = e.target.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = rect.height - (e.clientY - rect.top); //match flipped canvas origin for y
+        const mx = (e.clientX - rect.left) * this.density;
+        const my = (rect.height - (e.clientY - rect.top))*this.density; //match flipped canvas origin for y
+
 
         //graph area width and height
         const gw = this.canvas.width - this.controlSize * 2;
@@ -275,8 +300,8 @@ export class CubicBezierCanvas{
             
             //get normalized mouse coords relative to graph area
             const rect = this.canvas.getBoundingClientRect();            
-            const mxn = (e.clientX - this.controlSize - rect.left)/(rect.width - 2*this.controlSize);
-            const myn = (rect.height - this.controlSize - (e.clientY - rect.top))/(rect.height - 2*this.controlSize); //invert
+            const mxn = (e.clientX - this.controlSize/this.density - rect.left)/(rect.width - 2*this.controlSize/this.density);
+            const myn = (rect.height - this.controlSize/this.density - (e.clientY - rect.top))/(rect.height - 2*this.controlSize/this.density); //invert
 
             //follow mouse y, but constrain inside graph area
             this.editPoint.y = clip(myn, 0, 1);
