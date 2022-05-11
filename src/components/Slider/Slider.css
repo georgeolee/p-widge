@@ -1,15 +1,15 @@
 .slider{
-  box-shadow: none;
+    box-shadow: none;
     -webkit-appearance: none;
     background: transparent;
     cursor: pointer;
     
     --slider-progress-percent: 50%;
-  
+    
     --slider-track-height: 12px;    
-
     --slider-thumb-width: 16px;
     --slider-thumb-height: var(--slider-thumb-width);
+    
     --slider-progress-color: #f44;
     --slider-progress-color-hover:#f66;
   
@@ -40,14 +40,6 @@
 
   }
 
-  .slider:hover::-webkit-slider-runnable-track{
-    background-image: linear-gradient(
-        90deg,
-        var(--slider-progress-color-hover) var(--slider-progress-percent),
-        var(--slider-track-color-hover) var(--slider-progress-percent)
-    );
-  }
-
   .slider::-webkit-slider-thumb{    
     box-shadow: none;
     -webkit-appearance: none;
@@ -58,20 +50,8 @@
     background-color: var(--slider-thumb-color);
     margin-top: calc(var(--slider-track-height)/2 - var(--slider-thumb-height)/2);  
   }
-  
-  .slider:hover::-webkit-slider-thumb{
-      background-color: var(--slider-thumb-color-hover);
-  }
-
-
-
 
 /* MOZ */
-
-
-
-
-
 
   .slider::-moz-range-track{
     box-shadow: none;
@@ -87,16 +67,6 @@
     );
   }
   
-  .slider:hover::-moz-range-track{    
-    background-image: linear-gradient(
-        90deg,
-        var(--slider-progress-color-hover) var(--slider-progress-percent),
-        var(--slider-track-color-hover) var(--slider-progress-percent)
-    );
-  }
-  
-  
-  
   .slider::-moz-range-thumb{
     box-shadow: none;
     -webkit-appearance: none;
@@ -109,7 +79,10 @@
     border: none;  
   }
 
-  .slider:hover::-moz-range-thumb{
-      background-color: var(--slider-thumb-color-hover);
+  @media (hover: hover) and (pointer: fine){
+    .slider:hover{
+      --slider-progress-color: var(--slider-progress-color-hover);
+      --slider-track-color: var(--slider-track-color-hover);
+      --slider-thumb-color: var(--slider-thumb-color-hover);
+    }
   }
-  

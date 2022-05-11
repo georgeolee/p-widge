@@ -20,10 +20,20 @@ const version = '0.1.1';
 *   TODO: 
 *         
         THIS : !          
-          
+        
+        ******
+          -figure out what to do about hover states on touch screens
+            > related - where / if / how to show tooltips?
+
+          -also, how to detect touch screen
+
+          -canvas toggle cleanup
+
+          -consolidate / clean up media queries
+          -get rid of 2 col layout - it looks dumb
+
   *       -speed and size tags
           -mid tone / low contrast theme
-          -css breakpoints for in-between window sizes ; 2 col layout?
 
 *       -figure out group heading / panel heading / tag situation *****
 *       -major css housekeeping 
@@ -31,9 +41,7 @@ const version = '0.1.1';
         -favicon
 *      
 *       continue tooltips - rgba, placement (currently, left slider values get covered up), appearance & timing
-*       continue stylesheet cleanup
 *       theme cleanup
-*       control cleanup
 *
 *       -github images 
 *       -styling and stuff  ***
@@ -42,7 +50,6 @@ const version = '0.1.1';
 *         - separate lookup res from sample res?
 *         >github update
 *         
-*       -linter warnings - useEffect deps, etc.  
 *       
 *         
 *
