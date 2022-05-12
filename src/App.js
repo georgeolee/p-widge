@@ -14,20 +14,19 @@ import { LinkButton } from './components/LinkButton';
 
 import { GetActiveParticleCount } from './particle-system/Particle';
 
-const version = '0.1.1';
+const version = '0.1.2';
 
 /*
 *   TODO: 
 *         
         THIS : !          
-        
+
+        scrollbar offset horizontal (- 15px / 2 ?) for fixed canvas on non-mobile browser? how / if to do
+
+
         ******
           continue stylesheet cleanup
 
-
-          fix tooltip width
-
-          tooltips on mobile ? possibly add a toggle next to canvas toggle
             > toggle placement in html doc?
             > related - canvas toggle cleanup
             > figure out what to do about that empty space at the top
@@ -47,10 +46,6 @@ const version = '0.1.1';
 *       -github images 
 *       -styling and stuff  ***
 *     
-*       -BezierInput: 
-*         - separate lookup res from sample res?
-*         >github update
-*         
 *       
 *         
 *
@@ -61,7 +56,7 @@ function App() {
 
 
   const onAppPointerMove = e => {
-    const canvasRect = p5ContainerRef.current.getBoundingClientRect();
+    const canvasRect = p5ContainerRef.current.querySelector('.p5Canvas').getBoundingClientRect();
     if(!canvasRect)return;
 
     mouse.pageX = e.pageX;
@@ -111,6 +106,14 @@ function App() {
     return () => document.body.removeEventListener('pointermove', onAppPointerMove);
   });
 
+
+  // DETECT TOUCH END
+  // CLEAN THIS UP
+  useEffect(()=>{
+    p5ContainerRef.current.querySelector('.p5Canvas').addEventListener('touchend',()=>{
+      mouse.overCanvas = false;
+    })
+  });
 
   return (
     <div className="App">      
@@ -358,18 +361,14 @@ function App() {
             <Radio 
               name='editor-theme' 
               label='light' 
-              func={()=>document.body.classList.remove('dark', 'toast')} 
+              func={()=>document.body.classList.remove('dark')} 
               checked={!isNightTime}/>
 
             <Radio 
               name='editor-theme' 
               label='dark' 
-              func={()=>{document.body.classList.remove('toast'); document.body.classList.add('dark')}} 
+              func={()=>{document.body.classList.add('dark')}} 
               checked={isNightTime}/>
-
-            <Radio name='editor-theme' 
-              label='toast' 
-              func={()=>{document.body.classList.remove('dark', 'light'); document.body.classList.add('toast')}}/>
           </div>
 
         </div>

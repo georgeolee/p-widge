@@ -35,7 +35,7 @@ export function sketch(p){
     p.setup = function(){
 
         const size = getCanvasSizeProperty();
-        let cnv = p.createCanvas(size,size)
+        p.createCanvas(size,size)
         p.background(255)        
         
 
@@ -45,13 +45,7 @@ export function sketch(p){
         
 
         s.pos = p.createVector(p.width/2,p.height/2)
-        
-        p.frameRate(frameRate);
-
-        p.noSmooth();
-        
-        console.log('SMOOTH?')
-        console.log(cnv.elt.getContext('2d').imageSmoothingEnabled)
+                
     }
 
     p.draw = function(){

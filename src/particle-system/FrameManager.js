@@ -19,23 +19,12 @@ export class FrameManager{
         this.isBusy = false;
         this.queue = [];
         this.maxQueueSize = 1;
-
         this.p5 = null;
-
-        // this.url = './images/default-particle.png';
         this.frameCount = 32;
-        
-        
         this.startColor = null;
         this.endColor = null;
-
         this.buffer = null;
     }
-
-    // static attachP5(p5Instance){
-    //     this.p5 = p5Instance;
-
-    // }
 
     static createFrames(url, count, callback){
         if(!this.p5){
