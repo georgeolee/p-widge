@@ -22,25 +22,26 @@ const version = '0.1.1';
         THIS : !          
         
         ******
-          -figure out what to do about hover states on touch screens
-            > related - where / if / how to show tooltips?
+          continue stylesheet cleanup
 
-          -also, how to detect touch screen
 
-          -canvas toggle cleanup
+          fix tooltip width
+
+          tooltips on mobile ? possibly add a toggle next to canvas toggle
+            > toggle placement in html doc?
+            > related - canvas toggle cleanup
+            > figure out what to do about that empty space at the top
 
           -consolidate / clean up media queries
-          -get rid of 2 col layout - it looks dumb
+            > intermediate sizes 
 
-  *       -speed and size tags
           -mid tone / low contrast theme
 
-*       -figure out group heading / panel heading / tag situation *****
-*       -major css housekeeping 
+*       -figure out group heading / panel heading / tag situation 
 *       
         -favicon
 *      
-*       continue tooltips - rgba, placement (currently, left slider values get covered up), appearance & timing
+*       continue tooltips - rgba, bz size
 *       theme cleanup
 *
 *       -github images 
@@ -128,9 +129,6 @@ function App() {
       
       
       <div className='controls-center' data-panel-tag="color settings">
-        <div className='color-inputs'>
-
-          <div>
           <RGBAInput 
             label='Particle Start' 
             rgb='#ff6600' 
@@ -138,8 +136,7 @@ function App() {
             func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} 
             timeoutFunc={()=> flags.slowRecolor = true} 
             timeout={500}
-            tooltip='Tint color for each particle at the start of its lifetime.&#xa;Particle tint will transition between this and end color over its lifetime.'/>
-          </div>
+            tooltip='Tint color for each particle at the start of its lifetime.&#xa;Particle tint will transition between this and end color over its lifetime.'/>          
 
           <RGBAInput 
             label='Particle End'             
@@ -157,7 +154,6 @@ function App() {
             alpha={255} 
             func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}
             tooltip='Background color to paint over canvas at the start of each frame. &#xa; If alpha is less than fully opaque, some of the previous frame will show through.'/>
-        </div>        
       </div>
 
 
