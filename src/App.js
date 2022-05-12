@@ -92,8 +92,8 @@ function App() {
  
   //print fps & particle count to screen
   useEffect(() => {
-    const fpsDisplay = document.getElementById('fps-display');
-    const particleCountDisplay = document.getElementById('particle-count-display');
+    const fpsDisplay = document.getElementById('fps-overlay');
+    const particleCountDisplay = document.getElementById('particle-count-overlay');
     const dcp = 0;
     const displayUpdate = setInterval( ()=> {
       fpsDisplay.textContent = `fps: ${Math.round(fps.current * 10**dcp) / 10**dcp || fps.current}`;
@@ -259,10 +259,10 @@ function App() {
       
       
       <div ref={p5ContainerRef} className='p5-container'>      
-        <input type="checkbox"/>
-        <div id='canvas-display-area'>
-          <div id='fps-display'></div>
-          <div id='particle-count-display'></div>
+        <input id='canvas-display-toggle' type="checkbox" defaultChecked/>
+        <div id='canvas-overlay'>
+          <div id='fps-overlay'></div>
+          <div id='particle-count-overlay'></div>
         </div>        
       </div>
       
