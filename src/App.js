@@ -5,7 +5,7 @@ import { LabeledSlider } from './components/LabeledSlider.js';
 import { Checkbox } from './components/Checkbox';
 import { Radio, RadioHeader } from './components/Radio';
 import {useRef, useEffect} from 'react';
-import { mouse, particleSettings, flags, fps } from './globals';
+import { pointer, particleSettings, flags, fps } from './globals';
 import { RGBAInput } from './components/RGBAInput';
 import { FrameManager } from './particle-system/FrameManager';
 import { FileInput } from './components/FileInput';
@@ -21,24 +21,21 @@ const version = '0.1.2';
 *         
         THIS : !          
 
-        scrollbar offset horizontal (- 15px / 2 ?) for fixed canvas on non-mobile browser? how / if to do
+        useEffect cleanup
+        stylesheet cleanup
+            > fixed mode canvas css            
+            > add in a landscape orientation?
 
+        figure out what to do about that empty space at the top *****
 
-        ******
-          continue stylesheet cleanup
+        make touchscreen inputs a little bigger
 
-            > toggle placement in html doc?
-            > related - canvas toggle cleanup
-            > figure out what to do about that empty space at the top
+        fixed mode - canvas position when embedding as fullsize iframe ; set top via css prop?
 
-          -consolidate / clean up media queries
+        -consolidate / clean up media queries
             > intermediate sizes 
-
-          -mid tone / low contrast theme
-
-*       -figure out group heading / panel heading / tag situation 
 *       
-        -favicon
+        mobile testing
 *      
 *       continue tooltips - rgba, bz size
 *       theme cleanup
@@ -56,31 +53,72 @@ function App() {
 
 
   const onAppPointerMove = e => {
-    const canvasRect = p5ContainerRef.current.querySelector('.p5Canvas').getBoundingClientRect();
+    const canvasRect = p5ContainerRef.current.querySelector('.p5Canvas')?.getBoundingClientRect();
     if(!canvasRect)return;
 
-    mouse.pageX = e.pageX;
-    mouse.pageY = e.pageY;
-    mouse.clientX = e.clientX;
-    mouse.clientY = e.clientY;
-    mouse.canvasX = e.clientX - canvasRect.left;
-    mouse.canvasY = e.clientY - canvasRect.top;
-    mouse.overCanvas = mouse.canvasX >= 0 && mouse.canvasY >= 0 && mouse.canvasX <= canvasRect.width && mouse.canvasY <= canvasRect.height;
+    pointer.pageX = e.pageX;
+    pointer.pageY = e.pageY;
+    pointer.clientX = e.clientX;
+    pointer.clientY = e.clientY;
+    pointer.canvasX = e.clientX - canvasRect.left;
+    pointer.canvasY = e.clientY - canvasRect.top;
+    pointer.overCanvas = pointer.canvasX >= 0 && pointer.canvasY >= 0 && pointer.canvasX <= canvasRect.width && pointer.canvasY <= canvasRect.height;
   }
+
+  
 
   const now = new Date();
   const isNightTime = now.getHours() < 6 || now.getHours() > 18;
 
-
   const p5ContainerRef = useRef();
 
-  //attach p5 instance
+  //create p5 instance & attach touch listeners to p5 canvas
   useEffect(()=>{
-    const p = new p5(sketch, p5ContainerRef.current);
+    
+    const listenerCleanups = [];
+    
+    const onCanvasTouchStart = e => {
+      const touch = e.changedTouches.item(0);
+      if(touch) onAppPointerMove(touch);    
+    }
+  
+    const onCanvasTouchEnd = () => {
+      pointer.overCanvas = false;
+    }
+
+    const attachP5CanvasListeners = (mutationsList) => {
+      mutationsList.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if(node.nodeName === 'CANVAS' && node.classList.contains('p5Canvas')){
+            node.addEventListener('touchstart', onCanvasTouchStart);
+            node.addEventListener('touchend', onCanvasTouchEnd);
+
+            listenerCleanups.push(
+              (() => node?.removeEventListener('touchstart', onCanvasTouchStart)),
+              (() => node?.removeEventListener('touchend', onCanvasTouchEnd))
+            );
+          }
+        })
+      })
+    }
+    
+
+    const canvasObserver = new MutationObserver(attachP5CanvasListeners);
+
+    canvasObserver.observe(p5ContainerRef.current, {childList: true});
+    
+    const p = new p5(sketch, p5ContainerRef.current);    
 
     return () => {
+      
+      for(const cleanup of listenerCleanups){
+        cleanup();
+      }
+
+      canvasObserver.disconnect();
       FrameManager.removeGraphicsBuffer();
-      p.remove()
+      p.remove();
+        
     };
 
   },[]);
@@ -98,22 +136,26 @@ function App() {
     return () => clearInterval(displayUpdate);
   }, [])
 
-
-  // attach mouse listener
+  // attach pointer listeners
   useEffect(()=>{
     document.body.addEventListener('pointermove', onAppPointerMove);
 
-    return () => document.body.removeEventListener('pointermove', onAppPointerMove);
+    //listener cleanup
+    return () => {
+      document.body.removeEventListener('pointermove', onAppPointerMove);
+    }
   });
 
+  // get width of vertical scrollbar (if any) and update css property
+  useEffect(() =>{
+    const computeScrollbarWidth = () => {
+      const scrollWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.documentElement.style.setProperty('--scrollbar-width', `${scrollWidth}px`);
+    }
 
-  // DETECT TOUCH END
-  // CLEAN THIS UP
-  useEffect(()=>{
-    p5ContainerRef.current.querySelector('.p5Canvas').addEventListener('touchend',()=>{
-      mouse.overCanvas = false;
-    })
-  });
+    computeScrollbarWidth();
+    window.onresize = computeScrollbarWidth;
+  })
 
   return (
     <div className="App">      
@@ -269,7 +311,7 @@ function App() {
         </div>        
       </div>
       
-      <div className='controls-right' data-panel-tag="emitter properties">
+      <div className='controls-right' data-panel-tag="system | emitter properties">
 
         
         

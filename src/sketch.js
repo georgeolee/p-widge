@@ -1,7 +1,7 @@
 import {Vector} from "p5";
 import { FrameManager } from "./particle-system/FrameManager";
 import { ParticleSystem } from "./particle-system/ParticleSystem";
-import { mouse, particleSettings, flags, fps } from "./globals";
+import { pointer, particleSettings, flags, fps } from "./globals";
 
 export function sketch(p){
     
@@ -61,13 +61,13 @@ export function sketch(p){
             s.lastEmitMillis = Date.now()
         }
 
-        if(s.settings.emitAuto || (mouse.overCanvas && p.mouseIsPressed)){
+        if(s.settings.emitAuto || (pointer.overCanvas && p.mouseIsPressed)){
             s.emitPerSecond(s.settings.rate, s.settings.overwrite)
         }
         s.update(p.deltaTime);
 
 
-        const targetPosition = mouse.overCanvas ? new Vector(mouse.canvasX, mouse.canvasY) : new Vector(p.width/2, p.height/2);
+        const targetPosition = pointer.overCanvas ? new Vector(pointer.canvasX, pointer.canvasY) : new Vector(p.width/2, p.height/2);
         s.pos = Vector.lerp(s.pos, targetPosition, 0.2);    // a little bit of damping to motion
     
         mousePressLastFrame = p.mouseIsPressed;

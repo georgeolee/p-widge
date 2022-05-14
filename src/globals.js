@@ -1,7 +1,7 @@
 import { ParticleSystemSettings } from "./particle-system/ParticleSystemSettings"
 
 //stuff for passing data in and out of p5 sketch
-export const mouse = {
+export const pointer = {
     pageX: null,
     pageY: null,
 

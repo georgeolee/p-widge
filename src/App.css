@@ -234,10 +234,11 @@ body{
   position: relative;
   display: flex;
   flex-direction: column;
-  margin-bottom: auto;
   grid-column: 3;  
   width: fit-content;
   height: fit-content;
+
+  align-items: center;
 }
 
 .p5-container canvas{
@@ -258,7 +259,7 @@ body{
   justify-content: space-between;
 
   border-radius: 0 0 var(--panel-border-radius) var(--panel-border-radius);
-
+  pointer-events: none;
 }
 
 #canvas-overlay *{
@@ -267,6 +268,10 @@ body{
 
 #particle-count-overlay{
   min-width: 12em;
+}
+
+#canvas-display-toggle{
+  display: none;
 }
 
 .controls-left, .controls-right, .controls-center{  
@@ -306,8 +311,7 @@ body{
 }
 
 .controls-center > .rgba-picker{
-  margin-top: var(--control-spacing);
-  margin-top: var(--panel-padding) !important;
+  margin-top: var(--panel-padding);
   flex: 1;
   margin-left: calc(var(--panel-padding)/2);
   margin-right: calc(var(--panel-padding)/2);
@@ -381,7 +385,7 @@ body{
   pointer-events: none;
 }
 
-.rgba-picker button, input[type="range"]{
+.rgba-picker button, .rgba-picker input[type="range"]{
   flex-grow: 1;  
   margin: 0 0 0 auto;  
   max-width: var(--input-size);
@@ -420,19 +424,13 @@ div.buttons > :nth-child(n + 3){
   height: var(--col-gap);
 }
 
-.file-input button{
-  background-image: url(../public/images/file-open-white.png);
-}
-
 .file-input.pimage-input button{  background-image: url(../public/images/file-open-p-white.png);  }
 .dark .file-input.pimage-input button{  background-image: url(../public/images/file-open-p-black.png);  }
 
 .file-input.emap-input button{  background-image: url(../public/images/file-open-e-white.png);  }
 .dark .file-input.emap-input button{  background-image: url(../public/images/file-open-e-black.png);  }
 
-.dark .file-input button{
-  background-image: url(../public/images/file-open-black.png);
-}
+.dark .file-input button{ background-image: url(../public/images/file-open-black.png) }
 
 .app-button{
   display: flex;
@@ -454,8 +452,6 @@ div.buttons > :nth-child(n + 3){
   image-rendering: crisp-edges;
   border-radius: 5px;    
 }
-
-
 
 .app-button label{ 
   pointer-events: none;
@@ -502,12 +498,9 @@ input[type="checkbox"], input[type="radio"]{
   height: 24px;
   background-color: var(--checkbox-color);  
   border: var(--border-width) solid transparent;
-    
   border-bottom-color: var(--darker);
   border-right-color: var(--darker);
-
   box-shadow: 0 0 0 var(--shadow-width) var(--checkbox-shadow-color);  
-  
   margin: var(--shadow-width);
 }
 
@@ -602,15 +595,21 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
 
 }
 
+@media (pointer: coarse){
+  :root{
+    --background-color: #ff0 !important;
+  }
+}
+
 @media screen and (max-width: 799px) {  
 
 
   #canvas-display-toggle{
+    display: flex;
     position: fixed;
     top: 0;
-    /* visibility: hidden; */
     width: 100vw;
-    height: 32px;
+    height: var(--vertical-padding);
     background-color: transparent;
     border: none;
     box-shadow: none;
@@ -620,17 +619,15 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
     top: 0;
     left: 0;
     right: 0;
-    width: 100vw !important;
-    height: 32px;
+    width: 100vw;
+    height: var(--vertical-padding); 
     justify-content: center;
-    text-align: center !important;
+    text-align: center;
     display: flex;
     flex-direction: column;
-    flex-wrap: nowrap;
     content: 'show canvas';
     font-size: 16px;
-    color: var(--low-contrast-color);
-    
+    color: var(--low-contrast-color); 
   }
 
   #canvas-display-toggle:checked::after{
@@ -652,51 +649,31 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
     flex-direction: column;
   }
 
-  /*
-  TEST STUFF - FIXED CANVAS ON SMALL SCREEN 
-  clean up / decide if this is good or not
-  */
 
-  /* .p5-container{
-    top: 0;
-    width: var(--canvas-size) !important;
-    position: fixed !important;
-    justify-self: center;    
-    z-index: 20000;
-    --overlay-color: #f44;
-    box-shadow: 0 calc(-100vw + 1em + 32px) 1px 100vw var(--overlay-color);
-    background-color: var(--overlay-color);    
-  } */
+  .App .p5-container{  
 
-  .p5-container{    
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    
-    --vertical-padding: 32px;
+    --vertical-padding: 36px;
     --horizontal-padding: calc((100vw - var(--canvas-size))/2);
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
     min-height: var(--vertical-padding);
-    margin: 0 !important;
-    
-    align-items: center !important;
-    /* justify-content: center !important; */
-    /* justify-self: center;     */
+    margin: 0;
     z-index: 20000;
-    --overlay-color: var(--primary-color);
-    background-color: var(--overlay-color);    
-    border: none !important;
+    background-color: var(--primary-color);        
     box-shadow: 0 4px 1px 0px #0004; 
   }
 
   .p5-container canvas{
-    margin: var(--vertical-padding) 0 !important; 
+    margin: var(--vertical-padding) 0; 
+    margin-right: var(--scrollbar-width);
   }
 
   .p5-container #canvas-overlay{
-    left: var(--horizontal-padding);
-    /* bottom: var(--padding); */
-    bottom: 32px;
+    left: calc(var(--horizontal-padding) - var(--scrollbar-width)/2);
+    bottom: var(--vertical-padding);
   }
 
 
@@ -738,20 +715,6 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
   }
 
 
-}
-
-@media screen and (min-width: 800px) {
-  #canvas-display-toggle{
-    display: none;
-  }
-
-  body .App .p5-container{
-    display: flex;
-  }
-
-  [data-tooltip]::after{
-    display: flex;
-  }
 }
 
 @media screen and (min-width: 800px) and (max-width: 1149px){
