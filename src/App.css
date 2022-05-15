@@ -28,6 +28,14 @@
   --input-border-color: #aaa;
 
   --scrollbar-width: 0px;
+
+  --slider-spacing: 8px;
+
+
+
+  --fixed-canvas-top: 0;
+
+  --app-margin:20px;
 }
 
 
@@ -104,7 +112,7 @@ body{
 
 .App {  
   position: relative;
-  margin: 20px;
+  margin: var(--app-margin);
   display: grid;
   grid-template-columns: auto var(--col-gap) var(--canvas-size) var(--col-gap) auto;
   font-size: 16px;
@@ -116,7 +124,7 @@ body{
 /* TOOLTIP STUFF */
 
 [data-tooltip]{
- --hover-time: 1s; 
+ --hover-time: 1.5s; 
  position: relative;
 }
 
@@ -214,6 +222,7 @@ body{
   width: fit-content;
   height: fit-content;
   align-self: center;
+  margin: var(--control-spacing) 0;
 }
 
 
@@ -222,12 +231,15 @@ body{
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 }
 .App-header h1 {
   font-size: 36px;  
   font-family: 'extrude';
   box-shadow: inset 0 0 0 1px var(--background-color);
   padding: 1px;
+  margin: 0 0 16px 0;
+  color: var(--primary-color);
 }
 
 .p5-container{
@@ -264,6 +276,10 @@ body{
 
 #canvas-overlay *{
   color: #fff;
+}
+
+#canvas-underlay{
+  display: none;
 }
 
 #particle-count-overlay{
@@ -306,10 +322,6 @@ body{
   padding-right: calc(var(--panel-padding)/2);
 }
 
-[class|="controls"] > :nth-child(n+2):not(.radio+.radio-item):not(.labeled-slider+.labeled-slider){
-  margin-top: var(--control-spacing);  
-}
-
 .controls-center > .rgba-picker{
   margin-top: var(--panel-padding);
   flex: 1;
@@ -340,7 +352,7 @@ body{
 }
 
 .labeled-slider+.labeled-slider{
-  margin-top: 8px;
+  margin-top: var(--slider-spacing);
 }
 
 .rgba-picker{
@@ -566,7 +578,7 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
   font-style: normal;
 }
 
-/*put hover styles here*/
+/*hover styles for mouse / trackpad devices*/
 @media (hover: hover) and (pointer: fine)
 {  
 
@@ -595,19 +607,57 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
 
 }
 
+/* bigger input controls for touch screens */
 @media (pointer: coarse){
   :root{
-    --background-color: #ff0 !important;
+    --slider-spacing: 16px;
+  }
+
+  body .App .bezier-input{
+    --bezier-canvas-width: 220px;
+    --bezier-canvas-height: 220px;
+    --bezier-control-size: 28px;
+  }
+
+  body .App .slider{
+    --slider-thumb-width: 28px;
   }
 }
 
+/* single col layout with fixed canvas ; for small screens */
 @media screen and (max-width: 799px) {  
 
+  /* :root{
+    --fixed-canvas-top: 0;
+  } */
+
+  /* TEST */
+  /* TEST */
+  /* TEST */
+  /* TEST */
+  /* TEST */
+
+  #canvas-underlay{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height:calc(var(--canvas-size) + 72px - var(--app-margin)); /* 72px from 2* var(--vertical-padding) in .p5Container*/
+    margin: 0;
+    /* background-color: cornflowerblue; */
+  }
+
+  #canvas-underlay img{
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    width: 128px;
+    height: auto;
+    opacity: 0.2;
+  }
 
   #canvas-display-toggle{
     display: flex;
     position: fixed;
-    top: 0;
+    top: var(--fixed-canvas-top);
     width: 100vw;
     height: var(--vertical-padding);
     background-color: transparent;
@@ -616,7 +666,7 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
   }
   #canvas-display-toggle::after{
     position: fixed;
-    top: 0;
+    top: var(--fixed-canvas-top);
     left: 0;
     right: 0;
     width: 100vw;
@@ -640,9 +690,6 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
 
   body .App{
     grid-template-columns: var(--canvas-size);
-
-    /* extra space so scrolling to top with floating canvas doesn't block content ; better way to do this? */
-    margin-top: calc(var(--canvas-size) + 100px);        
   }
 
   .App .controls-center{
@@ -656,7 +703,7 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
     --horizontal-padding: calc((100vw - var(--canvas-size))/2);
 
     position: fixed;
-    top: 0;
+    top: var(--fixed-canvas-top);
     left: 0;
     width: 100vw;
     min-height: var(--vertical-padding);
@@ -678,7 +725,7 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
 
 
   body .App div.buttons{
-    grid-row: 2;
+    grid-row: 3;
   }  
 
   .horizontal-gutter{
@@ -702,21 +749,14 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
     margin-top: 1em;
   }
 
-  /* bigger bezier controls for touch screen */
-  body .App .bezier-input{
-    --bezier-canvas-width: 200px;
-    --bezier-canvas-height: 200px;
-    --bezier-control-size: 25px;
-  }
-
-  /* bigger slider controls for touch screen */
-  body .App .slider{
-    --slider-thumb-width: 24px;
-  }
-
-
 }
 
+@media (hover: hover) and (min-width: 800px)
+{  
+  [data-tooltip]::after{
+    display: flex;
+  }
+}
 @media screen and (min-width: 800px) and (max-width: 1149px){
   
   .rgba-picker{

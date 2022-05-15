@@ -14,6 +14,8 @@ import { LinkButton } from './components/LinkButton';
 
 import { GetActiveParticleCount } from './particle-system/Particle';
 
+import fire from './fire.png'
+
 const version = '0.1.2';
 
 /*
@@ -28,9 +30,7 @@ const version = '0.1.2';
 
         figure out what to do about that empty space at the top *****
 
-        make touchscreen inputs a little bigger
-
-        fixed mode - canvas position when embedding as fullsize iframe ; set top via css prop?
+        fixed mode - canvas position when embedding as fullsize iframe ; set top via css prop? *****
 
         -consolidate / clean up media queries
             > intermediate sizes 
@@ -160,8 +160,12 @@ function App() {
   return (
     <div className="App">      
 
+      <div id='canvas-underlay'>
+        <img src={fire} alt="happy 8-bit fire" />
+      </div>
+
       <div className='App-header'>
-        <div className='title'><h1>p-widge </h1></div>
+        <div className='title'><h1>p&#8209;widge</h1></div>
         
         <div className='sub'>
           2D particle scratch pad
@@ -181,7 +185,7 @@ function App() {
             func={rgba => {FrameManager.setStartColor(rgba); flags.recolor = true}} 
             timeoutFunc={()=> flags.slowRecolor = true} 
             timeout={500}
-            tooltip='Tint color for each particle at the start of its lifetime.&#xa;Particle tint will transition between this and end color over its lifetime.'/>          
+            tooltip='Particle start color.'/>          
 
           <RGBAInput 
             label='Particle End'             
@@ -190,7 +194,7 @@ function App() {
             func={rgba => {FrameManager.setEndColor(rgba); flags.recolor = true}} 
             timeoutFunc={()=> flags.slowRecolor = true} 
             timeout={500}
-            tooltip='Tint color for each particle at the end of its lifetime.'/>
+            tooltip='Particle end color.'/>
 
 
           <RGBAInput 
@@ -198,7 +202,7 @@ function App() {
             rgb='#2d3434' 
             alpha={255} 
             func={rgba => {particleSettings.backgroundColor = rgba; flags.dirtyBackground = true}}
-            tooltip='Background color to paint over canvas at the start of each frame. &#xa; If alpha is less than fully opaque, some of the previous frame will show through.'/>
+            tooltip='Background color. &#xa; If alpha is less than fully opaque, some of the previous frame will show through as new frames are painted.'/>
       </div>
 
 
@@ -221,7 +225,7 @@ function App() {
             label='Create E&#8209;Map'
             className="emap-link" 
             href='https://georgelee.space/build'             
-            tooltip="Create a new particle emission map. &#xa;—&#xa;Links to a new tab where you can design an emitter shape."/>
+            tooltip="Create a new particle emission map. &#xa;—&#xa;Opens a new tab where you can design an emitter shape."/>
         </div>
 
       <div className='horizontal-gutter'></div>
@@ -243,13 +247,13 @@ function App() {
 
         
           <LabeledSlider 
-            label='Max Size' 
+            label='Base Size' 
             min={0} 
             max={200} 
             step={1} 
             defaultValue={100} 
             func={n => particleSettings.particleBaseSize = n}
-            tooltip='Max size of each particle, before applying randomness.'/>
+            tooltip='Base size of each particle, before applying randomness or curve values.'/>
           
           <LabeledSlider 
             label='Randomness' 
@@ -257,10 +261,10 @@ function App() {
             max={1} 
             step={0.01} 
             func={n => particleSettings.particleSizeRandomFactor = n}
-            tooltip='size'/>
+            tooltip='Size randomness.&#xa;—&#xa;The initial speed of each particle is a weighted average between base value B and a random number from 0 to B. This sets the balance of random vs. non-random weight.'/>
         
         
-        <div className='bezier-tooltip' data-tooltip='size curve'>
+        <div className='bezier-tooltip' data-tooltip='Modifies the size of each particle over its lifetime.&#xa;—&#xa;Click and drag to edit the curve points.'>
           <BezierInput 
             labelTop='Size Curve' 
             labelY='<— Size' 
@@ -272,13 +276,13 @@ function App() {
 
 
           <LabeledSlider 
-            label='Max Speed' 
+            label='Base Speed' 
             min={0} 
             max={500} 
             step={1} 
             defaultValue={175} 
             func={n => particleSettings.particleBaseSpeed = n}
-            tooltip='Set the maximum particle speed. This corresponds to the top of the bezier graph below.'/>
+            tooltip='Base speed of each particle, before applying randomness or curve values.'/>
 
           <LabeledSlider 
             label='Randomness' 
@@ -286,11 +290,11 @@ function App() {
             max={1} 
             step={0.01} 
             func={n => particleSettings.particleSpeedRandomFactor = n}
-            tooltip='The max speed of each emitted particle gets multiplied by a random number between 1 and 1 minus this number.'/>
+            tooltip='Speed randomness.&#xa;—&#xa;Uses the same formula as size.'/>
 
         
         
-        <div className='bezier-tooltip' data-tooltip="Modifies the speed of a particle over its lifetime. Click and drag to edit the curve points.">
+        <div className='bezier-tooltip' data-tooltip="Modifies the speed of each particle over its lifetime.&#xa;—&#xa;Click and drag to edit the curve points.">
           <BezierInput 
             labelTop='Speed Curve' 
             labelY='<— Speed' 
@@ -322,7 +326,7 @@ function App() {
           step={1} 
           suffix='/s' 
           func={n => particleSettings.rate = n}
-          tooltip='Set the number of particles emitted per second.'/>
+          tooltip='Number of particles to emit per second.'/>
         
         <LabeledSlider 
           label='arc' 
@@ -332,7 +336,7 @@ function App() {
           suffix='º' 
           defaultValue={360} 
           func={n => particleSettings.arc = n}
-          tooltip='Set the emission arc for each point defined by the current emitter'/>
+          tooltip='Emission arc for each point defined by the current emitter'/>
         
         <LabeledSlider 
           label='rotation' 
@@ -352,23 +356,23 @@ function App() {
           suffix='%' 
           defaultValue={50} 
           func={n => particleSettings.emitterSize = n}
-          tooltip='Set emitter size as a percentage of canvas size. &#xa;—&#xa;Has no effect on the default emitter, which is a single point.'/>
+          tooltip='Emitter size as a percentage of canvas size. &#xa;—&#xa;Has no effect on the default emitter, which is a single point.'/>
         
         <Checkbox 
           label='auto emit' 
           func={b => {particleSettings.emitAuto = b; flags.emitTimerReset = true}} 
-          tooltip='Toggles between continuous emission mode (default) and emit on mouse press only.'
+          tooltip='Toggles between continuous emission mode (default) and emit on mouse press / touch only.'
           checked/>
 
         <Checkbox 
           label='rotate image by velocity' 
           func={b => particleSettings.rotateByVelocity = b}
-          tooltip='Rotate particle images to match the direction of their movement.&#xa;SLOW!'/>
+          tooltip='Rotate particle images to match the direction of their movement.'/>
 
         <Checkbox 
           label='image smoothing' 
           func={b => flags.setImageSmoothing = b}
-          tooltip='Toggles bilinear filtering off (default) or on (SLOW!)'/>
+          tooltip='Toggles bilinear filtering when drawing particle textures.'/>
         
         
 
@@ -393,7 +397,7 @@ function App() {
               name='blend-mode'
               label='multiply' 
               func={()=>particleSettings.p5BlendMode = 'multiply'} 
-              tooltip='RGB values (scaled between 0 and 1) are multiplied together. The result is always darker.&#xa;Note: SLOW!'/>      
+              tooltip='RGB values (scaled between 0 and 1) are multiplied together. The result is always darker.'/>      
           
           </div>
           
@@ -404,13 +408,15 @@ function App() {
               name='editor-theme' 
               label='light' 
               func={()=>document.body.classList.remove('dark')} 
-              checked={!isNightTime}/>
+              checked={!isNightTime}
+              tooltip='A cheery red color theme.'/>
 
             <Radio 
               name='editor-theme' 
               label='dark' 
               func={()=>{document.body.classList.add('dark')}} 
-              checked={isNightTime}/>
+              checked={isNightTime}
+              tooltip='A subdued blue theme. Cut your eyes some slack!'/>
           </div>
 
         </div>
