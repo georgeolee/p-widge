@@ -227,6 +227,7 @@ body{
 
 
 
+
 .App-header {
   display: flex;
   flex-direction: column;
@@ -484,7 +485,9 @@ div.buttons > :nth-child(n + 3){
   display: none;
 }
 
-
+.controls-left > *, .controls-right > *{
+  margin-top: var(--control-spacing);
+}
 
 .radio, .checkbox{
   display: flex;
