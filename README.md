@@ -1,70 +1,39 @@
-# Getting Started with Create React App
+# p-widge
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+##### Find the app [here](https://georgelee.space/p-widge/build)! 
 
-## Available Scripts
+A lightweight scratch pad for sketching out 2D particle effects. It runs in the browser and provides a standalone particle system with adjustable settings and support for user-defined textures. 
 
-In the project directory, you can run:
+This app came about after working on game jams with friends of very different artistic and technical backgrounds. It aims to lower the technical barrier to entry for artists by taking speed bumps like software installation, compilation, and component setup out of the early part of the design process.
 
-### `npm start`
+Note that this is intended as a sketch pad of sorts, and doesn't actually export to Unity or any other game engine. However, all the features available here should be replicable in (and eclipsed by) any fully-featured particle system.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Emitter Shapes
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+##### Create an emitter [here](https://georgelee.space/build)! 
 
-### `npm test`
+The default particle emitter is just a single point, but custom emitter shapes can be defined as PNG files. The red and green channels of each pixel map to the emission direction at a given point, with blue or a transparent alpha channel masking out non-emitting points. I made [another tool](https://github.com/georgeolee/map-e) to streamline the process, but you can also use any image editor that exports to PNG.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Performance Notes
 
-### `npm run build`
+My laptop hit its tenth birthday over a year ago, so I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, .
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Some unscientific observations from a small sample size:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- chrome is generally the fastest browser, with some variation among others according to device
+- increasing the overall number of active particles – via `rate`, `lifetime`, or both – will require more calculations and draw calls
+- these settings also result in a performance hit on slower devices:
+  - `multiply` blend mode
+  - `rotate by velocity` on
+  - `image smoothing` on
+  - large particle `size`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Browser Support
 
-### `npm run eject`
+Tested and working as of May 17, 2022:
+- Chrome (Mac, Windows, iOS)
+- Firefox (Mac, Windows, iOS)
+- Safari (Mac, iOS)
+- Edge (Windows)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+##### *All browser versions are the latest official release at the time of writing... with the exception of Safari, which stopped supporting my laptop at version 13.1.2 :sweat_smile:*

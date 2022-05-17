@@ -23,6 +23,8 @@ const version = '0.1.2';
 *         
         THIS : !          
 
+        Color Lerping - WTH is going on with alpha channel? check rgba input, framemanager ; lerpcolor, tint docs for p5js
+
         useEffect cleanup
         stylesheet cleanup
             > fixed mode canvas css            

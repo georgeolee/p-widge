@@ -5,7 +5,6 @@ export class FrameManager{
     static isBusy;
     static queue;
     static maxQueueSize;
-    // static url; //image url
     static frameCount;
     
     //p5
@@ -67,7 +66,7 @@ export class FrameManager{
                 frame.copy(this.buffer, 0, 0, this.buffer.width, this.buffer.height, 0, 0, frame.width, frame.height);
                 frames.push(frame);
             }
-            console.log(`recolored ${frames.length} frames`)
+            // console.log(`recolored ${frames.length} frames`)
             callback?.(frames); //invoke the callback w/ the created frames as an argument            
         })
     }
