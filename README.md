@@ -16,9 +16,9 @@ The default particle emitter is just a single point, but custom emitter shapes c
 
 ## Performance Notes
 
-My laptop hit its tenth birthday over a year ago, so I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, .
+My laptop hit its tenth birthday over a year ago, so I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, lightning-fast performance is not a top priority here.
 
-Some unscientific observations from a small sample size:
+A few observations:
 
 - chrome is generally the fastest browser, with some variation among others according to device
 - increasing the overall number of active particles – via `rate`, `lifetime`, or both – will require more calculations and draw calls
