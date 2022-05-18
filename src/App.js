@@ -23,10 +23,7 @@ const version = '0.1.2';
 *         
         THIS : !          
 
-        Color Lerping - WTH is going on with alpha channel? check rgba input, framemanager ; lerpcolor, tint docs for p5js
-
-        stylesheet cleanup
-            > fixed mode canvas css            
+        stylesheet cleanup          
             > add in a landscape orientation?
 
         fixed mode - canvas position when embedding as fullsize iframe ; set top via css prop? *****
@@ -234,7 +231,7 @@ function App() {
           defaultValue={1.5}
           step={0.01} 
           func={n => particleSettings.particleLifetime = n}
-          suffix=' s'
+          suffix=' s'
           tooltip='How many seconds each particle remains active for after being emitted.'/>
         
         
@@ -370,7 +367,7 @@ function App() {
         
         
 
-        <div style={{display:'flex', justifyContent:'space-between'}}>
+        <div className='radio-group-container'>
           <div className='radio-group'>
             <RadioHeader label='Blend Mode'/>
             <Radio 
@@ -402,15 +399,13 @@ function App() {
               name='editor-theme' 
               label='light' 
               func={()=>document.body.classList.remove('dark')} 
-              checked={!isNightTime}
-              tooltip='A cheery red color theme.'/>
+              checked={!isNightTime} />
 
             <Radio 
               name='editor-theme' 
               label='dark' 
               func={()=>{document.body.classList.add('dark')}} 
-              checked={isNightTime}
-              tooltip='A subdued blue theme. Cut your eyes some slack!'/>
+              checked={isNightTime} />
           </div>
 
         </div>
