@@ -16,7 +16,7 @@ The default particle emitter is just a single point, but custom emitter shapes c
 
 ## Performance Notes
 
-My laptop hit its tenth birthday over a year ago, so I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, lightning-fast performance is not a top priority here.
+My laptop hit its tenth birthday over a year ago, so I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, lightning-fast performance isn't a top priority here.
 
 A few observations:
 

@@ -25,25 +25,17 @@ const version = '0.1.2';
 
         Color Lerping - WTH is going on with alpha channel? check rgba input, framemanager ; lerpcolor, tint docs for p5js
 
-        useEffect cleanup
         stylesheet cleanup
             > fixed mode canvas css            
             > add in a landscape orientation?
-
-        figure out what to do about that empty space at the top *****
 
         fixed mode - canvas position when embedding as fullsize iframe ; set top via css prop? *****
 
         -consolidate / clean up media queries
             > intermediate sizes 
 *       
-        mobile testing
-*      
-*       continue tooltips - rgba, bz size
-*       theme cleanup
 *
-*       -github images 
-*       -styling and stuff  ***
+*        -github images & screen captures
 *     
 *       
 *         
