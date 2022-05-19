@@ -1,14 +1,14 @@
 # p-widge
 
-##### Find the app [here](https://georgelee.space/p-widge/build)! 
+##### Find the app [here](https://georgelee.space/p-widge/build).
 
-A browser app that provides a standalone particle system with adjustable settings and support for user-defined textures. Conceived of as a way for artists on a game jam team to design particle effects while sidestepping the speed bumps and technical hurdles of configuring a system in-engine.
+A browser app that provides a standalone particle system with out of the box functionality. Users can upload their own textures and adjust various settings. Conceived of as a way for artists on a game jam team to experiment with particle effects without getting hung up on implementation details.
 
-Note that this is only a sketch pad of sorts, and effects will still need to be implemented afterwards for a given game engine. The intention here is to allow a degree of separation between the visual design of an effect and its implementation.
+Note that this is just a sketch pad of sorts, without any in-engine implementation — the intention here is to make the initial design step more beginner-friendly by shifting technical hurdles further down the development line.
 
 ![p-widge-capture-compressed](https://user-images.githubusercontent.com/62530485/168943659-f6b1b4af-eeda-4458-af29-904f153f8974.gif)
 
-*desktop screen capture*
+*desktop view*
 
 ## Browser Support
 
@@ -23,15 +23,17 @@ Tested and working as of 5-17-2022:
 
 ## Emitter Shapes
 
-##### Create an emission map [here](https://georgelee.space/build)! 
+##### Create an emission map [here](https://georgelee.space/build).
 
-Custom emitters can be defined as PNG files using a vector-to-color encoding method similar to the one used by normal maps. I made [this editor](https://github.com/georgeolee/map-e) to streamline the process (note that it isn't designed for mobile at the moment).
+The default emitter is just a single point, but custom emitters can be imported from PNG files. Emission vectors are encoded with a color-as-vector approach similar to the one used in normal mapping. I made [a click and drag editor](https://github.com/georgeolee/map-e) to simplify the process of creating a new emitter (note that it isn't designed for mobile at the moment).
 
 ![p-widge-custom-emitter-compressed](https://user-images.githubusercontent.com/62530485/169181292-1743aaa6-82e4-49ed-bdde-8cc610d56347.gif)
 
+*custom emitter shape*
+
 ## Performance Notes
 
-The bulk of my development has been on an eleven year old laptop, so I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, results may vary according to device, browser, and particle settings.
+I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, results may vary according to device, browser, and particle settings.
 
 A few observations, based on (very limited) testing:
 
@@ -45,4 +47,4 @@ A few observations, based on (very limited) testing:
 
 ![p-widge-capture-dark-mobile-compressed-smaller](https://user-images.githubusercontent.com/62530485/168944265-d707212c-e5d0-4d3e-976e-1b87e8cc0ba9.gif)
 
-*mobile screen capture*
+*mobile view*

@@ -34,7 +34,8 @@ export class CubicBezierCanvas{
 
 
         // resolution of canvas in proportion to computed css size
-        this.density = 2;
+        // this.density = 2;
+        this.density = window.devicePixelRatio;
 
         this.curveStrokeWidth = 4 * this.density;
         this.controlStrokeWidth = 1.5 * this.density;

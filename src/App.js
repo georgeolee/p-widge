@@ -21,15 +21,11 @@ const version = '0.1.2';
 /*
 *   TODO: 
 *         
-        THIS : !          
 
-        stylesheet cleanup          
-            > add in a landscape orientation?
-
-        fixed mode - canvas position when embedding as fullsize iframe ; set top via css prop? *****
+        stylesheet cleanup         
 
         -consolidate / clean up media queries
-            > intermediate sizes 
+            > ~ 800px wide needs a little cleanup
 *       
 *
 *        -github images & screen captures
@@ -221,7 +217,7 @@ function App() {
 
       <div className='horizontal-gutter'></div>
 
-      <div className='controls-left' data-panel-tag="particle properties">        
+      <div className='controls-left' data-panel-tag="particle settings">        
         
         
         <LabeledSlider 
@@ -306,7 +302,7 @@ function App() {
         </div>        
       </div>
       
-      <div className='controls-right' data-panel-tag="system | emitter properties">
+      <div className='controls-right' data-panel-tag="system | emitter settings">
 
         
         

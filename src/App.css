@@ -225,9 +225,9 @@ body{
   margin: var(--control-spacing) 0;
 }
 
-
-
-
+.controls-left > :last-child, .controls-right > :last-child{
+  margin-bottom: 0;
+}
 .App-header {
   display: flex;
   flex-direction: column;
@@ -646,23 +646,12 @@ input[type="checkbox"]:checked, input[type="radio"]:checked{
 /* single col layout with fixed canvas ; for small screens */
 @media screen and (max-width: 799px) {  
 
-  /* :root{
-    --fixed-canvas-top: 0;
-  } */
-
-  /* TEST */
-  /* TEST */
-  /* TEST */
-  /* TEST */
-  /* TEST */
-
   #canvas-underlay{
     display: flex;
     align-items: center;
     justify-content: center;
     height:calc(var(--canvas-size) + 72px - var(--app-margin)); /* 72px from 2* var(--vertical-padding) in .p5Container*/
     margin: 0;
-    /* background-color: cornflowerblue; */
   }
 
   #canvas-underlay img{
