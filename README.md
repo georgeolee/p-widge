@@ -2,11 +2,9 @@
 
 ##### Find the app [here](https://georgelee.space/p-widge/build)! 
 
-A lightweight scratch pad for sketching out 2D particle effects. It runs in the browser and provides a standalone particle system with adjustable settings and support for user-defined textures. 
+A browser app that provides a standalone particle system with adjustable settings and support for user-defined textures. Conceived of as a way for artists on a game jam team to design particle effects while sidestepping the speed bumps and technical hurdles of configuring a system in-engine.
 
-This app came about after working on game jams with friends of very different artistic and technical backgrounds. It aims to lower the technical barrier to entry for artists by removing speed bumps like software installation, compilation, and component setup from the initial design process. 
-
-Note that this is intended as a sketch pad of sorts, and doesn't actually export to any particular game engine. However, all the features available here should be replicable in (and eclipsed by) any fully-featured particle system.
+Note that this is only a sketch pad of sorts, and effects will still need to be implemented afterwards for a given game engine. The intention here is to allow a degree of separation between the visual design of an effect and its implementation.
 
 ![p-widge-capture-compressed](https://user-images.githubusercontent.com/62530485/168943659-f6b1b4af-eeda-4458-af29-904f153f8974.gif)
 
@@ -14,26 +12,28 @@ Note that this is intended as a sketch pad of sorts, and doesn't actually export
 
 ## Browser Support
 
-Tested and working as of May 17, 2022:
+Tested and working as of 5-17-2022:
 - Chrome (Mac, Windows, iOS)
 - Firefox (Mac, Windows, iOS)
 - Safari (Mac, iOS)
 - Edge (Windows)
 
 
-##### *All browser versions are the latest official release at the time of writing... with the exception of Safari, which stopped supporting my laptop at version 13.1.2 :sweat_smile:*
+##### *All tested browser versions are the latest official release at the time of writing... with the exception of Safari, which stopped supporting my laptop at version 13.1.2 :sweat_smile:*
 
 ## Emitter Shapes
 
-##### Create an emitter [here](https://georgelee.space/build)! 
+##### Create an emission map [here](https://georgelee.space/build)! 
 
-The default particle emitter is just a single point, but its possible to define your own emitter shapes. Custom emitters can be created as PNG files where the red and green channels of each pixel map to an emission vector and low blue/alpha values mask out non-emitting points. I made [another tool](https://github.com/georgeolee/map-e) to streamline the process, but you can also use any image editor that exports to PNG.
+Custom emitters can be defined as PNG files using a vector-to-color encoding method similar to the one used by normal maps. I made [this editor](https://github.com/georgeolee/map-e) to streamline the process (note that it isn't designed for mobile at the moment).
+
+![p-widge-custom-emitter-compressed](https://user-images.githubusercontent.com/62530485/169181292-1743aaa6-82e4-49ed-bdde-8cc610d56347.gif)
 
 ## Performance Notes
 
-My laptop hit its tenth birthday over a year ago, so I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, your experience might vary according to device, browser, and particle settings.
+The bulk of my development has been on an eleven year old laptop, so I've tried to keep framerate within a reasonable level for anyone running a modern browser on older hardware. That being said, results may vary according to device, browser, and particle settings.
 
-A few observations, going off of my own (limited) testing:
+A few observations, based on (very limited) testing:
 
 - chrome is generally the fastest browser, with some variation among others across devices
 - increasing the overall number of active particles – via `rate`, `lifetime`, or both – will require more calculations and draw calls
