@@ -89,7 +89,7 @@ export class CubicBezierCanvas{
         this.classChangeObserver.observe(this.canvas, {attributes:true, attributeFilter: ['class']});       // watch canvas for changes
         this.classChangeObserver.observe(document.body, {attributes:true, attributeFilter: ['class']});     // watch document body for changes
 
-        this.sizeChangeObserver.observe(document.body);
+        this.sizeChangeObserver.observe(document.documentElement);
         this.sizeChangeObserver.observe(this.canvas);
 
         this.redraw();
