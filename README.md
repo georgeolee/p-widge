@@ -1,37 +1,19 @@
 # p-widge
 
-##### Run the app [here](https://p-widge.netlify.app).
+#### Click [here](https://p-widge.netlify.app) to run the app.
 
-A browser sketch pad for mocking up 2D particle effects. For the asset artist who just needs a minimal-setup environment to preview a texture and maybe tweak a few settings as they work. Everything runs out of the box, and no prior experience with any game engine or other particle system is required.
+A browser sketch pad for mocking up 2D particle effects. For game artists who don't want to set down the iPad or wrestle with a sprawling program like Unity. You can drop in your own textures and tweak settings as you go, but everything runs out of the box — no lengthy setup or special software required.
 
 ![p-widge-capture-compressed](https://user-images.githubusercontent.com/62530485/168943659-f6b1b4af-eeda-4458-af29-904f153f8974.gif)
 
-*desktop view*
-
-## Browser Support
-
-Tested and working as of 8-1-2022:
-- Chrome (Mac, Windows, iOS)
-- Firefox (Mac, Windows, iOS)
-- Safari (Mac, iOS)
-- Edge (Windows)
-
-Anything not listed here... I haven't tried :thinking:
-
 ## Emitter Shapes
 
-##### Create an emission map [here](https://map-e.netlify.app).
+#### Click [here](https://map-e.netlify.app) to create and download an emission map.
 
-The default emitter is just a single point, but custom emitters can be created from PNG files. I made a simple [editor](https://github.com/georgeolee/map-e) with the specific aim of streamlining the process, but any program that exports to PNG will work. Emission vectors are encoded as colors – similar to the approach used in normal mapping, but without the z-channel.
+The default emitter is just a single point, but custom emitter shapes can be loaded from PNG vector maps. You can create one in a minute or two using the above link. You can also use a different program so long as it exports to PNG – read the note below on encoding emission vectors.
+
+*Note: the encoding method for emitter textures is similar to the one used by normal maps, but the Y axis is positive going down instead of up. Pixels with a nonzero Z component or a transparent alpha channel won't emit particles.*
 
 ![p-widge-custom-emitter-compressed](https://user-images.githubusercontent.com/62530485/169181292-1743aaa6-82e4-49ed-bdde-8cc610d56347.gif)
 
-*custom emitter shape*
-
-## Performance
-
-I've tried to keep framerate within a reasonable level on older hardware. That being said, results may vary according to device, browser, and settings.
-
 ![p-widge-capture-dark-mobile-compressed-smaller](https://user-images.githubusercontent.com/62530485/168944265-d707212c-e5d0-4d3e-976e-1b87e8cc0ba9.gif)
-
-*mobile view*
